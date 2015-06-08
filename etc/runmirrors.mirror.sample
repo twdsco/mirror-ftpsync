@@ -11,8 +11,13 @@
 #
 # Type is either all, staged or mhop, meaning:
 # all    - do a "normal" push. Trigger them, go on.
+#          This is the default for a Debian mirror. It does all the
+#          right things (when the mirror uses ftpsync), like staged-syncing.
 # staged - do a two-stage push, waiting for them after stage 2(and all others that
-#          are staged) before doing stage2
+#          are staged) before doing stage2.
+#          Contrary to all, this waits for ALL downstream mirrors
+#          marked "staged", so most useful if they are behind a DNS RR
+#          and need to update dists/ at near the same time.
 # mhop   - send a multi-hop staged push. This will tell the mirror to initiate
 #          a mhop/stage1 push to its staged/mhop mirrors and then exit.
 #          When all mhop got back we then send the stage2 through to them.
