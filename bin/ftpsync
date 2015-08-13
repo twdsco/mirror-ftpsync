@@ -379,6 +379,10 @@ for ARCH in ${ARCH_EXCLUDE}; do
     if [ "${ARCH}" = "source" ]; then
         if [ -z ${SOURCE_EXCLUDE} ]; then
             SOURCE_EXCLUDE=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
+            # Over-ride the exclude=*.tar.gz above - there are some
+            # tar.gz files in the archive that are *not* source
+            # files...
+            SOURCE_EXCLUDE="$SOURCE_EXCLUDE --include=debian-cd_info.tar.gz --include=debian-faq.en.html.tar.gz --include=netboot.tar.gz --include=nfsroot.tar.gz --include=hd-media.tar.gz --include=dedication*.tar.gz"
         fi
     fi
 done
