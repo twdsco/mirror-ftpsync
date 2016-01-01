@@ -367,6 +367,9 @@ CALLBACKKEY=${CALLBACKKEY:-"none"}
 # General excludes. Don't list architecture specific stuff here, use ARCH_EXCLUDE for that!
 EXCLUDE=${EXCLUDE:-""}
 
+# collect some stats
+STATS_TOTAL_RSYNC_TIME=0
+
 # The temp directory used by rsync --delay-updates is not
 # world-readable remotely. Always exclude it to avoid errors.
 EXCLUDE="${EXCLUDE} --exclude=.~tmp~/"
@@ -503,9 +506,12 @@ while [ -e "${UPDATEREQUIRED}" ]; do
 
             set +e
             # Step one, sync everything except Packages/Releases
+            rsync_started=$(date +%s)
             ${RSYNC} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE} \
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
+            rsync_ended=$(date +%s)
+            STATS_TOTAL_RSYNC_TIME=$(( STATS_TOTAL_RSYNC_TIME + rsync_ended - rsync_started ))
             set -e
 
             log "Back from rsync with returncode ${result}"
@@ -637,6 +643,15 @@ if [ "xtruex" = "x${SYNCSTAGE2}x" ] || [ "xtruex" = "x${SYNCALL}x" ]; then
                             out="GUESSED:{${ARCHLIST}}"
                             echo "Architectures: ${out}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
+                            total=0
+                            for bytes in $(egrep 'Total bytes received: ' "${LOGDIR}/rsync-${NAME}.log" | awk -F: '{print $2}'); do
+                                bytes=${bytes//,}
+                                total=$((total + bytes))
+                            done
+                            echo "Total bytes received in rsync: ${total}"
+                            echo "Total time spent in rsync: ${STATS_TOTAL_RSYNC_TIME}"
+                            rate=$(( total / STATS_TOTAL_RSYNC_TIME ))
+                            echo "Average rate: ${rate} B/s"
                         fi # full trace
                     fi # other traces
                 } > "${TO}/${TRACE}.new"
