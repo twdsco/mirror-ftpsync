@@ -206,10 +206,10 @@ tracefile() {
                             echo "Architectures: ${out}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
                             total=0
-                            if [[ -e "${LOGDIR}/rsync-${NAME}.log" ]]; then
+                            if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
                                 for bytes in $(egrep 'Total bytes received: ' "${LOGDIR}/rsync-${NAME}.log" | awk -F: '{print $2}'); do
                                     bytes=${bytes//,}
-                                    total=$((total + bytes))
+                                    total=$(( total + bytes ))
                                 done
                                 echo "Total bytes received in rsync: ${total}"
                             fi
