@@ -182,13 +182,13 @@ tracefile() {
             if [[ -d $(dirname "${TRACEFILE}") ]]; then
                 {
                     LC_ALL=POSIX LANG=POSIX date -u
-                    rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
-                    echo "Date: ${rfc822date}"
-
-                    FILESOA=$(awk '/serial/ { print $3 }' ${TO}/project/trace/master || echo unknown )
-                    echo "Archive serial: ${FILESOA}"
-
                     if [[ date != ${EXTENDEDTRACE} ]]; then
+                        rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
+                        echo "Date: ${rfc822date}"
+
+                        FILESOA=$(awk '/serial/ { print $3 }' ${TO}/project/trace/master || echo unknown )
+                        echo "Archive serial: ${FILESOA}"
+
                         echo "Used ftpsync version: ${VERSION}"
                         echo "Running on host: ${TRACEHOST}"
                         if [[ full = ${EXTENDEDTRACE} ]]; then
