@@ -232,7 +232,7 @@ tracefile() {
                 mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
                 cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
 
-                (cd ${tracedir} && ls -rt) | grep -v '^_' > "${TO}/${TRACELIST}"
+                (cd ${tracedir} && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
             fi
             ;;
         *)
