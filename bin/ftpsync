@@ -205,11 +205,13 @@ tracefile() {
                             echo "Architectures: ${out}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
                             total=0
-                            for bytes in $(egrep 'Total bytes received: ' "${LOGDIR}/rsync-${NAME}.log" | awk -F: '{print $2}'); do
-                                bytes=${bytes//,}
-                                total=$((total + bytes))
-                            done
-                            echo "Total bytes received in rsync: ${total}"
+                            if [[ -e "${LOGDIR}/rsync-${NAME}.log" ]]; then
+                                for bytes in $(egrep 'Total bytes received: ' "${LOGDIR}/rsync-${NAME}.log" | awk -F: '{print $2}'); do
+                                    bytes=${bytes//,}
+                                    total=$((total + bytes))
+                                done
+                                echo "Total bytes received in rsync: ${total}"
+                            fi
                             echo "Total time spent in rsync: ${STATS_TOTAL_RSYNC_TIME}"
                             if [[ 0 != ${STATS_TOTAL_RSYNC_TIME} ]]; then
                                 rate=$(( total / STATS_TOTAL_RSYNC_TIME ))
@@ -594,8 +596,6 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
         exit 3
     fi
 
-    tracefile "${TO}/${TRACE}-stage1"
-
     HOOK=(
         HOOKNR=2
         HOOKSCR=${HOOK2}
@@ -678,6 +678,8 @@ done
 # Otherwise we would update it after stage1 already, which is wrong.
 if [[ true = ${SYNCSTAGE2} ]] || [[ true = ${SYNCALL} ]]; then
     tracefile
+elif [[ true = ${SYNCSTAGE1} ]]; then
+    tracefile "${TO}/${TRACE}-stage1"
 fi
 
 
