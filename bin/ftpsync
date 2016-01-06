@@ -370,7 +370,7 @@ TRACEHOST=${TRACEHOST:-$(hostname -f)}
 RSYNC=${RSYNC:-rsync}
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
-RSYNC_FILTER=${RSYNC_FILTER:-"--filter=protect_Archive-Update-in-Progress-${MIRRORNAME} --filter=protect_${TRACE} --filter=protect_${TRACE}-stage1 --filter=protect_${TRACEHIERARCHY} --filter=protect_Archive-Update-Required-${MIRRORNAME}"}
+RSYNC_FILTER=${RSYNC_FILTER:-"--filter=protect_Archive-Update-in-Progress-${MIRRORNAME} --filter=protect_${TRACE} --filter=protect_${TRACE}-stage1 --exclude=${TRACEHIERARCHY} --filter=protect_${TRACEHIERARCHY} --filter=protect_Archive-Update-Required-${MIRRORNAME}"}
 # limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
 RSYNC_BW=${RSYNC_BW:-0}
 RSYNC_PROTOCOL=$(rsync_protocol)
