@@ -226,7 +226,7 @@ tracefile() {
                     if [[ -e "${TO}/${TRACEHIERARCHY}.mirror" ]]; then
                         cat "${TO}/${TRACEHIERARCHY}.mirror"
                     fi
-                    echo "$(basename "${TRACEFILE}") ${MIRRORNAME}"
+                    echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST}"
                 } > "${TO}/${TRACEHIERARCHY}".new
                 mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
                 cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
