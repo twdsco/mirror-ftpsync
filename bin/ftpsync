@@ -678,6 +678,9 @@ done
 # Otherwise we would update it after stage1 already, which is wrong.
 if [[ true = ${SYNCSTAGE2} ]] || [[ true = ${SYNCALL} ]]; then
     tracefile
+    if [[ true = ${SYNCALL} ]]; then
+        rm -f "${TO}/${TRACE}-stage1"
+    fi
 elif [[ true = ${SYNCSTAGE1} ]]; then
     tracefile "${TO}/${TRACE}-stage1"
 fi
