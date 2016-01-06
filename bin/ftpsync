@@ -139,7 +139,7 @@ check_rsync() {
     SPEED="unknown"
     if [[ -f ${LOGDIR}/rsync-${NAME}.log ]]; then
         SPEED=$(
-            SPEEDLINE=$(egrep '[[0-9.,]]+ bytes/sec' "${LOGDIR}/rsync-${NAME}.log" | tail -n 1)
+            SPEEDLINE=$(egrep '[0-9.,]+ bytes/sec' "${LOGDIR}/rsync-${NAME}.log" | tail -n 1)
             set "nothing" ${SPEEDLINE}
             echo ${8:-""}
         )
