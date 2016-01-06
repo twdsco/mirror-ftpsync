@@ -8,6 +8,11 @@ set -u
 # the important part here)
 set -E
 
+# A pipeline's return status is the value of the last (rightmost)
+# command to exit with a non-zero status, or zero if all commands exit
+# success‐ fully.
+set -o pipefail
+
 # ftpsync script for Debian
 # Based losely on a number of existing scripts, written by an
 # unknown number of different people over the years.
