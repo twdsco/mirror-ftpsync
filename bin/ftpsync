@@ -223,13 +223,13 @@ tracefile() {
                 mv "${TRACEFILE}.new" "${TRACEFILE}"
 
                 {
-                    if [[ -e "${TRACEHIERARCHY}.mirror" ]]; then
-                        cat "${TRACEHIERARCHY}.mirror"
+                    if [[ -e "${TO}/${TRACEHIERARCHY}.mirror" ]]; then
+                        cat "${TO}/${TRACEHIERARCHY}.mirror"
                     fi
                     echo "$(basename "${TRACEFILE}") ${MIRRORNAME}"
-                } > "${TRACEHIERARCHY}".new
-                mv "${TRACEHIERARCHY}".new "${TRACEHIERARCHY}"
-                cp "${TRACEHIERARCHY}" "${TRACEHIERARCHY}.mirror"
+                } > "${TO}/${TRACEHIERARCHY}".new
+                mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
+                cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
             fi
             ;;
         *)
