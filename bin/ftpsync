@@ -211,8 +211,10 @@ tracefile() {
                             done
                             echo "Total bytes received in rsync: ${total}"
                             echo "Total time spent in rsync: ${STATS_TOTAL_RSYNC_TIME}"
-                            rate=$(( total / STATS_TOTAL_RSYNC_TIME ))
-                            echo "Average rate: ${rate} B/s"
+                            if [[ 0 != ${STATS_TOTAL_RSYNC_TIME} ]]; then
+                                rate=$(( total / STATS_TOTAL_RSYNC_TIME ))
+                                echo "Average rate: ${rate} B/s"
+                            fi
                         fi # full trace
                     fi # other traces
                 } > "${TRACEFILE}.new"
