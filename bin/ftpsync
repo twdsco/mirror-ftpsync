@@ -221,6 +221,15 @@ tracefile() {
                     fi # other traces
                 } > "${TRACEFILE}.new"
                 mv "${TRACEFILE}.new" "${TRACEFILE}"
+
+                {
+                    if [[ -e "${TRACEHIERARCHY}.mirror" ]]; then
+                        cat "${TRACEHIERARCHY}.mirror"
+                    fi
+                    echo "$(basename "${TRACEFILE}") ${MIRRORNAME}"
+                } > "${TRACEHIERARCHY}".new
+                mv "${TRACEHIERARCHY}".new "${TRACEHIERARCHY}"
+                cp "${TRACEHIERARCHY}" "${TRACEHIERARCHY}.mirror"
             fi
             ;;
         *)
@@ -341,6 +350,7 @@ UIPRETRIES=${UIPRETRIES:-3}
 UPDATEREQUIRED="${TO}/Archive-Update-Required-${MIRRORNAME}"
 # Trace file for mirror stats and checks (make sure we get full hostname)
 TRACE=${TRACE:-"project/trace/${MIRRORNAME}"}
+TRACEHIERARCHY=${TRACEHIERARCHY:-"project/trace/_hierachy"}
 # The trace file can have different format/contents. Here you can select
 # what it will be.
 # Possible values are
@@ -360,7 +370,7 @@ TRACEHOST=${TRACEHOST:-$(hostname -f)}
 RSYNC=${RSYNC:-rsync}
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
-RSYNC_FILTER=${RSYNC_FILTER:-"--filter=protect_Archive-Update-in-Progress-${MIRRORNAME} --filter=protect_${TRACE} --filter=protect_${TRACE}-stage1 --filter=protect_Archive-Update-Required-${MIRRORNAME}"}
+RSYNC_FILTER=${RSYNC_FILTER:-"--filter=protect_Archive-Update-in-Progress-${MIRRORNAME} --filter=protect_${TRACE} --filter=protect_${TRACE}-stage1 --filter=protect_${TRACEHIERARCHY} --filter=protect_Archive-Update-Required-${MIRRORNAME}"}
 # limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
 RSYNC_BW=${RSYNC_BW:-0}
 RSYNC_PROTOCOL=$(rsync_protocol)
