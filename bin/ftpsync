@@ -229,16 +229,20 @@ tracefile() {
                 } > "${TRACEFILE}.new"
                 mv "${TRACEFILE}.new" "${TRACEFILE}"
 
-                {
-                    if [[ -e "${TO}/${TRACEHIERARCHY}.mirror" ]]; then
-                        cat "${TO}/${TRACEHIERARCHY}.mirror"
-                    fi
-                    echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST}"
-                } > "${TO}/${TRACEHIERARCHY}".new
-                mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
-                cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
+                if [[ full = ${EXTENDEDTRACE} ]] || [[ -e ${TO}/${TRACEHIERARCHY}.mirror ]]; then
+                    {
+                        if [[ -e ${TO}/${TRACEHIERARCHY}.mirror ]]; then
+                            cat ${TO}/${TRACEHIERARCHY}.mirror
+                        fi
+                        echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST}"
+                    } > "${TO}/${TRACEHIERARCHY}".new
+                    mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
+                    cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
 
-                (cd ${tracedir} && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
+                    (cd ${tracedir} && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
+                else
+                    rm -f "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACELIST}"
+                fi
             fi
             ;;
         *)
