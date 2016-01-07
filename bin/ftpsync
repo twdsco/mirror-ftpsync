@@ -363,7 +363,7 @@ UIPRETRIES=${UIPRETRIES:-3}
 UPDATEREQUIRED="${TO}/Archive-Update-Required-${MIRRORNAME}"
 # Trace file for mirror stats and checks (make sure we get full hostname)
 TRACE=${TRACE:-"project/trace/${MIRRORNAME}"}
-TRACEHIERARCHY=${TRACEHIERARCHY:-"project/trace/_hierachy"}
+TRACEHIERARCHY=${TRACEHIERARCHY:-"project/trace/_hierarchy"}
 TRACELIST=${TRACELIST:-"project/trace/_traces"}
 # The trace file can have different format/contents. Here you can select
 # what it will be.
