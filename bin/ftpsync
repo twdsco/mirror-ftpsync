@@ -219,9 +219,12 @@ tracefile() {
                                 done
                                 echo "Total bytes received in rsync: ${total}"
                             fi
-                            echo "Total time spent in rsync: ${STATS_TOTAL_RSYNC_TIME}"
-                            if [[ 0 != ${STATS_TOTAL_RSYNC_TIME} ]]; then
-                                rate=$(( total / STATS_TOTAL_RSYNC_TIME ))
+                            total_time=$(( STATS_TOTAL_RSYNC_TIME1 + STATS_TOTAL_RSYNC_TIME2 ))
+                            echo "Total time spent in stage1 rsync: ${STATS_TOTAL_RSYNC_TIME1}"
+                            echo "Total time spent in stage2 rsync: ${STATS_TOTAL_RSYNC_TIME2}"
+                            echo "Total time spent in rsync: ${total_time}"
+                            if [[ 0 != ${total_time} ]]; then
+                                rate=$(( total / total_time ))
                                 echo "Average rate: ${rate} B/s"
                             fi
                         fi # full trace
@@ -456,7 +459,8 @@ CALLBACKKEY=${CALLBACKKEY:-"none"}
 EXCLUDE=${EXCLUDE:-""}
 
 # collect some stats
-STATS_TOTAL_RSYNC_TIME=0
+STATS_TOTAL_RSYNC_TIME1=0
+STATS_TOTAL_RSYNC_TIME2=0
 
 # The temp directory used by rsync --delay-updates is not
 # world-readable remotely. Always exclude it to avoid errors.
@@ -599,7 +603,7 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
             rsync_ended=$(date +%s)
-            STATS_TOTAL_RSYNC_TIME=$(( STATS_TOTAL_RSYNC_TIME + rsync_ended - rsync_started ))
+            STATS_TOTAL_RSYNC_TIME1=$(( STATS_TOTAL_RSYNC_TIME1 + rsync_ended - rsync_started ))
             set -e
 
             log "Back from rsync with returncode ${result}"
@@ -669,9 +673,12 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
             set +e
             # We are lucky, it worked. Now do step 2 and sync again, this time including
             # the packages/releases files
+            rsync_started=$(date +%s)
             ${RSYNC} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} \
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
+            rsync_ended=$(date +%s)
+            STATS_TOTAL_RSYNC_TIME2=$(( STATS_TOTAL_RSYNC_TIME2 + rsync_ended - rsync_started ))
             set -e
 
             log "Back from rsync with returncode ${result}"
