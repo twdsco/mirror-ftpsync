@@ -213,7 +213,7 @@ tracefile() {
                             echo "Upstream-mirror: ${RSYNC_HOST}"
                             total=0
                             if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
-                                for bytes in $(egrep 'Total bytes received: ' "${LOGDIR}/rsync-${NAME}.log" | awk -F: '{print $2}'); do
+                                for bytes in $(awk -F': '   '$1 == "Total bytes received" {print $2} ' "${LOGDIR}/rsync-${NAME}.log"); do
                                     bytes=${bytes//,}
                                     total=$(( total + bytes ))
                                 done
