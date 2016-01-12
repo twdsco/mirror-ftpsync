@@ -192,6 +192,7 @@ tracefile() {
                     if [[ date != ${EXTENDEDTRACE} ]]; then
                         rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
                         echo "Date: ${rfc822date}"
+                        echo "Date-Started: ${DATE_STARTED}"
 
                         FILESOA=$(awk -F": " ' $1=="Archive serial" {print $2}' ${TO}/project/trace/master || echo unknown )
                         echo "Archive serial: ${FILESOA}"
@@ -492,6 +493,7 @@ HOOK5=${HOOK5:-""}
 # Are we a hub?
 HUB=${HUB:-"false"}
 
+DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 ########################################################################
 # Really nothing to see below here. Only code follows.                 #
 ########################################################################
