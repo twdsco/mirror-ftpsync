@@ -468,20 +468,24 @@ STATS_TOTAL_RSYNC_TIME2=0
 EXCLUDE="${EXCLUDE} --exclude=.~tmp~/"
 
 SOURCE_EXCLUDE=${SOURCE_EXCLUDE:-""}
+SOURCE_EXCLUDE_EXPLICIT=
 ARCH_EXCLUDE=${ARCH_EXCLUDE:-""}
+
 # Exclude architectures defined in $ARCH_EXCLUDE
 for ARCH in ${ARCH_EXCLUDE}; do
     EXCLUDE="${EXCLUDE} --exclude=binary-${ARCH}/ --exclude=installer-${ARCH}/ --exclude=Contents-${ARCH}.gz --exclude=Contents-udeb-${ARCH}.gz --exclude=Contents-${ARCH}.diff/ --exclude=arch-${ARCH}.files --exclude=arch-${ARCH}.list.gz --exclude=*_${ARCH}.deb --exclude=*_${ARCH}.udeb --exclude=*_${ARCH}.changes"
     if [[ ${ARCH} = source ]]; then
-        if [[ -z ${SOURCE_EXCLUDE} ]]; then
-            SOURCE_EXCLUDE=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
-            # Over-ride the exclude=*.tar.gz above - there are some
-            # tar.gz files in the archive that are *not* source
-            # files...
-            SOURCE_EXCLUDE="$SOURCE_EXCLUDE --include=debian-cd_info.tar.gz --include=debian-faq.en.html.tar.gz --include=netboot.tar.gz --include=nfsroot.tar.gz --include=hd-media.tar.gz --include=dedication*.tar.gz"
-        fi
+        SOURCE_EXCLUDE_EXPLICIT=1
     fi
 done
+
+if [[ ${SOURCE_EXCLUDE_EXPLICIT} ]] && [[ -z ${SOURCE_EXCLUDE} ]]; then
+    SOURCE_EXCLUDE=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
+    # Over-ride the exclude=*.tar.gz above - there are some
+    # tar.gz files in the archive that are *not* source
+    # files...
+    SOURCE_EXCLUDE="$SOURCE_EXCLUDE --include=debian-cd_info.tar.gz --include=debian-faq.en.html.tar.gz --include=netboot.tar.gz --include=nfsroot.tar.gz --include=hd-media.tar.gz --include=dedication*.tar.gz"
+fi
 
 # Hooks
 HOOK1=${HOOK1:-""}
