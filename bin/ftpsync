@@ -255,6 +255,19 @@ tracefile() {
     esac
 
 }
+
+arch_imexclude() {
+    local param="$1" arch="$2"
+    EXCLUDE="${EXCLUDE} --${param}=binary-${arch}/ --${param}=installer-${arch}/ --${param}=Contents-${arch}.gz --${param}=Contents-udeb-${arch}.gz --${param}=Contents-${arch}.diff/ --${param}=arch-${arch}.files --${param}=arch-${arch}.list.gz --${param}=*_${arch}.deb --${param}=*_${arch}.udeb --${param}=*_${arch}.changes"
+}
+
+arch_exclude() {
+    arch_imexclude exclude "$1"
+}
+
+arch_include() {
+    arch_imexclude include "$1"
+}
 ########################################################################
 ########################################################################
 
@@ -474,7 +487,7 @@ ARCH_INCLUDE=${ARCH_INCLUDE:-""}
 
 # Exclude architectures defined in $ARCH_EXCLUDE
 for ARCH in ${ARCH_EXCLUDE}; do
-    EXCLUDE="${EXCLUDE} --exclude=binary-${ARCH}/ --exclude=installer-${ARCH}/ --exclude=Contents-${ARCH}.gz --exclude=Contents-udeb-${ARCH}.gz --exclude=Contents-${ARCH}.diff/ --exclude=arch-${ARCH}.files --exclude=arch-${ARCH}.list.gz --exclude=*_${ARCH}.deb --exclude=*_${ARCH}.udeb --exclude=*_${ARCH}.changes"
+    arch_exclude ${ARCH}
     if [[ ${ARCH} = source ]]; then
         SOURCE_EXCLUDE_EXPLICIT=1
     fi
@@ -484,7 +497,7 @@ if [[ ${ARCH_INCLUDE} ]]; then
     ARCH_INCLUDE_ALL=
     SOURCE_EXCLUDE_EXPLICIT=1
     for ARCH in ${ARCH_INCLUDE}; do
-        EXCLUDE="${EXCLUDE} --include=binary-${ARCH}/ --include=installer-${ARCH}/ --include=Contents-${ARCH}.gz --include=Contents-udeb-${ARCH}.gz --include=Contents-${ARCH}.diff/ --include=arch-${ARCH}.files --include=arch-${ARCH}.list.gz --include=*_${ARCH}.deb --include=*_${ARCH}.udeb --include=*_${ARCH}.changes"
+        arch_include ${ARCH}
         if [[ ${ARCH} = source ]]; then
             SOURCE_EXCLUDE_EXPLICIT=
         else
@@ -492,9 +505,9 @@ if [[ ${ARCH_INCLUDE} ]]; then
         fi
     done
     if [[ ${ARCH_INCLUDE_ALL} ]]; then
-        EXCLUDE="${EXCLUDE} --include=binary-all/ --include=installer-all/ --include=Contents-all.gz --include=Contents-udeb-all.gz --include=Contents-all.diff/ --include=arch-all.files --include=arch-all.list.gz --include=*_all.deb --include=*_all.udeb --include=*_all.changes"
+        arch_include all
     fi
-    EXCLUDE="${EXCLUDE} --exclude=binary-*/ --exclude=installer-*/ --exclude=Contents-*.gz --exclude=Contents-udeb-*.gz --exclude=Contents-*.diff/ --exclude=arch-*.files --exclude=arch-*.list.gz --exclude=*.deb --exclude=*.udeb --exclude=*.changes"
+    arch_exclude '*'
 fi
 
 if [[ ${SOURCE_EXCLUDE_EXPLICIT} ]] && [[ -z ${SOURCE_EXCLUDE} ]]; then
