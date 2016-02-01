@@ -31,6 +31,15 @@
 ## If we need a user we also need a password
 #RSYNC_PASSWORD=
 
+## Set to "true" to tunnel your rsync through stunnel.  Requires that stunnel4 be
+## available in PATH.  ftpsync will then create an stunnel config file and use
+## rsync's -e to connect to RSYNC_SSL_PORT on the remote site.  (This requires
+## server support, obviously.)  The presented certificate is checked by stunnel
+## against the certificate authorities in RSYNC_SSL_CAPATH.
+#RSYNC_SSL=false
+#RSYNC_SSL_PORT=1873
+#RSYNC_SSL_CAPATH=/etc/ssl/certs
+
 ## In which directory should logfiles end up
 ## Note that BASEDIR defaults to $HOME, but can be set before calling the
 ## ftpsync script to any value you want (for example using pam_env)
