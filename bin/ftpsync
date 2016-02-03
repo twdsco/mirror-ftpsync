@@ -256,38 +256,6 @@ tracefile() {
     esac
 
 }
-setup_stunnel_config() {
-    if [[ "$(declare -p RSYNC)" =~ "declare -a" ]]; then
-      : # RSYNC already is an array
-    else
-      RSYNC=($RSYNC)
-    fi
-
-    if [[ true != ${RSYNC_SSL} ]]; then
-        return
-    fi
-    STUNNEL_CONFIG="${BASEDIR}/etc/stunnel-${NAME}.conf"
-    cat << EOF > "$STUNNEL_CONFIG"
-# This file has been automatically created by ftpsync for syncing
-# from ${RSYNC_HOST}.
-#
-# Do not edit it, it will be overwritten next time ftpsync runs.
-#
-# To test if things works, try the following:
-#    rsync -e 'stunnel4 ${STUNNEL_CONFIG}' ${RSYNC_USER}@dummy::
-#
-client = yes
-verify = 2
-CApath = ${RSYNC_SSL_CAPATH}
-
-syslog = no
-debug = 4
-output = /dev/stderr
-
-connect = ${RSYNC_HOST}:${RSYNC_SSL_PORT}
-EOF
-    RSYNC+=('-e' "stunnel4 ${STUNNEL_CONFIG}")
-}
 ########################################################################
 ########################################################################
 
@@ -474,10 +442,6 @@ RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
 # a possible proxy
 RSYNC_PROXY=${RSYNC_PROXY:-""}
 
-RSYNC_SSL=${RSYNC_SSL:-"false"}
-RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
-RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
-
 # Do we sync stage1?
 SYNCSTAGE1=${SYNCSTAGE1:-"false"}
 # Do we sync stage2?
@@ -520,6 +484,20 @@ for ARCH in ${ARCH_EXCLUDE}; do
     fi
 done
 
+RSYNC_SSL=${RSYNC_SSL:-"false"}
+RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
+RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
+RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"socat"}
+
+if [[ true != ${RSYNC_SSL} ]]; then
+  RSYNC_SSL_OPTIONS=""
+else
+  export RSYNC_SSL_PORT
+  export RSYNC_SSL_CAPATH
+  export RSYNC_SSL_METHOD
+  RSYNC_SSL_OPTIONS="-e ${BASEDIR}/bin/rsync-ssl-tunnel"
+fi
+
 # Hooks
 HOOK1=${HOOK1:-""}
 HOOK2=${HOOK2:-""}
@@ -529,8 +507,6 @@ HOOK5=${HOOK5:-""}
 
 # Are we a hub?
 HUB=${HUB:-"false"}
-
-setup_stunnel_config
 
 DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 ########################################################################
@@ -635,12 +611,12 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
     if [[ true = ${SYNCSTAGE1} ]] || [[ true = ${SYNCALL} ]]; then
         while [[ -e ${UPDATEREQUIRED} ]]; do
             rm -f "${UPDATEREQUIRED}"
-            log "Running stage1: ${RSYNC[@]} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE}  ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
+            log "Running stage1: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE}  ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
 
             set +e
             # Step one, sync everything except Packages/Releases
             rsync_started=$(date +%s)
-            "${RSYNC[@]}" ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE} \
+            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE} \
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
             rsync_ended=$(date +%s)
@@ -709,13 +685,13 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
                 result=1
             fi
         else
-            log "Running stage2: ${RSYNC[@]} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
+            log "Running stage2: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
 
             set +e
             # We are lucky, it worked. Now do step 2 and sync again, this time including
             # the packages/releases files
             rsync_started=$(date +%s)
-            "${RSYNC[@]}" ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} \
+            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} \
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
             rsync_ended=$(date +%s)

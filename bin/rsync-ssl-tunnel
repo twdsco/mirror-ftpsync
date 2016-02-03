@@ -1,0 +1,88 @@
+#! /bin/bash
+
+set -e
+set -u
+
+usage() {
+  echo "Usage: [RSYNC_SSL_CAPATH=<capath>] [RSYNC_SSL_CAPATH=<port>] $0 <RSYNC_HOST>"
+}
+
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -l)
+      shift
+      shift
+      continue
+      ;;
+    --)
+      shift
+      continue
+      ;;
+    -*)
+      usage >&2
+      exit 1
+      ;;
+    *)
+      RSYNC_HOST="$1"; shift
+      break
+  esac
+done
+
+if [[ "$#" = 0 ]]; then
+  usage >&2
+  echo >&2 "No arguments given."
+  exit 1
+fi
+RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
+RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
+RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"socat"}
+
+method_stunnel() {
+  tmp="`tempfile`"
+  trap "rm -f '$tmp'" EXIT
+
+  cat << EOF > "$tmp"
+# This file has been automatically created by ftpsync for syncing
+# from ${RSYNC_HOST}.
+#
+# To test if things works, try the following:
+#    rsync -e 'stunnel4 <this config file>' \$RSYNC_USER@dummy::
+#
+client = yes
+verify = 2
+CApath = ${RSYNC_SSL_CAPATH}
+
+syslog = no
+debug = 4
+output = /dev/stderr
+
+connect = ${RSYNC_HOST}:${RSYNC_SSL_PORT}
+EOF
+
+  exec stunnel4 "$tmp"
+  echo >&2 "Failed to exec stunnel4"
+  exit 1
+}
+
+method_socat() {
+  exec socat - "openssl-connect:${RSYNC_HOST}:${RSYNC_SSL_PORT},capath=${RSYNC_SSL_CAPATH}"
+  echo >&2 "Failed to exec socat."
+  exit 1
+}
+
+case ${RSYNC_SSL_METHOD:-} in
+  stunnel4)
+    method_stunnel
+    ;;
+  socat)
+    method_socat
+    ;;
+  *)
+    echo >&2 "Unknown method $RSYNC_SSL_METHOD."
+    exit 1
+    ;;
+esac

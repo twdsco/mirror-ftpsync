@@ -31,14 +31,26 @@
 ## If we need a user we also need a password
 #RSYNC_PASSWORD=
 
-## Set to "true" to tunnel your rsync through stunnel.  Requires that stunnel4 be
-## available in PATH.  ftpsync will then create an stunnel config file and use
-## rsync's -e to connect to RSYNC_SSL_PORT on the remote site.  (This requires
-## server support, obviously.)  The presented certificate is checked by stunnel
-## against the certificate authorities in RSYNC_SSL_CAPATH.
+## Set to "true" to tunnel your rsync through stunnel.
+##
+## ftpsync will then use rsync's -e option to wrap the connection
+## with bin/rsync-ssl-tunnel which sets up an stunnel to connect to
+## RSYNC_SSL_PORT on the remote site.  (This requires server
+##  support, obviously.)
+##
+## ftpsync can use either socat or stunnel4 to set up the encrypted
+## tunnel.
+##  o Note that stunnel will not verify the peer certificate's name
+##    (It will check that it's a valid certificate signed by a CA, but not
+##    if it is actually for the host you want to connect to.)
+##  o socat will verify the peer certificate name only starting with version
+##    1.7.3 (Debian 9.0).
+## To test if things work, you can run
+##  RSYNC_SSL_PORT=1873 RSYNC_SSL_CAPATH=/etc/ssl/certs RSYNC_SSL_METHOD=socat rsync -e 'bin/rsync-ssl-tunnel' <server>::
 #RSYNC_SSL=false
 #RSYNC_SSL_PORT=1873
 #RSYNC_SSL_CAPATH=/etc/ssl/certs
+#RSYNC_SSL_METHOD=socat
 
 ## In which directory should logfiles end up
 ## Note that BASEDIR defaults to $HOME, but can be set before calling the
