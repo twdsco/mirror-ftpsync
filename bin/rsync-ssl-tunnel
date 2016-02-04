@@ -39,13 +39,16 @@ fi
 RSYNC_HOST="$1"; shift
 RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
 RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
-RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"socat"}
+RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
 
 method_stunnel() {
+  skip_host_check="$1"; shift
+
   tmp="`tempfile`"
   trap "rm -f '$tmp'" EXIT
 
-  cat << EOF > "$tmp"
+  (
+    cat << EOF
 # This file has been automatically created by ftpsync for syncing
 # from ${RSYNC_HOST}.
 #
@@ -62,6 +65,10 @@ output = /dev/stderr
 
 connect = ${RSYNC_HOST}:${RSYNC_SSL_PORT}
 EOF
+    if ! [ "$skip_host_check" = 1 ]; then
+      echo "checkHost = ${RSYNC_HOST}"
+    fi
+  ) > "$tmp"
 
   exec stunnel4 "$tmp"
   echo >&2 "Failed to exec stunnel4"
@@ -76,7 +83,10 @@ method_socat() {
 
 case ${RSYNC_SSL_METHOD:-} in
   stunnel4)
-    method_stunnel
+    method_stunnel 0
+    ;;
+  stunnel4-old)
+    method_stunnel 1
     ;;
   socat)
     method_socat

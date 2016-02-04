@@ -38,11 +38,16 @@
 ## RSYNC_SSL_PORT on the remote site.  (This requires server
 ##  support, obviously.)
 ##
-## ftpsync can use either socat or stunnel4 to set up the encrypted
-## tunnel.
-##  o Note that stunnel will not verify the peer certificate's name
-##    (It will check that it's a valid certificate signed by a CA, but not
-##    if it is actually for the host you want to connect to.)
+## ftpsync can use either stunnel4, stunnel4-old, or socat to set up the
+## encrypted tunnel.
+##  o stunnel4 requires at least stunnel4 version 5.15 built aginst openssl
+##    1.0.2 or later such that the stunnel build supports the checkHost
+##    service-level option.  This will cause stunnel to verify both the
+##    peer certificate's validity and that it's actually for the host we wish
+##    to connect to.
+##  o stunnel4-old will skip the checkHost check.  As such it will connect
+##    to any peer that is able to present a valid certificate, regardless of
+##    which name it is made out to.
 ##  o socat will verify the peer certificate name only starting with version
 ##    1.7.3 (Debian 9.0).
 ## To test if things work, you can run
@@ -50,7 +55,7 @@
 #RSYNC_SSL=false
 #RSYNC_SSL_PORT=1873
 #RSYNC_SSL_CAPATH=/etc/ssl/certs
-#RSYNC_SSL_METHOD=socat
+#RSYNC_SSL_METHOD=stunnel4
 
 ## In which directory should logfiles end up
 ## Note that BASEDIR defaults to $HOME, but can be set before calling the
