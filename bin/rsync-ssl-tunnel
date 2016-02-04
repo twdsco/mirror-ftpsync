@@ -27,7 +27,6 @@ while [[ "$#" -gt 0 ]]; do
       exit 1
       ;;
     *)
-      RSYNC_HOST="$1"; shift
       break
   esac
 done
@@ -37,6 +36,7 @@ if [[ "$#" = 0 ]]; then
   echo >&2 "No arguments given."
   exit 1
 fi
+RSYNC_HOST="$1"; shift
 RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
 RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
 RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"socat"}
