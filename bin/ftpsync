@@ -202,13 +202,22 @@ tracefile() {
                         if [[ full = ${EXTENDEDTRACE} ]]; then
                             GLOBALARCHLIST="source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mipsel powerpc ppc64el s390 s390x sparc"
 
-                            AEXCLUDE="^${ARCH_EXCLUDE// /\$|^}$"
                             ARCHLIST=""
-                            for ARCH in ${GLOBALARCHLIST}; do
-                                if ! [[ ${ARCH} =~ ${AEXCLUDE} ]]; then
-                                    ARCHLIST="${ARCHLIST} ${ARCH}"
-                                fi
-                            done
+                            if [[ ${ARCH_INCLUDE} ]]; then
+                                AINCLUDE="^${ARCH_INCLUDE// /\$|^}$"
+                                for ARCH in ${GLOBALARCHLIST}; do
+                                    if [[ ${ARCH} =~ ${AINCLUDE} ]]; then
+                                        ARCHLIST="${ARCHLIST} ${ARCH}"
+                                    fi
+                                done
+                            else
+                                AEXCLUDE="^${ARCH_EXCLUDE// /\$|^}$"
+                                for ARCH in ${GLOBALARCHLIST}; do
+                                    if ! [[ ${ARCH} =~ ${AEXCLUDE} ]]; then
+                                        ARCHLIST="${ARCHLIST} ${ARCH}"
+                                    fi
+                                done
+                            fi
                             out="GUESSED:{${ARCHLIST}}"
                             echo "Architectures: ${out}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
