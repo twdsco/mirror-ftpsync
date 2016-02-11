@@ -94,7 +94,8 @@
 ## kfreebsd-i386 m68k mipsel mips powerpc ppc64el s390 s390x sh sparc source
 ## eg. ARCH_EXCLUDE="alpha arm arm64 armel mipsel mips s390 sparc"
 ## An unset value will mirror all architectures (default!)
-## Notice: source shall not be excluded on an official mirror
+## Mutually exclusive with ARCH_INCLUDE.
+## Notice: source must not be excluded on an official/public mirror
 #ARCH_EXCLUDE=""
 
 ## If you do want to include only a set of architectures, this is for you.
@@ -104,7 +105,9 @@
 ## kfreebsd-i386 m68k mipsel mips powerpc ppc64el s390 s390x sh sparc source
 ## eg. ARCH_INCLUDE="amd64 i386 source"
 ## An unset value will mirror all architectures (default!)
-## Notice: source shall be included on an official mirror
+## Arch all will be included automatically if one binary arch is included.
+## Mutually exclusive with ARCH_EXCLUDE.
+## Notice: source needs to be included on an official/public mirror
 #ARCH_INCLUDE=""
 
 ## Do we have leaf mirror to signal we are done and they should sync?
