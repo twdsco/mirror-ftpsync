@@ -202,13 +202,22 @@ tracefile() {
                         if [[ full = ${EXTENDEDTRACE} ]]; then
                             GLOBALARCHLIST="source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mipsel powerpc ppc64el s390 s390x sparc"
 
-                            AEXCLUDE="^${ARCH_EXCLUDE// /\$|^}$"
                             ARCHLIST=""
-                            for ARCH in ${GLOBALARCHLIST}; do
-                                if ! [[ ${ARCH} =~ ${AEXCLUDE} ]]; then
-                                    ARCHLIST="${ARCHLIST} ${ARCH}"
-                                fi
-                            done
+                            if [[ ${ARCH_INCLUDE} ]]; then
+                                AINCLUDE="^${ARCH_INCLUDE// /\$|^}$"
+                                for ARCH in ${GLOBALARCHLIST}; do
+                                    if [[ ${ARCH} =~ ${AINCLUDE} ]]; then
+                                        ARCHLIST="${ARCHLIST} ${ARCH}"
+                                    fi
+                                done
+                            else
+                                AEXCLUDE="^${ARCH_EXCLUDE// /\$|^}$"
+                                for ARCH in ${GLOBALARCHLIST}; do
+                                    if ! [[ ${ARCH} =~ ${AEXCLUDE} ]]; then
+                                        ARCHLIST="${ARCHLIST} ${ARCH}"
+                                    fi
+                                done
+                            fi
                             out="GUESSED:{${ARCHLIST}}"
                             echo "Architectures: ${out}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
@@ -255,6 +264,19 @@ tracefile() {
             ;;
     esac
 
+}
+
+arch_imexclude() {
+    local param="$1" arch="$2"
+    EXCLUDE="${EXCLUDE} --${param}=binary-${arch}/ --${param}=installer-${arch}/ --${param}=Contents-${arch}.gz --${param}=Contents-udeb-${arch}.gz --${param}=Contents-${arch}.diff/ --${param}=arch-${arch}.files --${param}=arch-${arch}.list.gz --${param}=*_${arch}.deb --${param}=*_${arch}.udeb --${param}=*_${arch}.changes"
+}
+
+arch_exclude() {
+    arch_imexclude exclude "$1"
+}
+
+arch_include() {
+    arch_imexclude include "$1"
 }
 ########################################################################
 ########################################################################
@@ -469,20 +491,42 @@ STATS_TOTAL_RSYNC_TIME2=0
 EXCLUDE="${EXCLUDE} --exclude=.~tmp~/"
 
 SOURCE_EXCLUDE=${SOURCE_EXCLUDE:-""}
+SOURCE_EXCLUDE_EXPLICIT=
 ARCH_EXCLUDE=${ARCH_EXCLUDE:-""}
+ARCH_INCLUDE=${ARCH_INCLUDE:-""}
+
 # Exclude architectures defined in $ARCH_EXCLUDE
 for ARCH in ${ARCH_EXCLUDE}; do
-    EXCLUDE="${EXCLUDE} --exclude=binary-${ARCH}/ --exclude=installer-${ARCH}/ --exclude=Contents-${ARCH}.gz --exclude=Contents-udeb-${ARCH}.gz --exclude=Contents-${ARCH}.diff/ --exclude=arch-${ARCH}.files --exclude=arch-${ARCH}.list.gz --exclude=*_${ARCH}.deb --exclude=*_${ARCH}.udeb --exclude=*_${ARCH}.changes"
+    arch_exclude ${ARCH}
     if [[ ${ARCH} = source ]]; then
-        if [[ -z ${SOURCE_EXCLUDE} ]]; then
-            SOURCE_EXCLUDE=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
-            # Over-ride the exclude=*.tar.gz above - there are some
-            # tar.gz files in the archive that are *not* source
-            # files...
-            SOURCE_EXCLUDE="$SOURCE_EXCLUDE --include=debian-cd_info.tar.gz --include=debian-faq.en.html.tar.gz --include=netboot.tar.gz --include=nfsroot.tar.gz --include=hd-media.tar.gz --include=dedication*.tar.gz"
-        fi
+        SOURCE_EXCLUDE_EXPLICIT=1
     fi
 done
+
+if [[ ${ARCH_INCLUDE} ]]; then
+    ARCH_INCLUDE_ALL=
+    SOURCE_EXCLUDE_EXPLICIT=1
+    for ARCH in ${ARCH_INCLUDE}; do
+        arch_include ${ARCH}
+        if [[ ${ARCH} = source ]]; then
+            SOURCE_EXCLUDE_EXPLICIT=
+        else
+            ARCH_INCLUDE_ALL=1
+        fi
+    done
+    if [[ ${ARCH_INCLUDE_ALL} ]]; then
+        arch_include all
+    fi
+    arch_exclude '*'
+fi
+
+if [[ ${SOURCE_EXCLUDE_EXPLICIT} ]] && [[ -z ${SOURCE_EXCLUDE} ]]; then
+    SOURCE_EXCLUDE=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
+    # Over-ride the exclude=*.tar.gz above - there are some
+    # tar.gz files in the archive that are *not* source
+    # files...
+    SOURCE_EXCLUDE="$SOURCE_EXCLUDE --include=debian-cd_info.tar.gz --include=debian-faq.en.html.tar.gz --include=netboot.tar.gz --include=nfsroot.tar.gz --include=hd-media.tar.gz --include=dedication*.tar.gz"
+fi
 
 RSYNC_SSL=${RSYNC_SSL:-"false"}
 RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
