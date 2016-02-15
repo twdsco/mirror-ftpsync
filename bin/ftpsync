@@ -550,7 +550,7 @@ HUB=${HUB:-"false"}
 # Really nothing to see below here. Only code follows.                 #
 ########################################################################
 ########################################################################
-GLOBALARCHLIST="source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mipsel powerpc ppc64el s390 s390x sparc"
+GLOBALARCHLIST="source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mips64el mipsel powerpc ppc64el s390 s390x sparc"
 
 DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 
