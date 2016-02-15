@@ -378,25 +378,6 @@ else
 fi
 
 ########################################################################
-# Config options go here. Feel free to overwrite them in the config    #
-# file if you need to.                                                 #
-# On debian.org machines the defaults should be ok.                    #
-#                                                                      #
-# The following extra variables can be defined in the config file:     #
-#                                                                      #
-# ARCH_EXCLUDE                                                         #
-#  can be used to exclude a complete architecture from                 #
-# mirrorring. Use as space seperated list.                             #
-# Possible values are:                                                 #
-# alpha amd64 arm arm64 armel armhf hppa hurd-i386 i386 ia64 mips      #
-# mipsel powerpc ppc64el s390 s390x sparc kfreebsd-i386 kfreebsd-amd64 #
-# source                                                               #
-# eg. ARCH_EXCLUDE="arm arm64 armel mipsel mips s390 s390x sparc"      #
-#                                                                      #
-# An unset value will mirror all architectures                         #
-########################################################################
-
-########################################################################
 # There should be nothing to edit here, use the config file            #
 ########################################################################
 MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
