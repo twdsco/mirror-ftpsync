@@ -548,11 +548,12 @@ HOOK5=${HOOK5:-""}
 # Are we a hub?
 HUB=${HUB:-"false"}
 
-DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 ########################################################################
 # Really nothing to see below here. Only code follows.                 #
 ########################################################################
 ########################################################################
+
+DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 
 # Exclude architectures defined in $ARCH_EXCLUDE
 set_exclude_include_archs
