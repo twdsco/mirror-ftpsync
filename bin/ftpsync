@@ -317,7 +317,7 @@ set_exclude_include_archs() {
 
   # we do not want sources, and SOURCE_EXCLUDE is not set in the config yet.
   if [[ true = ${exclude_sources} ]] && [[ -z ${SOURCE_EXCLUDE} ]]; then
-      SOURCE_EXCLUDE=" --exclude=/dists/**/source/ --exclude=/pool/**/*.tar.gz --exclude=/pool/**/*.diff.gz --exclude=/pool/**/*.tar.bz2 --exclude=/pool/**/*.tar.xz --exclude=/pool/**/*.diff.bz2 --exclude=/pool/**/*.dsc "
+      SOURCE_EXCLUDE=" --exclude=/dists/**/source/ --exclude=/pool/**/*.tar.* --exclude=/pool/**/*.diff.* --exclude=/pool/**/*.dsc "
   fi
 }
 
