@@ -266,7 +266,7 @@ tracefile() {
 
 arch_imexclude() {
     local param="$1" arch="$2"
-    EXCLUDE="${EXCLUDE} --${param}=binary-${arch}/ --${param}=installer-${arch}/ --${param}=Contents-${arch}.gz --${param}=Contents-udeb-${arch}.gz --${param}=Contents-${arch}.diff/ --${param}=arch-${arch}.files --${param}=arch-${arch}.list.gz --${param}=*_${arch}.deb --${param}=*_${arch}.udeb --${param}=*_${arch}.changes"
+    EXCLUDE="${EXCLUDE} --${param}=/dists/**/binary-${arch}/ --${param}=/dists/**/installer-${arch}/ --${param}=/dists/**/Contents-${arch}.gz --${param}=/dists/**/Contents-udeb-${arch}.gz --${param}=/dists/**/Contents-${arch}.diff/ --${param}=/indices/**/arch-${arch}.files --${param}=/indices/**/arch-${arch}.list.gz --${param}=/pool/**/*_${arch}.deb --${param}=/pool/**/*_${arch}.udeb --${param}=/pool/**/*_${arch}.changes"
 }
 
 arch_exclude() {
@@ -317,11 +317,7 @@ set_exclude_include_archs() {
 
   # we do not want sources, and SOURCE_EXCLUDE is not set in the config yet.
   if [[ true = ${exclude_sources} ]] && [[ -z ${SOURCE_EXCLUDE} ]]; then
-      SOURCE_EXCLUDE=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
-      # Over-ride the exclude=*.tar.gz above - there are some
-      # tar.gz files in the archive that are *not* source
-      # files...
-      SOURCE_EXCLUDE="$SOURCE_EXCLUDE --include=debian-cd_info.tar.gz --include=debian-faq.en.html.tar.gz --include=netboot.tar.gz --include=nfsroot.tar.gz --include=hd-media.tar.gz --include=dedication*.tar.gz"
+      SOURCE_EXCLUDE=" --exclude=/dists/**/source/ --exclude=/pool/**/*.tar.* --exclude=/pool/**/*.diff.* --exclude=/pool/**/*.dsc "
   fi
 }
 
