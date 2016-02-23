@@ -4,7 +4,7 @@ set -e
 set -u
 
 usage() {
-  echo "Usage: [RSYNC_SSL_CAPATH=<capath>] [RSYNC_SSL_PORT=<port>] $0 <RSYNC_HOST>"
+  echo "Usage: [RSYNC_SSL_CAPATH=<capath>] [RSYNC_SSL_PORT=<port>] [RSYNC_SSL_METHOD=stunnel4|stunnel4-old|socat] $0 <RSYNC_HOST>"
 }
 
 while [[ "$#" -gt 0 ]]; do
