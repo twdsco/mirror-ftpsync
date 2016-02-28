@@ -209,25 +209,82 @@ ssh $USER@$HOST sync:all sync:archive:bpo sync:callback
 Mirror trace files
 ==================
 Every mirror needs to have a 'trace' file under project/trace.
-The file format is as follows:
+The filename has to be the full hostname (eg. hostname -f), or in the
+case of a mirror participating in RR DNS (where users will never use
+the hostname) the name of the DNS RR entry, eg. security.debian.org
+for the security rotation.). (Note: ftp.$COUNTRY.debian.org is always
+wrong, don't use that).
 
- The filename has to be the full hostname (eg. hostname -f), or in the
- case of a mirror participating in RR DNS (where users will never use
- the hostname) the name of the DNS RR entry, eg. security.debian.org
- for the security rotation)
+The contents are defined as:
 
- The content has (no leading spaces):
-   Sat Nov  8 13:20:22 UTC 2008
-   Used ftpsync version: 42
-   Running on host: steffani.debian.org
+First line is always the output of "date -u", ideally run with LANG
+and LC_ALL set to POSIX.
 
- First line: Output of date -u
+For the following lines there are two possibilities. Old, legacy,
+style is described first, followed by the new standard, as written out
+by ftpsync since February 2016. The latter is now the preferred
+format.
+
+Legacy format:
  Second line: Freeform text containing the program name and version
  Third line: Text "Running on host: " followed by hostname -f
 
- The third line MUST NOT be the DNS RR name, even if the mirror is part
- of it. It MUST BE the hosts own name.  This is in contrast to the filename,
- which SHOULD be the DNS RR name.
+Preferred new format:
+
+Lines two to the end of file follow a RFC822 style format, though the
+field names can have spaces. Currently the following fields are
+defined, listed in the order as output by ftpsync, though the order is
+not mandantory:
+
+Date: Date in RFC822 Format when the tracefile got generated, ie. end
+        of mirror run.
+      Example: Sun, 28 Feb 2016 09:40:29 +0000
+
+Date-Started: As Date, but the time the mirror run started.
+              Example: Sun, 28 Feb 2016 09:33:55 +0000
+
+Archive Serial: Archive serial for mirror run, taken from main
+                archives tracefile.
+                Example: 2016022802
+
+Used ftpsync version: Version string of ftpsync.
+                      Non-ftpsync mirrors are encouraged to switch to
+                      ftpsync, but could output their own name here too.
+                      Example: 20150425
+
+Running on host: FQDN of mirror host. This may not match the actual
+                   mirror name, its the real hostname.
+                 Example: klecker.debian.org
+
+Architectures:  List of architectures included in the mirror.
+                Example: GUESSED:{ source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mips64el mipsel powerpc ppc64el s390 s390x sparc}
+
+Upstream-Mirror: From where does the mirror get its data.
+                 Example: ftp-master.debian.org
+
+SSL: Boolean, is ftpsync rsync over ssl feature used
+     Example: true
+
+Total bytes received in rsync: rsync --stats output, bytes received
+                               Example: 1109846675
+
+Total time spent in stage1 rsync: Seconds of runtime for stage1
+                                  Example: 347
+
+Total time spent in stage2 rsync: Seconds of runtime for stage2
+                                  Example: 47
+
+Total time spent in rsync: How long in total for rsync
+                           Example: 394
+
+Average rate: How fast did the sync go
+              2816869 B/s
+
+
+The third line in the legacy format and the hostname for the "Running
+on Host" line for the new format MUST NOT be the DNS RR name, even if
+the mirror is part of it. It MUST BE the hosts own name. This is in
+contrast to the filename, which SHOULD be the DNS RR name.
 
 
 runmirrors
