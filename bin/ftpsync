@@ -202,6 +202,13 @@ tracefile() {
                         if [[ full = ${EXTENDEDTRACE} ]]; then
                             ARCH=$(find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + | sort -u | tr '\n' ' ')
                             echo "Architectures: ${ARCH}"
+                            if [[ ${ARCH_INCLUDE} ]]; then
+                                echo "Architectures-Configuration: INCLUDE $(tr ' ' '\n' <<< ${ARCH_INCLUDE} | sort -u | tr '\n' ' ')"
+                            elif [[ ${ARCH_EXCLUDE} ]]; then
+                                echo "Architectures-Configuration: EXCLUDE $(tr ' ' '\n' <<< ${ARCH_EXCLUDE} | sort -u | tr '\n' ' ')"
+                            else
+                                echo "Architectures-Configuration: ALL"
+                            fi
                             echo "Upstream-mirror: ${RSYNC_HOST}"
                             echo "SSL: ${RSYNC_SSL}"
                             total=0
