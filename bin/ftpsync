@@ -200,7 +200,7 @@ tracefile() {
                         echo "Used ftpsync version: ${VERSION}"
                         echo "Running on host: ${TRACEHOST}"
                         if [[ full = ${EXTENDEDTRACE} ]]; then
-                            ARCH=$(find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + | sort -u | tr '\n' ' ')
+                            ARCH=$((find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + 2>/dev/null || echo "unknown") | sort -u | tr '\n' ' ')
                             echo "Architectures: ${ARCH}"
                             if [[ ${ARCH_INCLUDE} ]]; then
                                 echo "Architectures-Configuration: INCLUDE $(tr ' ' '\n' <<< ${ARCH_INCLUDE} | sort -u | tr '\n' ' ')"
