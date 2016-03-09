@@ -200,24 +200,8 @@ tracefile() {
                         echo "Used ftpsync version: ${VERSION}"
                         echo "Running on host: ${TRACEHOST}"
                         if [[ full = ${EXTENDEDTRACE} ]]; then
-                            ARCHLIST=""
-                            if [[ ${ARCH_INCLUDE} ]]; then
-                                AINCLUDE="^${ARCH_INCLUDE// /\$|^}$"
-                                for ARCH in ${GLOBALARCHLIST}; do
-                                    if [[ ${ARCH} =~ ${AINCLUDE} ]]; then
-                                        ARCHLIST="${ARCHLIST} ${ARCH}"
-                                    fi
-                                done
-                            else
-                                AEXCLUDE="^${ARCH_EXCLUDE// /\$|^}$"
-                                for ARCH in ${GLOBALARCHLIST}; do
-                                    if ! [[ ${ARCH} =~ ${AEXCLUDE} ]]; then
-                                        ARCHLIST="${ARCHLIST} ${ARCH}"
-                                    fi
-                                done
-                            fi
-                            out="GUESSED:{${ARCHLIST}}"
-                            echo "Architectures: ${out}"
+                            ARCH=$(find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + | sort -u | tr '\n' ' ')
+                            echo "Architectures: ${ARCH}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
                             echo "SSL: ${RSYNC_SSL}"
                             total=0
