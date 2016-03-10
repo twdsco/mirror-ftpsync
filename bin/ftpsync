@@ -200,24 +200,15 @@ tracefile() {
                         echo "Used ftpsync version: ${VERSION}"
                         echo "Running on host: ${TRACEHOST}"
                         if [[ full = ${EXTENDEDTRACE} ]]; then
-                            ARCHLIST=""
+                            ARCH=$((find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + 2>/dev/null || echo "unknown") | sort -u | tr '\n' ' ')
+                            echo "Architectures: ${ARCH}"
                             if [[ ${ARCH_INCLUDE} ]]; then
-                                AINCLUDE="^${ARCH_INCLUDE// /\$|^}$"
-                                for ARCH in ${GLOBALARCHLIST}; do
-                                    if [[ ${ARCH} =~ ${AINCLUDE} ]]; then
-                                        ARCHLIST="${ARCHLIST} ${ARCH}"
-                                    fi
-                                done
+                                echo "Architectures-Configuration: INCLUDE $(tr ' ' '\n' <<< ${ARCH_INCLUDE} | sort -u | tr '\n' ' ')"
+                            elif [[ ${ARCH_EXCLUDE} ]]; then
+                                echo "Architectures-Configuration: EXCLUDE $(tr ' ' '\n' <<< ${ARCH_EXCLUDE} | sort -u | tr '\n' ' ')"
                             else
-                                AEXCLUDE="^${ARCH_EXCLUDE// /\$|^}$"
-                                for ARCH in ${GLOBALARCHLIST}; do
-                                    if ! [[ ${ARCH} =~ ${AEXCLUDE} ]]; then
-                                        ARCHLIST="${ARCHLIST} ${ARCH}"
-                                    fi
-                                done
+                                echo "Architectures-Configuration: ALL"
                             fi
-                            out="GUESSED:{${ARCHLIST}}"
-                            echo "Architectures: ${out}"
                             echo "Upstream-mirror: ${RSYNC_HOST}"
                             echo "SSL: ${RSYNC_SSL}"
                             total=0
@@ -546,8 +537,6 @@ HUB=${HUB:-"false"}
 # Really nothing to see below here. Only code follows.                 #
 ########################################################################
 ########################################################################
-GLOBALARCHLIST="source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mips64el mipsel powerpc ppc64el s390 s390x sparc"
-
 DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 
 # Exclude architectures defined in $ARCH_EXCLUDE
