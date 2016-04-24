@@ -595,6 +595,7 @@ fi
 trap cleanup ERR TERM HUP INT QUIT
 
 # Start log by redirecting stdout and stderr there and closing stdin
+mkdir -p "$LOGDIR"
 exec >"$LOG" 2>&1 <&-
 log "Mirrorsync start"
 
