@@ -12,7 +12,7 @@ TARNAME = ftpsync_$(DEB_VERSION_UPSTREAM_REVISION).tar.gz
 
 override_dh_auto_install:
 	dh_auto_install
-	$(MAKE) install DESTDIR=debian/ftpsync-tar/distrib bindir=bin
+	$(MAKE) install DESTDIR=debian/ftpsync-tar/distrib bindir=bin examplesdir=etc
 
 override_dh_builddeb:
 	dh_builddeb
