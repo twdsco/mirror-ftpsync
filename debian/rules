@@ -3,12 +3,18 @@
 # output every command that modifies files on the build system.
 #export DH_VERBOSE = 1
 
+include /usr/share/dpkg/pkg-info.mk
+
+TARNAME = ftpsync_$(DEB_VERSION_UPSTREAM_REVISION).tar.gz
+
 %:
 	dh $@
 
+override_dh_auto_install:
+	dh_auto_install
+	$(MAKE) install DESTDIR=debian/ftpsync-tar/distrib bindir=bin
 
-# dh_make generated override targets
-# This is example for Cmake (See https://bugs.debian.org/641051 )
-#override_dh_auto_configure:
-#	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
-
+override_dh_builddeb:
+	dh_builddeb
+	tar -c -C debian/ftpsync-tar distrib | gzip -n > ../$(TARNAME)
+	dpkg-distaddfile $(TARNAME) raw-ftpsync -
