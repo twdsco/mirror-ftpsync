@@ -4,6 +4,7 @@
 #export DH_VERBOSE = 1
 
 include /usr/share/dpkg/pkg-info.mk
+export DEB_VERSION
 
 TARNAME = ftpsync_$(DEB_VERSION_UPSTREAM_REVISION).tar.gz
 
