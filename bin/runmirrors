@@ -90,11 +90,11 @@ PUSHKIND=${PUSHKIND:-"mhop"}
 FROMFTPSYNC=${FROMFTPSYNC:-"false"}
 
 ########################################################################
-# Read our config file
-. "${BASEDIR}/etc/${NAME}.conf"
-
 # Source our common functions
 . "${BASEDIR}/etc/common"
+
+# Read our config file
+read_config "${NAME}.conf"
 
 # Set sane defaults if the configfile didn't do that for us.
 # The directory for our logfiles
@@ -106,7 +106,7 @@ LOCKDIR=${LOCKDIR:-"${BASEDIR}/locks"}
 # How many logfiles to keep
 LOGROTATE=${LOGROTATE:-14}
 # Our mirrorfile
-MIRRORS=${MIRRORS:-"${BASEDIR}/etc/${NAME}.mirror"}
+MIRRORS=${MIRRORS:-$(search_config "${NAME}.mirror")}
 # used by log()
 PROGRAM=${PROGRAM:-"${NAME}"}
 # extra ssh options we might want hostwide
