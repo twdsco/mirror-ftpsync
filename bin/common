@@ -314,3 +314,64 @@ create_lockdir() {
 create_logdir() {
   mkdir -p "$LOGDIR"
 }
+
+join_by() {
+    local IFS="$1"
+    shift
+    echo $*
+}
+
+# Sends mail
+# mailf [-a attachment] [-b body] [-s subject] to-addr ...
+mailf() {
+    local boundary="==--$RANDOM--$RANDOM--$RANDOM--=="
+    local attachment=()
+    local body=()
+    local subject=
+
+    OPTIND=1
+    while getopts ":a:b:s:" arg; do
+        case $arg in
+            a)
+                attachment+=("$OPTARG")
+                ;;
+            b)
+                body+=("$OPTARG")
+                ;;
+            s)
+                subject="$OPTARG"
+                ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    (
+        cat <<EOF
+Subject: ${subject}
+To: $(join_by ', ' "$@")
+Auto-Submitted: auto-generated
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary=${boundary}
+
+EOF
+        for a in "${body[@]}"; do
+            cat <<EOF
+--${boundary}
+Content-type: text/plain
+
+EOF
+            echo "$a"
+        done
+        for a in "${attachment[@]}"; do
+            cat <<EOF
+--${boundary}
+Content-type: text/plain; name="$(basename $a)"
+
+EOF
+            cat "$a" || echo "Failed to attach $a"
+        done
+        cat <<EOF
+--${boundary}--
+EOF
+    ) | /usr/sbin/sendmail -i -- "$@"
+}
