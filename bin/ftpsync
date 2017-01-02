@@ -94,6 +94,8 @@ check_commandline() {
 
 # All the stuff we want to do when we exit, no matter where
 cleanup() {
+    rc=$?
+
     trap - ERR TERM HUP INT QUIT EXIT
     # all done. Mail the log, exit.
     log "Mirrorsync done";
@@ -136,6 +138,8 @@ cleanup() {
     savelog "$LOG" > /dev/null
 
     rm -f "${LOCK}"
+
+    exit $rc
 }
 
 run_rsync() {
@@ -606,11 +610,8 @@ if ! ( set -o noclobber; echo "$$" > "${LOCK}") 2> /dev/null; then
     fi
 fi
 
-# When we exit normally we call cleanup on our own. Otherwise we want it called by
-# this trap.  (We can not trap on EXIT, because that is called when the main script
-# exits. Which also happens when we background the mainroutine, ie. while we still
-# run!)
-trap cleanup ERR TERM HUP INT QUIT
+# We want to cleanup always
+trap cleanup EXIT TERM HUP INT QUIT
 
 # Start log by redirecting stdout and stderr there and closing stdin
 exec >"$LOG" 2>&1 <&-
@@ -820,6 +821,3 @@ if [[ ${HUB} = true ]]; then
         hook $HOOK
     fi
 fi
-
-# All done, lets call cleanup
-cleanup
