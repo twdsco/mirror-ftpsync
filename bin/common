@@ -209,6 +209,7 @@ log () {
 # to the address configured in MAILTO (if non-empty)
 error () {
     log "$@"
+    LOG_ERROR=1
     if [[ -n "${MAILTO}" ]]; then
         echo "$@" | mailx -e -s "[$PROGRAM@$(hostname -s)] ERROR [$$]" ${MAILTO}
     fi
