@@ -3,9 +3,9 @@ examplesdir = /usr/share/doc/ftpsync/examples
 
 all: bin/ftpsync.install bin/runmirrors.install
 
-bin/%.install: bin/% etc/common
+bin/%.install: bin/% bin/common
 	sed \
-		-e '\#^\. .*/common"# {' -e 'r etc/common' -e 'd' -e '};' \
+		-e '\#^\. .*/common"# {' -e 'r bin/common' -e 'd' -e '};' \
 		-e 's/^VERSION=.*$$/VERSION="${DEB_VERSION}"/;' \
 		$^ > $@
 

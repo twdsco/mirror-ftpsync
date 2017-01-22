@@ -94,7 +94,7 @@ FROMFTPSYNC=${FROMFTPSYNC:-"false"}
 . "${BASEDIR}/etc/${NAME}.conf"
 
 # Source our common functions
-. "${BASEDIR}/etc/common"
+. "${BASEDIR}/bin/common"
 
 # Set sane defaults if the configfile didn't do that for us.
 # The directory for our logfiles

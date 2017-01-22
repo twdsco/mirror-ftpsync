@@ -45,7 +45,7 @@ BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
 VERSION="20160306"
 
 # Source our common functions
-. "${BASEDIR}/etc/common"
+. "${BASEDIR}/bin/common"
 
 ########################################################################
 ########################################################################
