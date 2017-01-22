@@ -1,0 +1,6 @@
+/ftpsync/
+/ftpsync-tar/
+/debhelper-build-stamp
+/files
+/*.debhelper.log
+/*.substvars
