@@ -1,5 +1,6 @@
 bindir = /usr/bin
-examplesdir = /usr/share/doc/ftpsync/examples
+docdir = /usr/share/doc/ftpsync
+examplesdir = ${docdir}/examples
 
 all: bin/ftpsync.install bin/runmirrors.install
 
@@ -13,6 +14,9 @@ install:
 	install -d ${DESTDIR}/${bindir} ${DESTDIR}/${examplesdir}
 	install bin/ftpsync.install ${DESTDIR}/${bindir}/ftpsync
 	install bin/runmirrors.install ${DESTDIR}/${bindir}/runmirrors
+	install -m644 \
+		README \
+		${DESTDIR}/${docdir}
 	install -m644 \
 		etc/ftpsync.conf.sample \
 		etc/runmirrors.conf.sample \
