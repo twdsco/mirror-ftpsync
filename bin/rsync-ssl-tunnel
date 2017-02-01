@@ -105,7 +105,7 @@ EOF
 }
 
 method_socat() {
-  exec socat - "openssl-connect:${RSYNC_HOST}:${RSYNC_SSL_PORT},capath=${RSYNC_SSL_CAPATH}"
+  exec socat - "openssl-connect:${RSYNC_HOST}:${RSYNC_SSL_PORT},capath=${RSYNC_SSL_CAPATH},keepalive,keepidle=300"
   echo >&2 "Failed to exec socat."
   exit 1
 }
