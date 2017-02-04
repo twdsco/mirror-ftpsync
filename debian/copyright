@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: archvsync
-Source: https://ftp-master.debian.org/git/archvsync.git
+Source: https://anonscm.debian.org/git/mirror/archvsync.git
 
 Files: *
 Copyright:
