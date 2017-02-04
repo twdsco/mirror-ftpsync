@@ -2,7 +2,9 @@ bindir = /usr/bin
 docdir = /usr/share/doc/ftpsync
 examplesdir = ${docdir}/examples
 
-all: bin/ftpsync.install bin/runmirrors.install
+SCRIPTS = bin/ftpsync bin/runmirrors
+
+all: $(SCRIPTS:%=%.install)
 
 bin/%.install: bin/% bin/common
 	sed \
@@ -24,4 +26,4 @@ install:
 		${DESTDIR}/${examplesdir}
 
 clean:
-	rm -f bin/ftpsync.install bin/runmirrors.install
+	rm -f $(SCRIPTS:%=%.install)
