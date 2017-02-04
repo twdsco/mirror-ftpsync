@@ -1,5 +1,5 @@
-archvsync (1) unstable; urgency=medium
+archvsync (20170204) unstable; urgency=medium
 
   * Initial packaged release
 
- -- Bastian Blank <waldi@debian.org>  Sun, 24 Apr 2016 11:15:53 +0200
+ -- Bastian Blank <waldi@debian.org>  Sun, 22 Jan 2017 18:21:13 +0100
