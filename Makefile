@@ -2,7 +2,7 @@ bindir = /usr/bin
 docdir = /usr/share/doc/ftpsync
 examplesdir = ${docdir}/examples
 
-SCRIPTS = bin/ftpsync bin/runmirrors
+SCRIPTS = bin/ftpsync bin/rsync-ssl-tunnel bin/runmirrors
 
 all: $(SCRIPTS:%=%.install)
 
@@ -15,6 +15,7 @@ bin/%.install: bin/% bin/common
 install:
 	install -d ${DESTDIR}/${bindir} ${DESTDIR}/${examplesdir}
 	install bin/ftpsync.install ${DESTDIR}/${bindir}/ftpsync
+	install bin/rsync-ssl-tunnel.install ${DESTDIR}/${bindir}/rsync-ssl-tunnel
 	install bin/runmirrors.install ${DESTDIR}/${bindir}/runmirrors
 	install -m644 \
 		README \
