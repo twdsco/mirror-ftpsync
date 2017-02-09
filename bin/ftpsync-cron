@@ -1,0 +1,49 @@
+#!/bin/bash
+set -euE
+
+BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
+BINDIR=${BINDIR:-"${BASEDIR}/bin"}
+CONFDIR=${CONFDIR:-"${BASEDIR}/etc"}
+. "${BASEDIR}/bin/common"
+
+ARCHIVE=${1:-}
+CONFIG="ftpsync${ARCHIVE:+-$ARCHIVE}.conf"
+PROGRAM=ftpsync-cron
+
+if ! read_config "${CONFIG}"; then
+    echo "Config ${CONFIG} not found!"
+    exit 1
+fi
+
+MAILTO="${MAILTO:-root}"
+RSYNC_PATH="${RSYNC_PATH:-debian}"
+TRACE_UPSTREAM="project/trace/${RSYNC_HOST}"
+
+function run_ftpsync() {
+    exec "${BINDIR:+${BINDIR}/}ftpsync" "sync:archive:${ARCHIVE}" "$@"
+}
+
+function cmp_trace() {
+    local trace_uri="http://${RSYNC_HOST}/${RSYNC_PATH}/${TRACE_UPSTREAM}"
+    local trace_local="${TO}/${TRACE_UPSTREAM}"
+    local trace ret
+
+    trace=$(curl --silent --fail --show-error "$trace_uri" 2>&1)
+    ret=$?
+    if [[ $ret != 0 ]]; then
+        error "Failed to retrieve $trace_uri: $trace"
+        exit $ret
+    fi
+
+    if ! [[ -e "$trace_local" ]]; then
+        return 1
+    elif echo "$trace" | cmp --silent - "$trace_local"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if ! cmp_trace; then
+    run_ftpsync
+fi
