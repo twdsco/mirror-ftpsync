@@ -439,9 +439,6 @@ TRACEHOST=${TRACEHOST:-$(hostname -f)}
 
 # rsync program
 RSYNC=${RSYNC:-rsync}
-# Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
-# excluded files
-RSYNC_FILTER=${RSYNC_FILTER:-"--filter=protect_Archive-Update-in-Progress-${MIRRORNAME} --filter=protect_${TRACE} --filter=protect_${TRACE}-stage1 --exclude=${TRACEHIERARCHY} --filter=protect_${TRACEHIERARCHY} --exclude=${TRACELIST} --filter=protect_${TRACELIST} --filter=protect_Archive-Update-Required-${MIRRORNAME}"}
 # limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
 RSYNC_BW=${RSYNC_BW:-0}
 RSYNC_PROTOCOL=$(rsync_protocol)
@@ -456,7 +453,7 @@ else
 fi
 
 # Default rsync options for *every* rsync call
-RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --timeout 3600 --stats ${RSYNC_FILTER}"}
+RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --timeout 3600 --stats"}
 # Options we only use in the first pass, where we do not want packages/sources to fly in yet and don't want to delete files
 RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --include=i18n/by-hash/** --exclude=i18n/* --exclude=ls-lR*"}
 # Options for the second pass, where we do want everything, including deletion of old and now unused files
@@ -493,6 +490,17 @@ RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
 
 # a possible proxy
 RSYNC_PROXY=${RSYNC_PROXY:-""}
+
+_RSYNC_FILTER_TRACE=(
+    "--exclude=${TRACEHIERARCHY}"
+    "--exclude=${TRACELIST}"
+    "--filter=protect_Archive-Update-in-Progress-${MIRRORNAME}"
+    "--filter=protect_Archive-Update-Required-${MIRRORNAME}"
+    "--filter=protect_${TRACE}"
+    "--filter=protect_${TRACE}-stage1"
+    "--filter=protect_${TRACEHIERARCHY}"
+    "--filter=protect_${TRACELIST}"
+)
 
 # Do we sync stage1?
 SYNCSTAGE1=${SYNCSTAGE1:-"false"}
@@ -654,12 +662,12 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
     if [[ true = ${SYNCSTAGE1} ]] || [[ true = ${SYNCALL} ]]; then
         while [[ -e ${UPDATEREQUIRED} ]]; do
             rm -f "${UPDATEREQUIRED}"
-            log "Running stage1: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${_RSYNC_FILTER_ARCH[*]} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
+            log "Running stage1: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${_RSYNC_FILTER_TRACE[*]} ${EXCLUDE} ${_RSYNC_FILTER_ARCH[*]} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
 
             set +e
             # Step one, sync everything except Packages/Releases
             rsync_started=$(date +%s)
-            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} "${_RSYNC_FILTER_ARCH[@]}" \
+            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} "${_RSYNC_FILTER_TRACE[@]}" ${EXCLUDE} "${_RSYNC_FILTER_ARCH[@]}" \
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
             rsync_ended=$(date +%s)
@@ -728,13 +736,13 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
                 result=1
             fi
         else
-            log "Running stage2: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${_RSYNC_FILTER_ARCH[*]} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
+            log "Running stage2: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${_RSYNC_FILTER_TRACE[*]} ${EXCLUDE} ${_RSYNC_FILTER_ARCH[*]} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
 
             set +e
             # We are lucky, it worked. Now do step 2 and sync again, this time including
             # the packages/releases files
             rsync_started=$(date +%s)
-            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} "${_RSYNC_FILTER_ARCH[@]}" \
+            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} "${_RSYNC_FILTER_TRACE[@]}" ${EXCLUDE} "${_RSYNC_FILTER_ARCH[@]}" \
                 ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
             result=$?
             rsync_ended=$(date +%s)
