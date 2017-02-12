@@ -292,8 +292,6 @@ set_exclude_include_archs() {
     exit 1
   fi
 
-  _RSYNC_FILTER_ARCH=()
-
   if [[ -n "${ARCH_EXCLUDE}" ]]; then
     for ARCH in ${ARCH_EXCLUDE}; do
         arch_exclude ${ARCH}
@@ -491,6 +489,8 @@ RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
 # a possible proxy
 RSYNC_PROXY=${RSYNC_PROXY:-""}
 
+_RSYNC_FILTER_ARCH=(
+)
 _RSYNC_FILTER_TRACE=(
     "--exclude=${TRACEHIERARCHY}"
     "--exclude=${TRACELIST}"
