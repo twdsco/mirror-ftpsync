@@ -119,28 +119,10 @@ signal () {
             touch "${PUSHLOCKOWN}"
 
             # Step2: Wait for all the other "lock"files to appear.
-            tries=0
-            # We do not wait forever
-            while [[ ${tries} -lt ${PUSHDELAY} ]]; do
-                total=0
-                found=0
-                for file in ${PUSHLOCKS}; do
-                    total=$(( total + 1 ))
-                    if [[ -f ${file} ]]; then
-                        found=$(( found + 1 ))
-                    fi
-                done
-                if [[ ${total} -eq ${found} ]] || [[ -f ${LOCKDIR}/all_stage1 ]]; then
-                    touch "${LOCKDIR}/all_stage1"
-                    break
-                fi
-                tries=$(( tries + 5 ))
-                sleep 5
-            done
             # In case we did not have all PUSHLOCKS and still continued, note it
             # This is a little racy, especially if the other parts decide to do this
             # at the same time, but it wont hurt more than a mail too much, so I don't care much
-            if [[ ${tries} -ge ${PUSHDELAY} ]]; then
+            if ! wait_for_pushlocks ${PUSHDELAY}; then
                 log "Failed to wait for all other mirrors. Failed ones are:" >> "${LOGDIR}/${MIRROR}.log"
                 for file in ${PUSHLOCKS}; do
                     if [[ ! -f ${file} ]]; then
@@ -174,6 +156,35 @@ signal () {
         # Can't decide? Then you get nothing.
         return
     fi
+}
+
+wait_for_pushlocks() {
+  local tries=0
+  local found
+  local total
+  local timeout=${1}; shift
+  # We do not wait forever
+  while [[ ${tries} -lt ${timeout} ]]; do
+      total=0
+      found=0
+      for file in ${PUSHLOCKS}; do
+          total=$(( total + 1 ))
+          if [[ -f ${file} ]]; then
+              found=$(( found + 1 ))
+          fi
+      done
+      if [[ ${total} -eq ${found} ]] || [[ -f ${LOCKDIR}/all_stage1 ]]; then
+          touch "${LOCKDIR}/all_stage1"
+          break
+      fi
+      tries=$(( tries + 5 ))
+      sleep 5
+  done
+  if [[ ${tries} -ge ${timeout} ]]; then
+    return 1
+  else
+    return 0
+  fi
 }
 
 # callback, used by ftpsync

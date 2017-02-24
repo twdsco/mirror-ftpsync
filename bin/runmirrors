@@ -180,8 +180,17 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
         if [ -z ${MLNAME} ]; then
             MLNAME=600
         fi
-        log "Delay of ${MLNAME} requested, sleeping" >> "${LOG}"
-        sleep ${MLNAME}
+        if [ "${MHOSTNAME:-}" = "stage1" ]; then
+            log "Delay of ${MLNAME} or until staging is finished requested" >> "${LOG}"
+            if ! wait_for_pushlocks ${MLNAME}; then
+                log "Staged delay ran into timeout of ${MLNAME} seconds" >> "${LOG}"
+            else
+                log "Staged delay finished" >> "${LOG}"
+            fi
+        else
+            log "Delay of ${MLNAME} requested, sleeping" >> "${LOG}"
+            sleep ${MLNAME}
+        fi
         continue
     fi
 
