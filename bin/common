@@ -145,7 +145,7 @@ signal () {
                 for file in ${PUSHLOCKS}; do
                     if [[ ! -f ${file} ]]; then
                         log "${file}" >> "${LOGDIR}/${MIRROR}.log"
-                        error "Missing Pushlockfile ${file} after waiting ${tries} second, continuing"
+                        log "Missing Pushlockfile ${file} after waiting for more than ${PUSHDELAY} seconds, continuing"
                     fi
                 done
             fi
