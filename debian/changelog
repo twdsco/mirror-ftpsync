@@ -1,3 +1,9 @@
+archvsync (20170204+nmu1) UNRELEASED; urgency=medium
+
+  * Fix Typo in Maintainer field (re: #856695).
+
+ -- Peter Palfrader <weasel@debian.org>  Sat, 04 Mar 2017 09:41:14 +0100
+
 archvsync (20170204) unstable; urgency=medium
 
   * Initial packaged release

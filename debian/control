@@ -1,7 +1,7 @@
 Source: archvsync
 Section: admin
 Priority: optional
-Maintainer: Debiab Mirror Team <mirrors@debian.org>
+Maintainer: Debian Mirror Team <mirrors@debian.org>
 Uploaders: Bastian Blank <waldi@debian.org>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.8
