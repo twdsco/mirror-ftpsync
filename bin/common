@@ -110,7 +110,7 @@ signal () {
         if [[ stage2 != ${PUSHKIND} ]]; then
             # Step1: Do a push to only sync stage1, do not background
             PUSHARGS1="sync:stage1"
-            ssh $SSH_OPTIONS "${HOSTNAME}" "${PUSHARGS} ${PUSHARGS1}" >>"${LOGDIR}/${MIRROR}.log" 2>&1
+            ssh -n $SSH_OPTIONS "${HOSTNAME}" "${PUSHARGS} ${PUSHARGS1}" >>"${LOGDIR}/${MIRROR}.log" 2>&1
             if [[ $? -eq 255 ]]; then
                 error "Trigger to ${HOSTNAME} failed"  >> "${LOG}"
             else
@@ -145,7 +145,7 @@ signal () {
         else
             PUSHARGS2="sync:stage2"
             log "Now doing the second stage push" >> "${LOGDIR}/${MIRROR}.log"
-            ssh $SSH_OPTIONS "${HOSTNAME}" "${PUSHARGS} ${PUSHARGS2}" >>"${LOGDIR}/${MIRROR}.log" 2>&1
+            ssh -n $SSH_OPTIONS "${HOSTNAME}" "${PUSHARGS} ${PUSHARGS2}" >>"${LOGDIR}/${MIRROR}.log" 2>&1
             if [[ $? -eq 255 ]]; then
                 error "Trigger to ${HOSTNAME} failed"  >> "${LOG}"
             else
@@ -191,7 +191,7 @@ wait_for_pushlocks() {
 callback () {
     # Defaults we always want, no matter what
     SSH_OPTIONS="-o BatchMode=yes -o ServerAliveInterval=45 -o ConnectTimeout=45 -o PasswordAuthentication=no"
-    ssh $SSH_OPTIONS -i "$3" -o"user $1" "$2" callback:${HOSTNAME}
+    ssh -n $SSH_OPTIONS -i "$3" -o"user $1" "$2" callback:${HOSTNAME}
 }
 
 # log something (basically echo it together with a timestamp)
