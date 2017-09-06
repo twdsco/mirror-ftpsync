@@ -142,20 +142,15 @@ check_rsync() {
     msg=$2
 
     # Lets get a statistical value
-    SPEED="unknown"
     if [[ -f ${LOGDIR}/rsync-${NAME}.log ]]; then
-        SPEED=$(
-            SPEEDLINE=$(egrep '[0-9.,]+ bytes/sec' "${LOGDIR}/rsync-${NAME}.log" | tail -n 1)
-            set "nothing" ${SPEEDLINE}
-            echo ${8:-""}
-        )
-        if [[ -n ${SPEED} ]]; then
+        SPEED=$(tail -n 2 ${LOGDIR}/rsync-${NAME}.log | sed -rne 's#.* ([0-9.,]+) bytes/sec#\1#p')
+        if [[ ${SPEED} ]]; then
             SPEED=${SPEED%%.*}
             SPEED=${SPEED//,}
             SPEED=$(( $SPEED / 1024 ))
+            log "Latest recorded rsync transfer speed: ${SPEED} KB/s"
         fi
     fi
-    log "Latest recorded rsync transfer speed: ${SPEED} KB/s"
 
     # 24 - vanished source files. Ignored, that should be the target of $UPDATEREQUIRED
     # and us re-running. If it's not, uplink is broken anyways.
