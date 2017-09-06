@@ -48,7 +48,7 @@ LOGDIR=${LOGDIR:-"${BASEDIR}/log"}
 VERSION="20170204"
 
 # Source our common functions
-. "${BASEDIR}/bin/common"
+. "${BINDIR}/common"
 
 ########################################################################
 ########################################################################
@@ -512,7 +512,7 @@ else
   export RSYNC_SSL_PORT
   export RSYNC_SSL_CAPATH
   export RSYNC_SSL_METHOD
-  RSYNC_SSL_OPTIONS="-e ${BASEDIR}/bin/rsync-ssl-tunnel"
+  RSYNC_SSL_OPTIONS="-e ${BINDIR:+${BINDIR}/}rsync-ssl-tunnel"
 fi
 
 # Hooks
@@ -836,7 +836,7 @@ if [[ ${HUB} = true ]]; then
             RUNMIRRORARGS="${RUNMIRRORARGS} -k all"
         fi
         log "Trigger slave mirrors using ${RUNMIRRORARGS}"
-        ${BASEDIR}/bin/runmirrors ${RUNMIRRORARGS}
+        ${BINDIR:+${BINDIR}/}runmirrors ${RUNMIRRORARGS}
         log "Trigger slave done"
 
         HOOK=(

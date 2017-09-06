@@ -95,7 +95,7 @@ FROMFTPSYNC=${FROMFTPSYNC:-"false"}
 
 ########################################################################
 # Source our common functions
-. "${BASEDIR}/bin/common"
+. "${BINDIR}/common"
 
 # Read our config file
 read_config "${NAME}.conf"
