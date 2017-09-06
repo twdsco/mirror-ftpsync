@@ -283,7 +283,7 @@ search_config() {
       return
     fi
   fi
-  for i in ~/.config/archvsync /etc/archvsync; do
+  for i in ~/.config/ftpsync /etc/ftpsync; do
     file="$i/$1"
     if [ -f "$file" ]; then
       echo "$file"
