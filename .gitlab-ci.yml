@@ -1,0 +1,11 @@
+ftpsync:
+  image: debian:stable
+  variables:
+    FTPSYNC_CONF: |
+      RSYNC=true
+      RSYNC_HOST=localhost
+  script:
+    - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
+    - bin/ftpsync || e=$?
+    - cat log/ftpsync.log* || true
+    - exit $e
