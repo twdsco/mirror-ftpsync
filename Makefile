@@ -7,8 +7,9 @@ SCRIPTS = bin/ftpsync bin/rsync-ssl-tunnel bin/runmirrors
 all: $(SCRIPTS:%=%.install)
 
 bin/%.install: bin/% bin/common
-	sed \
+	sed -r \
 		-e '\#^\. .*/common"# {' -e 'r bin/common' -e 'd' -e '};' \
+		-e 's/^(BASE|BIN|CONF|LOCK|LOG)DIR=.*$$/\1DIR=/;' \
 		-e 's/^VERSION=.*$$/VERSION="${DEB_VERSION}"/;' \
 		$^ > $@
 
