@@ -100,6 +100,10 @@ FROMFTPSYNC=${FROMFTPSYNC:-"false"}
 # Read our config file
 read_config "${NAME}.conf"
 
+# Make sure we have our log and lock directories
+create_logdir
+create_lockdir
+
 # Set sane defaults if the configfile didn't do that for us.
 # Our own logfile
 LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
@@ -145,10 +149,6 @@ HOOK3=${HOOK3:-""}
 # Some sane defaults
 cd "${BASEDIR}"
 umask 022
-
-# Make sure we have our log and lock directories
-mkdir -p "${LOGDIR}"
-mkdir -p "${LOCKDIR}"
 
 trap 'log "Mirrorpush done" >> "${LOG}"' EXIT
 
