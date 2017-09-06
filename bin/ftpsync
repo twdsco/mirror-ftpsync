@@ -170,14 +170,13 @@ check_rsync() {
 tracefile() {
     local TRACEFILE=${1:-"${TO}/${TRACE}"}
 
-    tracedir=$(dirname "${TRACEFILE}")
     {
         LC_ALL=POSIX LANG=POSIX date -u
         rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
         echo "Date: ${rfc822date}"
         echo "Date-Started: ${DATE_STARTED}"
 
-        FILESOA=$(awk -F": " ' $1=="Archive serial" {print $2}' ${TO}/project/trace/master || echo unknown )
+        FILESOA=$(awk -F": " ' $1=="Archive serial" {print $2}' ${TO}/${TRACEDIR}/master || echo unknown )
         echo "Archive serial: ${FILESOA}"
 
         echo "Used ftpsync version: ${VERSION}"
@@ -222,7 +221,7 @@ tracefile() {
     mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
     cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
 
-    (cd ${tracedir} && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
+    (cd "${TO}/${TRACEDIR}" && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
 }
 
 arch_imexclude() {
@@ -373,9 +372,10 @@ UIPRETRIES=${UIPRETRIES:-3}
 # Do we need another rsync run?
 UPDATEREQUIRED="${TO}/Archive-Update-Required-${MIRRORNAME}"
 # Trace file for mirror stats and checks (make sure we get full hostname)
-TRACE=${TRACE:-"project/trace/${MIRRORNAME}"}
-TRACEHIERARCHY=${TRACEHIERARCHY:-"project/trace/_hierarchy"}
-TRACELIST=${TRACELIST:-"project/trace/_traces"}
+TRACEDIR=project/trace
+TRACE=${TRACE:-"${TRACEDIR}/${MIRRORNAME}"}
+TRACEHIERARCHY=${TRACEHIERARCHY:-"${TRACEDIR}/_hierarchy"}
+TRACELIST=${TRACELIST:-"${TRACEDIR}/_traces"}
 # The trace file can have different format/contents. Here you can select
 # what it will be.
 # Possible values are
@@ -517,7 +517,7 @@ umask 022
 
 # If we are here for the first time, create the
 # destination and the trace directory
-mkdir -p "${TO}/project/trace"
+mkdir -p "${TO}/${TRACEDIR}"
 
 # Used to make sure we will have the archive fully and completly synced before
 # we stop, even if we get multiple pushes while this script is running.
