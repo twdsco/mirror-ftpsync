@@ -244,7 +244,7 @@ tracefile() {
             fi
             ;;
         *)
-            error "Unsupported EXTENDEDTRACE value configured in ${BASEDIR}/etc/${NAME}.conf, please fix"
+            error "Unsupported EXTENDEDTRACE value configured in ${CURRENT_CONFIG}.conf, please fix"
             ;;
     esac
 
@@ -460,7 +460,7 @@ unset RSYNC_OPTION_REGEX
 RSYNC_HOST=${RSYNC_HOST:-""}
 # Error out if we have no host to sync from
 if [[ -z ${RSYNC_HOST} ]]; then
-    error "Missing a host to mirror from, please set RSYNC_HOST variable in ${BASEDIR}/etc/${NAME}.conf"
+    error "Missing a host to mirror from, please set RSYNC_HOST variable in ${CURRENT_CONFIG}.conf"
 fi
 
 # our username for the rsync share

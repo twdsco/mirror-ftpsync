@@ -298,6 +298,7 @@ read_config() {
   local config=$(search_config "$name")
   if [ "$config" ]; then
     . "$config"
+    CURRENT_CONFIG="$config"
     return 0
   fi
   return 1
