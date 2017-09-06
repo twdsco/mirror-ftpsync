@@ -180,6 +180,7 @@ tracefile() {
         echo "Archive serial: ${FILESOA}"
 
         echo "Used ftpsync version: ${VERSION}"
+        echo "Creator: ftpsync ${VERSION}"
         echo "Running on host: ${TRACEHOST}"
 
         ARCH=$((find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + 2>/dev/null || echo "unknown") | sort -u | tr '\n' ' ')
