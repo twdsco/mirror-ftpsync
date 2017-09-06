@@ -169,6 +169,7 @@ check_rsync() {
 # Write a tracefile
 tracefile() {
     local TRACEFILE=${1:-"${TO}/${TRACE}"}
+    local TRACEFILE_MASTER="${TO}/${TRACEDIR}/master"
 
     {
         LC_ALL=POSIX LANG=POSIX date -u
@@ -176,8 +177,9 @@ tracefile() {
         echo "Date: ${rfc822date}"
         echo "Date-Started: ${DATE_STARTED}"
 
-        FILESOA=$(awk -F": " ' $1=="Archive serial" {print $2}' ${TO}/${TRACEDIR}/master || echo unknown )
-        echo "Archive serial: ${FILESOA}"
+        if [[ -e $TRACEFILE_MASTER ]]; then
+            echo "Archive serial: $(awk -F': ' ' $1=="Archive serial" {print $2}' $TRACEFILE_MASTER || echo unknown )"
+        fi
 
         echo "Used ftpsync version: ${VERSION}"
         echo "Creator: ftpsync ${VERSION}"
