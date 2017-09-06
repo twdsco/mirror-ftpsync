@@ -2,10 +2,14 @@ ftpsync:
   image: debian:stable
   variables:
     FTPSYNC_CONF: |
+      TO=root
       RSYNC=true
       RSYNC_HOST=localhost
+      MIRRORNAME=localhost
   script:
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
     - bin/ftpsync || e=$?
+    - ls -alR log root
+    - cat root/project/trace/localhost
     - cat log/ftpsync.log* || true
     - exit $e

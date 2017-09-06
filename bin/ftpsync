@@ -170,84 +170,59 @@ check_rsync() {
 tracefile() {
     local TRACEFILE=${1:-"${TO}/${TRACE}"}
 
-    case ${EXTENDEDTRACE} in
-        none)
-            log "No trace file wanted. Not creating one"
-            ;;
-        touch)
-            log "Just touching the trace file"
-            touch "${TRACEFILE}"
-            ;;
-        date|terse|full)
-            log "Creating a ${EXTENDEDTRACE} trace file"
-            tracedir=$(dirname "${TRACEFILE}")
-            if [[ -d ${tracedir} ]]; then
-                {
-                    LC_ALL=POSIX LANG=POSIX date -u
-                    if [[ date != ${EXTENDEDTRACE} ]]; then
-                        rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
-                        echo "Date: ${rfc822date}"
-                        echo "Date-Started: ${DATE_STARTED}"
+    tracedir=$(dirname "${TRACEFILE}")
+    {
+        LC_ALL=POSIX LANG=POSIX date -u
+        rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
+        echo "Date: ${rfc822date}"
+        echo "Date-Started: ${DATE_STARTED}"
 
-                        FILESOA=$(awk -F": " ' $1=="Archive serial" {print $2}' ${TO}/project/trace/master || echo unknown )
-                        echo "Archive serial: ${FILESOA}"
+        FILESOA=$(awk -F": " ' $1=="Archive serial" {print $2}' ${TO}/project/trace/master || echo unknown )
+        echo "Archive serial: ${FILESOA}"
 
-                        echo "Used ftpsync version: ${VERSION}"
-                        echo "Running on host: ${TRACEHOST}"
-                        if [[ full = ${EXTENDEDTRACE} ]]; then
-                            ARCH=$((find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + 2>/dev/null || echo "unknown") | sort -u | tr '\n' ' ')
-                            echo "Architectures: ${ARCH}"
-                            if [[ ${ARCH_INCLUDE} ]]; then
-                                echo "Architectures-Configuration: INCLUDE $(tr ' ' '\n' <<< ${ARCH_INCLUDE} | sort -u | tr '\n' ' ')"
-                            elif [[ ${ARCH_EXCLUDE} ]]; then
-                                echo "Architectures-Configuration: EXCLUDE $(tr ' ' '\n' <<< ${ARCH_EXCLUDE} | sort -u | tr '\n' ' ')"
-                            else
-                                echo "Architectures-Configuration: ALL"
-                            fi
-                            echo "Upstream-mirror: ${RSYNC_HOST}"
-                            echo "SSL: ${RSYNC_SSL}"
-                            total=0
-                            if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
-                                for bytes in $(awk -F': '   '$1 == "Total bytes received" {print $2} ' "${LOGDIR}/rsync-${NAME}.log"); do
-                                    bytes=${bytes//,}
-                                    total=$(( total + bytes ))
-                                done
-                                echo "Total bytes received in rsync: ${total}"
-                            fi
-                            total_time=$(( STATS_TOTAL_RSYNC_TIME1 + STATS_TOTAL_RSYNC_TIME2 ))
-                            echo "Total time spent in stage1 rsync: ${STATS_TOTAL_RSYNC_TIME1}"
-                            echo "Total time spent in stage2 rsync: ${STATS_TOTAL_RSYNC_TIME2}"
-                            echo "Total time spent in rsync: ${total_time}"
-                            if [[ 0 != ${total_time} ]]; then
-                                rate=$(( total / total_time ))
-                                echo "Average rate: ${rate} B/s"
-                            fi
-                        fi # full trace
-                    fi # other traces
-                } > "${TRACEFILE}.new"
-                mv "${TRACEFILE}.new" "${TRACEFILE}"
+        echo "Used ftpsync version: ${VERSION}"
+        echo "Running on host: ${TRACEHOST}"
 
-                if [[ full = ${EXTENDEDTRACE} ]] || [[ -e ${TO}/${TRACEHIERARCHY}.mirror ]]; then
-                    {
-                        if [[ -e ${TO}/${TRACEHIERARCHY}.mirror ]]; then
-                            cat ${TO}/${TRACEHIERARCHY}.mirror
-                        fi
-                        echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST}"
-                    } > "${TO}/${TRACEHIERARCHY}".new
-                    mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
-                    cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
+        ARCH=$((find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + 2>/dev/null || echo "unknown") | sort -u | tr '\n' ' ')
+        echo "Architectures: ${ARCH}"
+        if [[ ${ARCH_INCLUDE} ]]; then
+            echo "Architectures-Configuration: INCLUDE $(tr ' ' '\n' <<< ${ARCH_INCLUDE} | sort -u | tr '\n' ' ')"
+        elif [[ ${ARCH_EXCLUDE} ]]; then
+            echo "Architectures-Configuration: EXCLUDE $(tr ' ' '\n' <<< ${ARCH_EXCLUDE} | sort -u | tr '\n' ' ')"
+        else
+            echo "Architectures-Configuration: ALL"
+        fi
+        echo "Upstream-mirror: ${RSYNC_HOST}"
+        echo "SSL: ${RSYNC_SSL}"
+        total=0
+        if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
+            for bytes in $(awk -F': '   '$1 == "Total bytes received" {print $2} ' "${LOGDIR}/rsync-${NAME}.log"); do
+                bytes=${bytes//,}
+                total=$(( total + bytes ))
+            done
+            echo "Total bytes received in rsync: ${total}"
+        fi
+        total_time=$(( STATS_TOTAL_RSYNC_TIME1 + STATS_TOTAL_RSYNC_TIME2 ))
+        echo "Total time spent in stage1 rsync: ${STATS_TOTAL_RSYNC_TIME1}"
+        echo "Total time spent in stage2 rsync: ${STATS_TOTAL_RSYNC_TIME2}"
+        echo "Total time spent in rsync: ${total_time}"
+        if [[ 0 != ${total_time} ]]; then
+            rate=$(( total / total_time ))
+            echo "Average rate: ${rate} B/s"
+        fi
+    } > "${TRACEFILE}.new"
+    mv "${TRACEFILE}.new" "${TRACEFILE}"
 
-                    (cd ${tracedir} && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
-                else
-                    rm -f "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACELIST}"
-                fi
-            fi
-            ;;
-        *)
-            error "Unsupported EXTENDEDTRACE value configured in ${CURRENT_CONFIG}.conf, please fix"
-            ;;
-    esac
+    {
+        if [[ -e ${TO}/${TRACEHIERARCHY}.mirror ]]; then
+            cat ${TO}/${TRACEHIERARCHY}.mirror
+        fi
+        echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST}"
+    } > "${TO}/${TRACEHIERARCHY}".new
+    mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
+    cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
 
+    (cd ${tracedir} && ls -1rt) | grep -E -v '^_|^master$' > "${TO}/${TRACELIST}"
 }
 
 arch_imexclude() {
