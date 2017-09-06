@@ -147,7 +147,7 @@ check_rsync() {
         if [[ ${SPEED} ]]; then
             SPEED=${SPEED%%.*}
             SPEED=${SPEED//,}
-            SPEED=$(( $SPEED / 1024 ))
+            SPEED=$(( SPEED / 1024 ))
             log "Latest recorded rsync transfer speed: ${SPEED} KB/s"
         fi
     fi
