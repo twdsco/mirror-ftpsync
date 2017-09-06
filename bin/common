@@ -276,8 +276,8 @@ rsync_protocol() {
 # Search config files in various locations
 search_config() {
   local file
-  if [ "$BASEDIR" ]; then
-    file="$BASEDIR/etc/$1"
+  if [ "$CONFDIR" ]; then
+    file="$CONFDIR/$1"
     if [ -f "$file" ]; then
       echo "$file"
       return
