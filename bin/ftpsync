@@ -92,9 +92,6 @@ check_commandline() {
                 ;;
             sync:archive:*)
                 ARCHIVE=${1##sync:archive:}
-                # We do not like / or . in the remotely supplied archive name.
-                ARCHIVE=${ARCHIVE//\/}
-                ARCHIVE=${ARCHIVE//.}
                 ;;
             sync:all)
                 SYNCALL="true"
