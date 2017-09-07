@@ -120,7 +120,7 @@ PUSHARCHIVE=${PUSHARCHIVE:-"${CONF}"}
 # How long to wait for mirrors to do stage1 if we have multi-stage syncing
 PUSHDELAY=${PUSHDELAY:-600}
 # Which ssh key to use?
-KEYFILE=${KEYFILE:-".ssh/pushmirror"}
+KEYFILE=${KEYFILE:-~/.ssh/pushmirror}
 KEYFILE_ABS=$(cd $BASEDIR; realpath $KEYFILE)
 
 # start a new log
