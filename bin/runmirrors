@@ -121,6 +121,7 @@ PUSHARCHIVE=${PUSHARCHIVE:-"${CONF}"}
 PUSHDELAY=${PUSHDELAY:-600}
 # Which ssh key to use?
 KEYFILE=${KEYFILE:-".ssh/pushmirror"}
+KEYFILE_ABS=$(cd $BASEDIR; realpath $KEYFILE)
 
 # start a new log
 savelog "${LOG}" > /dev/null
@@ -134,8 +135,8 @@ else
     MAILTO=${MAILTO:-"mirrorlogs@debian.org"}
 fi
 
-if ! [[ -f ${BASEDIR}/${KEYFILE} ]]; then
-    error "SSH Key ${BASEDIR}/${KEYFILE} does not exist" >> "${LOG}"
+if ! [[ -f ${KEYFILE_ABS} ]]; then
+    error "SSH Key ${KEYFILE_ABS} does not exist" >> "${LOG}"
     exit 5
 fi
 
@@ -224,7 +225,7 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
             # Yes we start with a -
             SSHOPT="${MSSHOPT}"
             MPROTO="99"
-            MKEYFILE="${BASEDIR}/${KEYFILE}"
+            MKEYFILE="${KEYFILE_ABS}"
         elif [[ ${MSSHOPT:0:1} -eq 1 ]] || [[ ${MSSHOPT:0:1} -eq 2 ]]; then
             # We do seem to have oldstyle options here.
             MPROTO=${MSSHOPT:0:1}
@@ -236,7 +237,7 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
         fi
     else
         MPROTO=2
-        MKEYFILE="${BASEDIR}/${KEYFILE}"
+        MKEYFILE="${KEYFILE_ABS}"
         SSHOPT=""
     fi
 
