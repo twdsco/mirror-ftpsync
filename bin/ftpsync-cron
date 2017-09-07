@@ -16,7 +16,10 @@ if ! read_config "${CONFIG}"; then
 fi
 
 MAILTO="${MAILTO:-root}"
+MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
+LOCK=${LOCK:-"${TO}/Archive-Update-in-Progress-${MIRRORNAME}"}
 RSYNC_PATH="${RSYNC_PATH:-debian}"
+
 TRACE_UPSTREAM="project/trace/${RSYNC_HOST}"
 
 function run_ftpsync() {
@@ -27,6 +30,10 @@ function cmp_trace() {
     local trace_uri="http://${RSYNC_HOST}/${RSYNC_PATH}/${TRACE_UPSTREAM}"
     local trace_local="${TO}/${TRACE_UPSTREAM}"
     local trace ret
+
+    if [[ -e $LOCK ]] && $(kill -0 $(< ${LOCK}) 2>/dev/null); then
+	return 0
+    fi
 
     trace=$(curl --silent --fail --show-error "$trace_uri" 2>&1)
     ret=$?
