@@ -204,17 +204,6 @@ The contents are defined as:
 First line is always the output of "date -u", ideally run with LANG
 and LC_ALL set to POSIX.
 
-For the following lines there are two possibilities. Old, legacy,
-style is described first, followed by the new standard, as written out
-by ftpsync since February 2016. The latter is now the preferred
-format.
-
-Legacy format:
- Second line: Freeform text containing the program name and version
- Third line: Text "Running on host: " followed by hostname -f
-
-Preferred new format:
-
 Lines two to the end of file follow a RFC822 style format, though the
 field names can have spaces. Currently the following fields are
 defined, listed in the order as output by ftpsync, though the order is
