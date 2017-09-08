@@ -1,5 +1,4 @@
-Archvsync
-=========
+# Archvsync
 
 This is the central repository for the Debian mirror scripts.  The scripts
 in this repository are written for the purposes of maintaining a Debian
@@ -17,23 +16,23 @@ Currently the following scripts are available:
   * udh         - We are lazy, just a shorthand to avoid typing the
                   commands, ignore... :)
 
-Usage
-=====
+## Usage
+
 For impatient people, short usage instruction:
 
- - Create a dedicated user for the whole mirror.
- - Create a seperate directory for the mirror, writeable by the new user.
- - Place the ftpsync script in the mirror user's $HOME/bin (or just $HOME)
- - Place the ftpsync.conf.sample into $HOME/etc as ftpsync.conf and edit
+ * Create a dedicated user for the whole mirror.
+ * Create a seperate directory for the mirror, writeable by the new user.
+ * Place the ftpsync script in the mirror user's $HOME/bin (or just $HOME)
+ * Place the ftpsync.conf.sample into $HOME/etc as ftpsync.conf and edit
    it to suit your system.  You should at the very least change the TO=
    and RSYNC_HOST lines.
- - Create $HOME/log (or wherever you point $LOGDIR to)
- - If only you receive an update trigger,
+ * Create $HOME/log (or wherever you point $LOGDIR to)
+ * If only you receive an update trigger,
    Setup the .ssh/authorized_keys for the mirror user and place the public key of
    your upstream mirror into it. Preface it with
-no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"
+   `no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty,command="~/bin/ftpsync",from="IPADDRESS"`
    and replace $IPADDRESS with that of your upstream mirror.
- - You are finished
+ * You are finished
 
 In order to receive different pushes or syncs from different archives,
 name the config file ftpsync-$ARCHIVE.conf and call the ftpsync script
@@ -50,138 +49,126 @@ Common names used in the Debian mirror network are:
 * debian-security archive:	ARCHIVE=security (ftpsync-security.conf)
 
 
-Debian mirror script minimum requirements
-=========================================
+## Debian mirror script minimum requirements
+
 As always, you may use whatever scripts you want for your Debian mirror,
 but we *STRONGLY* recommend you to not invent your own. However, if you
 want to be listed as a mirror it *MUST* support the following minimal
 functionality:
 
- - Must perform a 2-stage sync
-   The archive mirroring must be done in 2 stages. The first rsync run
-   must ignore the index files.  The correct exclude options for the
-   first rsync run are:
-  --exclude Packages* --exclude Sources* --exclude Release* --exclude=InRelease --include=i18n/by-hash/** --exclude=i18n/* --exclude ls-lR*
-   The first stage must not delete any files.
+*   Must perform a 2-stage sync
+    The archive mirroring must be done in 2 stages. The first rsync run
+    must ignore the index files.  The correct exclude options for the
+    first rsync run are:
+    `--exclude Packages* --exclude Sources* --exclude Release* --exclude=InRelease --include=i18n/by-hash/** --exclude=i18n/* --exclude ls-lR*`
 
-   The second stage should then transfer the above excluded files and
-   delete files that no longer belong on the mirror.
+    The first stage must not delete any files.
 
-   Rationale: If archive mirroring is done in a single stage, there will be
-   periods of time during which the index files will reference files not
-   yet mirrored.
+    The second stage should then transfer the above excluded files and
+    delete files that no longer belong on the mirror.
 
- - Must not ignore pushes whil(e|st) running.
-   If a push is received during a run of the mirror sync, it MUST NOT
-   be ignored.  The whole synchronization process must be rerun.
+    Rationale: If archive mirroring is done in a single stage, there will be
+    periods of time during which the index files will reference files not
+    yet mirrored.
 
-   Rationale: Most implementations of Debian mirror scripts will leave the
-   mirror in an inconsistent state in the event of a second push being
-   received while the first sync is still running.  It is likely that in
-   the near future, the frequency of pushes will increase.
+*   Must not ignore pushes whil(e|st) running.
+    If a push is received during a run of the mirror sync, it MUST NOT
+    be ignored.  The whole synchronization process must be rerun.
 
- - Should understand multi-stage pushes.
-   The script should parse the arguments it gets via ssh, and if they
-   contain a hint to only sync stage1 or stage2, then ONLY those steps
-   SHOULD be performed.
+    Rationale: Most implementations of Debian mirror scripts will leave the
+    mirror in an inconsistent state in the event of a second push being
+    received while the first sync is still running.  It is likely that in
+    the near future, the frequency of pushes will increase.
 
-   Rationale: This enables us to coordinate the timing of the first
-   and second stage pushes and minimize the time during which the
-   archive is desynchronized.  This is especially important for mirrors
-   that are involved in a round robin or GeoDNS setup.
+*   Should understand multi-stage pushes.
+    The script should parse the arguments it gets via ssh, and if they
+    contain a hint to only sync stage1 or stage2, then ONLY those steps
+    SHOULD be performed.
 
-   The minimum arguments the script has to understand are:
-   sync:stage1   Only sync stage1
-   sync:stage2   Only sync stage2
-   sync:all      Do everything. Default if none of stage1/2 are
-                 present.
-   There are more possible arguments, for a complete list see the
-   ftpsync script in our git repository.
+    Rationale: This enables us to coordinate the timing of the first
+    and second stage pushes and minimize the time during which the
+    archive is desynchronized.  This is especially important for mirrors
+    that are involved in a round robin or GeoDNS setup.
 
+    The minimum arguments the script has to understand are:
+    * `sync:stage1`:  Only sync stage1
+    * `sync:stage2`:  Only sync stage2
+    * `sync:all`:     Do everything. Default if none of stage1/2 are present.
 
+    There are more possible arguments, for a complete list see the
+    ftpsync script in our git repository.
 
-ftpsync
-=======
+## ftpsync
 
 This script is based on the old anonftpsync script.  It has been rewritten
 to add flexibilty and fix a number of outstanding issues.
 
 Some of the advantages of the new version are:
- - Nearly every aspect is configurable
- - Correct support for multiple pushes
- - Support for multi-stage archive synchronisations
- - Support for hook scripts at various points
- - Support for multiple archives, even if they are pushed using one ssh key
- - Support for multi-hop, multi-stage archive synchronisations
+ * Nearly every aspect is configurable
+ * Correct support for multiple pushes
+ * Support for multi-stage archive synchronisations
+ * Support for hook scripts at various points
+ * Support for multiple archives, even if they are pushed using one ssh key
+ * Support for multi-hop, multi-stage archive synchronisations
 
-  Correct support for multiple pushes
-  -----------------------------------
-  When the script receives a second push while it is running and syncing
-  the archive it won't ignore it. Instead it will rerun the
-  synchronisation step to ensure the archive is correctly synchronised.
+### Correct support for multiple pushes
+When the script receives a second push while it is running and syncing
+the archive it won't ignore it. Instead it will rerun the
+synchronisation step to ensure the archive is correctly synchronised.
 
-  Scripts that fail to do that risk ending up with an inconsistent archive.
+Scripts that fail to do that risk ending up with an inconsistent archive.
 
+### Can do multi-stage archive synchronisations
+The script can be told to only perform the first or second stage of the
+archive synchronisation.
 
-  Can do multi-stage archive synchronisations
-  -------------------------------------------
-  The script can be told to only perform the first or second stage of the
-  archive synchronisation.
+This enables us to send all the binary packages and sources to a
+number of mirrors, and then tell all of them to sync the
+Packages/Release files at once. This will keep the timeframe in which
+the mirrors are out of sync very small and will greatly help things like
+DNS RR entries or even the planned GeoDNS setup.
 
-  This enables us to send all the binary packages and sources to a
-  number of mirrors, and then tell all of them to sync the
-  Packages/Release files at once. This will keep the timeframe in which
-  the mirrors are out of sync very small and will greatly help things like
-  DNS RR entries or even the planned GeoDNS setup.
+### Multi-hop, multi-stage archive synchronisations
+The script can be told to perform a multi-hop multi-stage archive
+synchronisation.
 
-
-  Multi-hop, multi-stage archive synchronisations
-  -----------------------------------------------
-  The script can be told to perform a multi-hop multi-stage archive
-  synchronisation.
-
-  This is basically the same as the multi-stage synchronisation
-  explained above, but enables the downstream mirror to push his own
-  staged/multi-hop downstreams before returning. This has the same
-  advantage than the multi-stage synchronisation but allows us to do
-  this over multiple level of mirrors. (Imagine one push going from
-  Europe to Australia, where then locally 3 others get updated before
-  stage2 is sent out. Instead of 4times transferring data from Europe to
-  Australia, just to have them all updated near instantly).
+This is basically the same as the multi-stage synchronisation
+explained above, but enables the downstream mirror to push his own
+staged/multi-hop downstreams before returning. This has the same
+advantage than the multi-stage synchronisation but allows us to do
+this over multiple level of mirrors. (Imagine one push going from
+Europe to Australia, where then locally 3 others get updated before
+stage2 is sent out. Instead of 4times transferring data from Europe to
+Australia, just to have them all updated near instantly).
 
 
-  Can run hook scripts
-  --------------------
-  ftpsync currently allows 5 hook scripts to run at various points of the
-  mirror sync run.
+### Can run hook scripts
+ftpsync currently allows 5 hook scripts to run at various points of the
+mirror sync run.
 
-  Hook1: After lock is acquired, before first rsync
-  Hook2: After first rsync, if successful
-  Hook3: After second rsync, if successful
-  Hook4: Right before leaf mirror triggering
-  Hook5: After leaf mirror trigger (only if we have slave mirrors; HUB=true)
+* Hook1: After lock is acquired, before first rsync
+* Hook2: After first rsync, if successful
+* Hook3: After second rsync, if successful
+* Hook4: Right before leaf mirror triggering
+* Hook5: After leaf mirror trigger (only if we have slave mirrors; HUB=true)
 
-  Note that Hook3 and Hook4 are likely to be called directly after each other.
-  The difference is that Hook3 is called *every* time the second rsync
-  succeeds even if the mirroring needs to re-run due to a second push.
-  Hook4 is only executed if mirroring is completed.
+Note that Hook3 and Hook4 are likely to be called directly after each other.
+The difference is that Hook3 is called *every* time the second rsync
+succeeds even if the mirroring needs to re-run due to a second push.
+Hook4 is only executed if mirroring is completed.
 
-
-  Support for multiple archives, even if they are pushed using one ssh key
-  ------------------------------------------------------------------------
-  If you get multiple archives from your upstream mirror (say Debian,
-  Debian-Backports and Volatile), previously you had to use 3 different ssh
-  keys to be able to automagically synchronize them.  This script can do it
-  all with just one key, if your upstream mirror tells you which archive.
-  See "Commandline/SSH options" below for further details.
-
+### Support for multiple archives, even if they are pushed using one ssh key
+If you get multiple archives from your upstream mirror (say Debian,
+Debian-Backports and Volatile), previously you had to use 3 different ssh
+keys to be able to automagically synchronize them.  This script can do it
+all with just one key, if your upstream mirror tells you which archive.
+See "Commandline/SSH options" below for further details.
 
 For details of all available options, please see the extensive documentation
 in the sample configuration file.
 
+### Commandline/SSH options
 
-Commandline/SSH options
-=======================
 Script options may be set either on the local command line, or passed by
 specifying an ssh "command".  Local commandline options always have
 precedence over the SSH_ORIGINAL_COMMAND ones.
@@ -189,17 +176,14 @@ precedence over the SSH_ORIGINAL_COMMAND ones.
 Currently this script understands the options listed below. To make them
 take effect they MUST be prepended by "sync:".
 
-Option         Behaviour
-stage1         Only do stage1 sync
-stage2         Only do stage2 sync
-all            Do a complete sync (default)
-mhop           Do a multi-hop sync
-archive:foo    Sync archive foo (if the file $HOME/etc/ftpsync-foo.conf
-               exists and is configured)
-callback       Call back when done (needs proper ssh setup for this to
-               work). It will always use the "command" callback:$HOSTNAME
-               where $HOSTNAME is the one defined in config and
-               will happen before slave mirrors are triggered.
+| Option       | Behaviour |
+|--------------|-----------|
+| stage1       | Only do stage1 sync |
+| stage2       | Only do stage2 sync |
+| all          | Do a complete sync (default) |
+| mhop         | Do a multi-hop sync |
+| archive:foo  | Sync archive foo (if the file $HOME/etc/ftpsync-foo.conf exists and is configured) |
+| callback     | Call back when done (needs proper ssh setup for this to work). It will always use the "command" callback:$HOSTNAME where $HOSTNAME is the one defined in config and will happen before slave mirrors are triggered. |
 
 So, to get the script to sync all of the archive behind bpo and call back when
 it is complete, use an upstream trigger of
@@ -287,12 +271,14 @@ the mirror is part of it. It MUST BE the hosts own name. This is in
 contrast to the filename, which SHOULD be the DNS RR name.
 
 
-runmirrors
-==========
+## runmirrors
+
 This script is used to tell leaf mirrors that it is time to synchronize
 their copy of the archive. This is done by parsing a mirror list and
 using ssh to "push" the leaf nodes. You can read much more about the
-principle behind the push at [1], essentially it tells the receiving
+principle behind the
+[push](http://blog.ganneff.de/blog/2007/12/29/ssh-triggers.html),
+essentially it tells the receiving
 end to run a pre-defined script. As the whole setup is extremely limited
 and the ssh key is not usable for anything else than the pre-defined
 script this is the most secure method for such an action.
@@ -315,6 +301,3 @@ useful include multiple hosts in a DNS Round Robin entry.
 
 For details on the mirror list please see the documented
 runmirrors.mirror.sample file.
-
-
-[1] http://blog.ganneff.de/blog/2007/12/29/ssh-triggers.html
