@@ -209,50 +209,21 @@ field names can have spaces. Currently the following fields are
 defined, listed in the order as output by ftpsync, though the order is
 not mandantory:
 
-Date: Date in RFC822 Format when the tracefile got generated, ie. end
-        of mirror run.
-      Example: Sun, 28 Feb 2016 09:40:29 +0000
-
-Date-Started: As Date, but the time the mirror run started.
-              Example: Sun, 28 Feb 2016 09:33:55 +0000
-
-Archive Serial: Archive serial for mirror run, taken from main
-                archives tracefile.
-                Example: 2016022802
-
-Used ftpsync version: Version string of ftpsync.
-                      Non-ftpsync mirrors are encouraged to switch to
-                      ftpsync, but could output their own name here too.
-                      Example: 20150425
-
-Running on host: FQDN of mirror host. This may not match the actual
-                   mirror name, its the real hostname.
-                 Example: klecker.debian.org
-
-Architectures:  List of architectures included in the mirror.
-                Example: GUESSED:{ source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mips64el mipsel powerpc ppc64el s390 s390x sparc}
-
-Upstream-Mirror: From where does the mirror get its data.
-                 Example: ftp-master.debian.org
-
-SSL: Boolean, is ftpsync rsync over ssl feature used
-     Example: true
-
-Total bytes received in rsync: rsync --stats output, bytes received
-                               Example: 1109846675
-
-Total time spent in stage1 rsync: Seconds of runtime for stage1
-                                  Example: 347
-
-Total time spent in stage2 rsync: Seconds of runtime for stage2
-                                  Example: 47
-
-Total time spent in rsync: How long in total for rsync
-                           Example: 394
-
-Average rate: How fast did the sync go
-              2816869 B/s
-
+| Field | Content | Example |
+|-------|---------|---------|
+| `Date` | Date in RFC822 Format when the tracefile got generated, ie. end of mirror run. | `Sun, 28 Feb 2016 09:40:29 +0000` |
+| `Date-Started` | As Date, but the time the mirror run started. | `Sun, 28 Feb 2016 09:33:55 +0000` |
+| `Archive Serial` | Archive serial for mirror run, taken from main archives tracefile. | `2016022802` |
+| `Used ftpsync version` | Version string of ftpsync.  Non-ftpsync mirrors are encouraged to switch to ftpsync, but could output their own name here too. | `20150425`
+| `Running on host` | FQDN of mirror host. This may not match the actual mirror name, its the real hostname. | `klecker.debian.org` |
+| `Architectures` | List of architectures included in the mirror. | `GUESSED:{ source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mips64el mipsel powerpc ppc64el s390 s390x sparc}` |
+| `Upstream-Mirror` | From where does the mirror get its data. | `ftp-master.debian.org` |
+| `SSL` | Boolean, is ftpsync rsync over ssl feature used | `true`
+| `Total bytes received in rsync` | rsync --stats output, bytes received | `1109846675` |
+| `Total time spent in stage1 rsync` | Seconds of runtime for stage1 | `347` |
+| `Total time spent in stage2 rsync` | Seconds of runtime for stage2 | `47` |
+| `Total time spent in rsync` | How long in total for rsync | `394` |
+| `Average rate` | How fast did the sync go | `2816869 B/s` |
 
 The third line in the legacy format and the hostname for the "Running
 on Host" line for the new format MUST NOT be the DNS RR name, even if
