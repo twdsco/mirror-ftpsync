@@ -186,7 +186,7 @@ tracefile() {
         echo "Running on host: ${TRACEHOST}"
 
         if [[ -d ${TO}/dists ]]; then
-            ARCH=$(find ${TO}/dists -name Release -exec sed -ne 's/^Architecture: //p' '{}' + 2>/dev/null | sort -u | tr '\n' ' ')
+            ARCH=$(find ${TO}/dists -name 'Packages.*' -printf '%h\n' 2>/dev/null | sed -Ene 's#.*/binary-([^/]+)$#\1#p' | sort -u | tr '\n' ' ')
             if [[ $ARCH ]]; then
                 echo "Architectures: ${ARCH}"
             fi
