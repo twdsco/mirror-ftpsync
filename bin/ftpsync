@@ -317,17 +317,9 @@ else
     ORIGINAL_COMMAND=""
 fi
 
-SSH_ORIGINAL_COMMAND=${SSH_ORIGINAL_COMMAND:-""}
 # Now, check if we got told about stuff via ssh
-if [[ -n ${SSH_ORIGINAL_COMMAND} ]]; then
-    # We deliberately add "nothing" and ignore it right again, to avoid
-    # people from outside putting some set options in the first place,
-    # making us parse them...
-    set "nothing" "${SSH_ORIGINAL_COMMAND}"
-    shift
-    # Yes, unqouted $* here. Or the function will only see it as one
-    # parameter, which doesnt help the case in it.
-    check_commandline $*
+if [[ -n ${SSH_ORIGINAL_COMMAND:-} ]]; then
+    check_commandline ${SSH_ORIGINAL_COMMAND}
 fi
 
 # Now, we can locally override all the above variables by just putting
