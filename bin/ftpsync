@@ -200,6 +200,9 @@ tracefile() {
         if [[ ${INFO_THROUGHPUT:-} ]]; then
             echo "Throughput: ${INFO_THROUGHPUT}"
         fi
+        if [[ ${INFO_TRIGGER:-} ]]; then
+            echo "Trigger: ${INFO_TRIGGER}"
+        fi
 
         if [[ -d ${TO}/dists ]]; then
             ARCH=$(find ${TO}/dists -name 'Packages.*' -printf '%h\n' 2>/dev/null | sed -Ene 's#.*/binary-([^/]+)$#\1#p' | sort -u | tr '\n' ' ')
@@ -311,8 +314,17 @@ set_exclude_include_archs() {
 # As what are we called?
 NAME="$(basename $0)"
 
+while getopts T: option; do
+    case $option in
+        T) INFO_TRIGGER=$OPTARG;;
+        ?) exit 64;;
+    esac
+done
+shift $(($OPTIND - 1))
+
 # Now, check if we got told about stuff via ssh
 if [[ -n ${SSH_ORIGINAL_COMMAND:-} ]]; then
+    INFO_TRIGGER=${INFO_TRIGGER:-ssh}
     check_commandline ${SSH_ORIGINAL_COMMAND}
 fi
 

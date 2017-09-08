@@ -221,6 +221,7 @@ not mandantory:
 | `Country` | The ISO 3361-1 code of the country hosting this mirror. | `DE` |
 | `Location` | The location this mirror is hosted in. | `Example` |
 | `Throughput` | Available throughput for this mirror per second. | `10Gb` |
+| `Trigger` | Trigger used for this run.` | `cron`, `ssh (comment)` |
 | `Architectures` | List of architectures included in the mirror. | `all amd64 i386 source` |
 | `Architectures-Configuration` | Architecture list as specified in config. | `ALL`, `INCLUDE amd64 i386 source`, `EXCLUDE armel` |
 | `Upstream-Mirror` | From where does the mirror get its data. | `ftp-master.debian.org` |

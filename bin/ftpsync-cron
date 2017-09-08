@@ -23,7 +23,7 @@ RSYNC_PATH="${RSYNC_PATH:-debian}"
 TRACE_UPSTREAM="project/trace/${RSYNC_HOST}"
 
 function run_ftpsync() {
-    exec "${BINDIR:+${BINDIR}/}ftpsync" "sync:archive:${ARCHIVE}" "$@"
+    exec "${BINDIR:+${BINDIR}/}ftpsync" -T "cron" "sync:archive:${ARCHIVE}" "$@"
 }
 
 function cmp_trace() {

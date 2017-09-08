@@ -13,7 +13,7 @@ ftpsync:
       INFO_THROUGHPUT=10Gb
   script:
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
-    - bin/ftpsync || e=$?
+    - bin/ftpsync -T test || e=$?
     - ls -alR log root
     - cat root/project/trace/localhost
     - cat log/ftpsync.log* || true
