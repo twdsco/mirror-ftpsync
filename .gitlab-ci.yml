@@ -6,6 +6,11 @@ ftpsync:
       RSYNC=true
       RSYNC_HOST=localhost
       MIRRORNAME=localhost
+      INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
+      INFO_SPONSOR="Example <https://example.com>"
+      INFO_COUNTRY=DE
+      INFO_LOCATION=Example
+      INFO_THROUGHPUT=10Gb
   script:
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
     - bin/ftpsync || e=$?

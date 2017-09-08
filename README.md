@@ -216,6 +216,11 @@ not mandantory:
 | `Archive Serial` | Archive serial for mirror run, taken from main archives tracefile. | `2016022802` |
 | `Creator` | Name and version of used software | `ftpsync 20170204`
 | `Running on host` | FQDN of mirror host. This may not match the actual mirror name, its the real hostname. | `klecker.debian.org` |
+| `Maintainer` | Groups and people responsible for this mirror. | `Admins <admins@example.com>` |
+| `Sponsor` | Organizations sponsoring this mirror. | `Example <https://example.com>` |
+| `Country` | The ISO 3361-1 code of the country hosting this mirror. | `DE` |
+| `Location` | The location this mirror is hosted in. | `Example` |
+| `Throughput` | Available throughput for this mirror per second. | `10Gb` |
 | `Architectures` | List of architectures included in the mirror. | `all amd64 i386 source` |
 | `Architectures-Configuration` | Architecture list as specified in config. | `ALL`, `INCLUDE amd64 i386 source`, `EXCLUDE armel` |
 | `Upstream-Mirror` | From where does the mirror get its data. | `ftp-master.debian.org` |

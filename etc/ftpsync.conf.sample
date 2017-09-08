@@ -57,6 +57,33 @@
 #RSYNC_SSL_CAPATH=/etc/ssl/certs
 #RSYNC_SSL_METHOD=stunnel4
 
+## Groups and people responsible for this mirror.  These contacts are
+## used to report irregularities and problems with the mirror.  They
+## must actually accept mail.
+## Example:
+##   INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
+#INFO_MAINTAINER=
+
+## Organizations sponsoring this mirror.
+## Example:
+##   INFO_SPONSOR="Example <https://example.com>"
+#INFO_SPONSOR=
+
+## The ISO 3361-1 code of the country hosting this mirror.
+## Example:
+##   INFO_COUNTRY=DE
+#INFO_COUNTRY=
+
+## The location this mirror is hosted in.
+## Example:
+##   INFO_LOCATION="Example"
+#INFO_LOCATION=
+
+## Available throughput for this mirror per second.
+## Example:
+##   INFO_THROUGHPUT=10Gb
+#INFO_THROUGHPUT=
+
 ## In which directory should logfiles end up
 ## Note that BASEDIR defaults to $HOME, but can be set before calling the
 ## ftpsync script to any value you want (for example using pam_env)

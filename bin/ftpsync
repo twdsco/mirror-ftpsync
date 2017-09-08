@@ -185,6 +185,22 @@ tracefile() {
         echo "Creator: ftpsync ${VERSION}"
         echo "Running on host: ${TRACEHOST}"
 
+        if [[ ${INFO_MAINTAINER:-} ]]; then
+            echo "Maintainer: ${INFO_MAINTAINER}"
+        fi
+        if [[ ${INFO_SPONSOR:-} ]]; then
+            echo "Sponsor: ${INFO_SPONSOR}"
+        fi
+        if [[ ${INFO_COUNTRY:-} ]]; then
+            echo "Country: ${INFO_COUNTRY}"
+        fi
+        if [[ ${INFO_LOCATION:-} ]]; then
+            echo "Location: ${INFO_LOCATION}"
+        fi
+        if [[ ${INFO_THROUGHPUT:-} ]]; then
+            echo "Throughput: ${INFO_THROUGHPUT}"
+        fi
+
         if [[ -d ${TO}/dists ]]; then
             ARCH=$(find ${TO}/dists -name 'Packages.*' -printf '%h\n' 2>/dev/null | sed -Ene 's#.*/binary-([^/]+)$#\1#p' | sort -u | tr '\n' ' ')
             if [[ $ARCH ]]; then
