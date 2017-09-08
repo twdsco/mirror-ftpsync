@@ -35,7 +35,7 @@ function cmp_trace() {
 	return 0
     fi
 
-    trace=$(curl --silent --fail --show-error "$trace_uri" 2>&1)
+    trace=$(curl --silent --fail --show-error --location "$trace_uri" 2>&1)
     ret=$?
     if [[ $ret != 0 ]]; then
         error "Failed to retrieve $trace_uri: $trace"
