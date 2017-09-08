@@ -310,12 +310,6 @@ set_exclude_include_archs() {
 
 # As what are we called?
 NAME="$(basename $0)"
-# The original command line arguments need to be saved!
-if [[ $# -gt 0 ]]; then
-    ORIGINAL_COMMAND=$*
-else
-    ORIGINAL_COMMAND=""
-fi
 
 # Now, check if we got told about stuff via ssh
 if [[ -n ${SSH_ORIGINAL_COMMAND:-} ]]; then
@@ -324,9 +318,8 @@ fi
 
 # Now, we can locally override all the above variables by just putting
 # them into the .ssh/authorized_keys file forced command.
-if [[ -n ${ORIGINAL_COMMAND} ]]; then
-    set ${ORIGINAL_COMMAND}
-    check_commandline $*
+if [[ $# -gt 0 ]]; then
+    check_commandline "$@"
 fi
 
 # If we have been told to do stuff for a different archive than default,
