@@ -214,9 +214,10 @@ not mandantory:
 | `Date` | Date in RFC822 Format when the tracefile got generated, ie. end of mirror run. | `Sun, 28 Feb 2016 09:40:29 +0000` |
 | `Date-Started` | As Date, but the time the mirror run started. | `Sun, 28 Feb 2016 09:33:55 +0000` |
 | `Archive Serial` | Archive serial for mirror run, taken from main archives tracefile. | `2016022802` |
-| `Used ftpsync version` | Version string of ftpsync.  Non-ftpsync mirrors are encouraged to switch to ftpsync, but could output their own name here too. | `20150425`
+| `Creator` | Name and version of used software | `ftpsync 20170204`
 | `Running on host` | FQDN of mirror host. This may not match the actual mirror name, its the real hostname. | `klecker.debian.org` |
-| `Architectures` | List of architectures included in the mirror. | `GUESSED:{ source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mips64el mipsel powerpc ppc64el s390 s390x sparc}` |
+| `Architectures` | List of architectures included in the mirror. | `all amd64 i386 source` |
+| `Architectures-Configuration` | Architecture list as specified in config. | `ALL`, `INCLUDE amd64 i386 source`, `EXCLUDE armel` |
 | `Upstream-Mirror` | From where does the mirror get its data. | `ftp-master.debian.org` |
 | `SSL` | Boolean, is ftpsync rsync over ssl feature used | `true`
 | `Total bytes received in rsync` | rsync --stats output, bytes received | `1109846675` |
