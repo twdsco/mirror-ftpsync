@@ -20,7 +20,7 @@ install:
 	install bin/rsync-ssl-tunnel.install ${DESTDIR}/${bindir}/rsync-ssl-tunnel
 	install bin/runmirrors.install ${DESTDIR}/${bindir}/runmirrors
 	install -m644 \
-		README \
+		README.md \
 		${DESTDIR}/${docdir}
 	install -m644 \
 		etc/ftpsync.conf.sample \
