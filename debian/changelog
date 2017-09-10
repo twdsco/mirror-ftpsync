@@ -1,8 +1,17 @@
-archvsync (20170304) UNRELEASED; urgency=medium
+archvsync (20170810) unstable; urgency=medium
 
+  [ Peter Palfrader ]
   * Fix Typo in Maintainer field (re: #856695, closes: #856912).
 
- -- Peter Palfrader <weasel@debian.org>  Sat, 04 Mar 2017 09:41:14 +0100
+  [ Bastian Blank ]
+  * Drop unused sync tools and configs.
+  * Fix i18n/by-hash include for stage 1.
+  * Always generate full trace.
+  * Add ftpsync-cron script.
+  * Add several mirror informations to trace file.
+  * Add informations about the used trigger to trace file.
+
+ -- Bastian Blank <waldi@debian.org>  Sun, 10 Sep 2017 21:52:44 +0200
 
 archvsync (20170204) unstable; urgency=medium
 
