@@ -25,10 +25,6 @@ set -u
 # In case the admin somehow wants to have this script located someplace else,
 # he can set BASEDIR, and we will take that. If it is unset we take ${HOME}
 BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
-BINDIR=${BINDIR:-"${BASEDIR}/bin"}
-CONFDIR=${CONFDIR:-"${BASEDIR}/etc"}
-LOCKDIR=${LOCKDIR:-"${BASEDIR}/locks"}
-LOGDIR=${LOGDIR:-"${BASEDIR}/log"}
 
 NAME="$(basename $0)"
 

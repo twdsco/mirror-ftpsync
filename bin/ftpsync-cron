@@ -2,8 +2,6 @@
 set -euE
 
 BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
-BINDIR=${BINDIR:-"${BASEDIR}/bin"}
-CONFDIR=${CONFDIR:-"${BASEDIR}/etc"}
 . "${BASEDIR}/bin/common"
 
 ARCHIVE=${1:-}

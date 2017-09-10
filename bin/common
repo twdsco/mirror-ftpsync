@@ -2,6 +2,11 @@
 # vim:syn=sh
 # Little common functions
 
+BINDIR=${BASEDIR:+"${BASEDIR}/bin"}
+CONFDIR=${BASEDIR:+"${BASEDIR}/etc"}
+LOCKDIR=${BASEDIR:+"${BASEDIR}/locks"}
+LOGDIR=${BASEDIR:+"${BASEDIR}/log"}
+
 # push a mirror attached to us.
 # Arguments (using an array named SIGNAL_OPTS):
 #
