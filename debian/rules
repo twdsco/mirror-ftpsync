@@ -18,4 +18,4 @@ override_dh_auto_install:
 override_dh_builddeb:
 	dh_builddeb
 	tar -c -C debian/ftpsync-tar distrib | gzip -n > ../$(TARNAME)
-	dpkg-distaddfile $(TARNAME) raw-ftpsync -
+	dpkg-distaddfile $(TARNAME) byhand -
