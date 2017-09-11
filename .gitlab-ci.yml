@@ -1,4 +1,4 @@
-ftpsync:
+test:
   image: debian:stable
   variables:
     FTPSYNC_CONF: |
@@ -11,10 +11,20 @@ ftpsync:
       INFO_COUNTRY=DE
       INFO_LOCATION=Example
       INFO_THROUGHPUT=10Gb
+    RUNMIRRORS_CONF: |
+      KEYFILE=~/key
+    SSH_KEY: |
   script:
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
-    - bin/ftpsync -T test || e=$?
+    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
+    - echo "$SSH_KEY" > ~/key
+    - bin/ftpsync -T test || e_ftpsync=$?
+    - echo $e_ftpsync
+    - bin/runmirrors || e_runmirrors=$?
+    - echo $e_runmirrors
     - ls -alR log root
     - cat root/project/trace/localhost
     - cat log/ftpsync.log* || true
-    - exit $e
+    - cat log/runmirrors.log* || true
+    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
+    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
