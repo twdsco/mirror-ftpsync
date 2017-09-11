@@ -117,7 +117,7 @@ PUSHARCHIVE=${PUSHARCHIVE:-"${CONF}"}
 PUSHDELAY=${PUSHDELAY:-600}
 # Which ssh key to use?
 KEYFILE=${KEYFILE:-".ssh/pushmirror"}
-KEYFILE_ABS=$(cd && readlink -f "$KEYFILE")
+KEYFILE_ABS=$(cd && readlink -f "$KEYFILE" || :)
 
 # start a new log
 savelog "${LOG}" > /dev/null
