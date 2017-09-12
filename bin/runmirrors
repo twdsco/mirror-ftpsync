@@ -204,14 +204,18 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
     MPROTO=2
     MKEYFILE="${KEYFILE_ABS}"
     SSHOPT=""
+    MPUSHARCHIVE=${PUSHARCHIVE}
 
     if [[ $MHOSTNAME =~ $REGEX_URL ]]; then
         MSCHEME=${BASH_REMATCH[1]}
         MUSER=${BASH_REMATCH[3]}
         MHOSTNAME=${BASH_REMATCH[4]}
+        URLPATH=${BASH_REMATCH[5]}
 
         if [[ $MSCHEME == ssh+ftpsync ]]; then
-            :
+            if [[ $URLPATH ]]; then
+                MPUSHARCHIVE=${URLPATH#/}
+            fi
         else
             log "Trigger ${MLNAME}: ${MHOSTNAME} have wrong scheme, ignoring" >> "${LOG}"
             continue
@@ -259,7 +263,7 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
         SSHOPTS="${SSHOPT/ /#}"
         PUSHLOCKOWN="${LOCKDIR}/${MLNAME}.stage1"
         PUSHTYPE="${MTYPE}"
-        PUSHARCHIVE=${PUSHARCHIVE}
+        PUSHARCHIVE=${MPUSHARCHIVE}
         PUSHKIND=${PUSHKIND}
         FROMFTPSYNC=${FROMFTPSYNC}
     )
