@@ -6,7 +6,7 @@
 include /usr/share/dpkg/pkg-info.mk
 export DEB_VERSION
 
-TARNAME = ftpsync-$(DEB_VERSION_UPSTREAM_REVISION).tar.gz
+TARNAME = ftpsync_$(DEB_VERSION_UPSTREAM_REVISION)_all.tar.gz
 
 %:
 	dh $@
