@@ -201,15 +201,17 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
         fi
     fi
 
+    MPROTO=2
+    MKEYFILE="${KEYFILE_ABS}"
+    SSHOPT=""
+
     if [[ $MHOSTNAME =~ $REGEX_URL ]]; then
         MSCHEME=${BASH_REMATCH[1]}
         MUSER=${BASH_REMATCH[3]}
         MHOSTNAME=${BASH_REMATCH[4]}
 
         if [[ $MSCHEME == ssh+ftpsync ]]; then
-            MPROTO=2
-            MKEYFILE="${KEYFILE_ABS}"
-            SSHOPT=""
+            :
         else
             log "Trigger ${MLNAME}: ${MHOSTNAME} have wrong scheme, ignoring" >> "${LOG}"
             continue
@@ -237,20 +239,14 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
             # Yes we start with a -
             SSHOPT="${MSSHOPT}"
             MPROTO="99"
-            MKEYFILE="${KEYFILE_ABS}"
         elif [[ ${MSSHOPT:0:1} -eq 1 ]] || [[ ${MSSHOPT:0:1} -eq 2 ]]; then
             # We do seem to have oldstyle options here.
             MPROTO=${MSSHOPT:0:1}
             MKEYFILE=${MSSHOPT:2}
-            SSHOPT=""
         else
             error "I don't know what is configured for mirror ${MLNAME}"
             continue
         fi
-    else
-        MPROTO=2
-        MKEYFILE="${KEYFILE_ABS}"
-        SSHOPT=""
     fi
 
     # Built our array
