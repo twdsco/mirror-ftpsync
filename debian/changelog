@@ -8,11 +8,13 @@ archvsync (20170912) unstable; urgency=medium
   * Fix i18n/by-hash include for stage 1.
   * Always generate full trace.
   * Add ftpsync-cron script.
-  * Add several mirror informations to trace file.
+  * Add several mirror information to trace file.
   * Add informations about the used trigger to trace file.
   * Support URL as a mirror specification.
+  * Only build extra tar on Debian, (closes: #875455)
+  * Don't duplicate code during expansion. (closes: #857702)
 
- -- Bastian Blank <waldi@debian.org>  Tue, 12 Sep 2017 21:02:29 +0200
+ -- Bastian Blank <waldi@debian.org>  Tue, 12 Sep 2017 22:02:08 +0200
 
 archvsync (20170204) unstable; urgency=medium
 
