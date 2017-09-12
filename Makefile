@@ -11,13 +11,13 @@ bin/%.install: bin/% bin/common
 		-e '\#^\. .*/common"# {' -e 'r bin/common' -e 'd' -e '};' \
 		-e 's/^BASEDIR=.*$$/BASEDIR=/;' \
 		-e 's/^VERSION=.*$$/VERSION="${DEB_VERSION}"/;' \
-		$^ > $@
+		$< > $@
 
 bin/%.install-tar: bin/% bin/common
 	sed -r \
 		-e '\#^\. .*/common"# {' -e 'r bin/common' -e 'd' -e '};' \
 		-e 's/^VERSION=.*$$/VERSION="${DEB_VERSION}"/;' \
-		$^ > $@
+		$< > $@
 
 install:
 	install -d ${DESTDIR}/${bindir} ${DESTDIR}/${examplesdir}
