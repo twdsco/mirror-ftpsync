@@ -119,6 +119,8 @@ PUSHDELAY=${PUSHDELAY:-600}
 KEYFILE=${KEYFILE:-".ssh/pushmirror"}
 KEYFILE_ABS=$(cd && readlink -f "$KEYFILE" || :)
 
+REGEX_URL='^([a-z.+]+)://(([^@/]+)@)?([^/]+)(/.*)?$'
+
 # start a new log
 savelog "${LOG}" > /dev/null
 
@@ -199,6 +201,20 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
         fi
     fi
 
+    if [[ $MHOSTNAME =~ $REGEX_URL ]]; then
+        MSCHEME=${BASH_REMATCH[1]}
+        MUSER=${BASH_REMATCH[3]}
+        MHOSTNAME=${BASH_REMATCH[4]}
+
+        if [[ $MSCHEME == ssh+ftpsync ]]; then
+            MPROTO=2
+            MKEYFILE="${KEYFILE_ABS}"
+            SSHOPT=""
+        else
+            log "Trigger ${MLNAME}: ${MHOSTNAME} have wrong scheme, ignoring" >> "${LOG}"
+            continue
+        fi
+
     # Now, MSSHOPT may start with a -. In that case the whole rest of the line is taken
     # as a set of options to give to ssh, we pass it without doing anything with it.
     # If it starts with a 1 or 2 then it will tell us about the ssh protocol version to use,
@@ -214,7 +230,7 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
     #
     # The only sane way to go around this, i think, is by dropping backward compability.
     # Which I don't really like.
-    if [[ -n ${MSSHOPT} ]]; then
+    elif [[ -n ${MSSHOPT} ]]; then
         # So its not empty, lets check if it starts with a - and as such is a "new-style"
         # ssh options set.
         if [[ ${MSSHOPT:0:1} = - ]]; then
