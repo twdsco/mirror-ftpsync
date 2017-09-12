@@ -1,4 +1,4 @@
-archvsync (20170810) unstable; urgency=medium
+archvsync (20170912) unstable; urgency=medium
 
   [ Peter Palfrader ]
   * Fix Typo in Maintainer field (re: #856695, closes: #856912).
@@ -10,8 +10,9 @@ archvsync (20170810) unstable; urgency=medium
   * Add ftpsync-cron script.
   * Add several mirror informations to trace file.
   * Add informations about the used trigger to trace file.
+  * Support URL as a mirror specification.
 
- -- Bastian Blank <waldi@debian.org>  Sun, 10 Sep 2017 21:52:44 +0200
+ -- Bastian Blank <waldi@debian.org>  Tue, 12 Sep 2017 21:02:29 +0200
 
 archvsync (20170204) unstable; urgency=medium
 
