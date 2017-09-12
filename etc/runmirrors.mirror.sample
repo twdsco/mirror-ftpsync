@@ -1,13 +1,11 @@
 # Definition of mirror hosts we push.
-# One mirror per line, with the following fields defined.
+# One mirror per line, with the following formats:
 #
+# Type ShortName URL
+# Type ShortName HostName User -$SOMESSHOPTION
 # Type ShortName HostName User SSHProtocol SSHKeyFile
 #
-# ALTERNATIVELY the line may look like
-#
-# Type ShortName HostName User -$SOMESSHOPTION
-#
-# The fields Type, ShortName, HostName and User are *mandantory*.
+# The fields Type, ShortName and either URL or HostName and User are *mandantory*.
 #
 # Type is either all, staged or mhop, meaning:
 # all    - do a "normal" push. Trigger them, go on.
@@ -24,6 +22,12 @@
 #
 # ShortName will be used as a shorthand in logfile outputs and for the logfile
 # where every ssh output gets redirected to.
+#
+# URL can be one of following:
+# - ssh+ftpsync://user@hostname
+#     (same as specifying the HostName and User field)
+# - ssh+ftpsync://user@hostname/archive
+#     (override the signaled archive name via 'sync:archive:$archive argument)
 #
 # If no SSHKeyFile is given, the default from the config file applies.
 # If SSHProtocol is empty, it will default to 2, but if you want to
