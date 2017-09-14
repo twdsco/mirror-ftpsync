@@ -1,3 +1,5 @@
+include /usr/share/dpkg/pkg-info.mk
+
 bindir = /usr/bin
 docdir = /usr/share/doc/ftpsync
 examplesdir = ${docdir}/examples
