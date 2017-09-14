@@ -767,10 +767,8 @@ rm -f "${LOCK}"
 # more than once every third day.
 if [[ -r ${TO}/project/ftpsync/LATEST.VERSION ]]; then
     LATEST=$(< "${TO}/project/ftpsync/LATEST.VERSION")
-    if ! [[ ${LATEST} =~ [0-9]+ ]]; then
-        LATEST=0
-    fi
-    if [[ ${LATEST} -gt ${VERSION} ]]; then
+    if [[ ${VERSION} =~ ^[0-9]+$ ]] && [[ ${LATEST} =~ ^[0-9]+$ ]] &&
+        [[ ${LATEST} -gt ${VERSION} ]]; then
         if [[ -n ${MAILTO} ]]; then
             difference=0
             if [[ -f ${LOGDIR}/ftpsync.newversion ]]; then
