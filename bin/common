@@ -283,7 +283,7 @@ rsync_protocol() {
 # Search config files in various locations
 search_config() {
   local file
-  if [ "$CONFDIR" ]; then
+  if [ "${CONFDIR:-}" ]; then
     file="$CONFDIR/$1"
     if [ -f "$file" ]; then
       echo "$file"
@@ -313,7 +313,7 @@ read_config() {
 
 # Create lock dir
 create_lockdir() {
-  if [ -z "$LOCKDIR" ]; then
+  if [ -z "${LOCKDIR:-}" ]; then
     LOCKDIR=~/.local/lock/ftpsync
   fi
   mkdir -p "$LOCKDIR"
@@ -321,7 +321,7 @@ create_lockdir() {
 
 # Create log dir
 create_logdir() {
-  if [ -z "$LOGDIR" ]; then
+  if [ -z "${LOGDIR:-}" ]; then
     LOGDIR=~/.local/log/ftpsync
   fi
   mkdir -p "$LOGDIR"

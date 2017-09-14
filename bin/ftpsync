@@ -524,7 +524,7 @@ DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 set_exclude_include_archs
 
 # Some sane defaults
-cd "${BASEDIR}"
+cd "${BASEDIR:-}"
 umask 022
 
 # If we are here for the first time, create the
