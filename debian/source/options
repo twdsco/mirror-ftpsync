@@ -1,0 +1,5 @@
+tar-ignore=.git
+tar-ignore=etc/*.conf
+tar-ignore=etc/*.mirror
+tar-ignore=locks
+tar-ignore=log
