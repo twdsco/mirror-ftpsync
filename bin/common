@@ -7,6 +7,11 @@ CONFDIR=${BASEDIR:+"${BASEDIR}/etc"}
 LOCKDIR=${BASEDIR:+"${BASEDIR}/locks"}
 LOGDIR=${BASEDIR:+"${BASEDIR}/log"}
 
+# Script version. DO NOT CHANGE, *unless* you change the master copy maintained
+# by Joerg Jaspert and the Debian mirroradm group.
+# This is used to track which mirror is using which script version.
+VERSION="20170810"
+
 # push a mirror attached to us.
 # Arguments (using an array named SIGNAL_OPTS):
 #

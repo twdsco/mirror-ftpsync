@@ -39,11 +39,6 @@ set -o pipefail
 # for that. Or pam_env. Or whatever fits in the local setup. :)
 BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
 
-# Script version. DO NOT CHANGE, *unless* you change the master copy maintained
-# by Joerg Jaspert and the Debian mirroradm group.
-# This is used to track which mirror is using which script version.
-VERSION="20170810"
-
 # Source our common functions
 . "${BASEDIR}/bin/common"
 
