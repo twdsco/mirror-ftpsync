@@ -10,7 +10,6 @@ Currently the following scripts are available:
 
   * ftpsync     - Used to sync an archive using rsync
   * runmirrors  - Used to notify leaf nodes of available updates
-  * typicalsync - Generates a typical Debian mirror
 
 ## Usage
 
