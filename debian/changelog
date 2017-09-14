@@ -1,3 +1,9 @@
+archvsync (20170913) UNRELEASED; urgency=medium
+
+  * Make sure source tar is pretty clean. (closes: #875702)
+
+ -- Bastian Blank <waldi@debian.org>  Thu, 14 Sep 2017 19:08:56 +0200
+
 archvsync (20170912) unstable; urgency=medium
 
   [ Peter Palfrader ]
