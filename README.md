@@ -13,8 +13,6 @@ Currently the following scripts are available:
   * dircombine  - Internal script to manage the mirror user's $HOME
                   on debian.org machines
   * typicalsync - Generates a typical Debian mirror
-  * udh         - We are lazy, just a shorthand to avoid typing the
-                  commands, ignore... :)
 
 ## Usage
 
