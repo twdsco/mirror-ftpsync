@@ -314,7 +314,7 @@ read_config() {
 # Create lock dir
 create_lockdir() {
   if [ -z "$LOCKDIR" ]; then
-    LOGDIR=~/.local/lock/ftpsync
+    LOCKDIR=~/.local/lock/ftpsync
   fi
   mkdir -p "$LOCKDIR"
 }
