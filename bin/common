@@ -2,13 +2,6 @@
 # vim:syn=sh
 # Little common functions
 
-BINDIR=${BASEDIR:+"${BASEDIR}/bin"}
-CONFDIR=${BASEDIR:+"${BASEDIR}/etc"}
-LOCKDIR=${BASEDIR:+"${BASEDIR}/locks"}
-LOGDIR=${BASEDIR:+"${BASEDIR}/log"}
-
-VERSION="g$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")"
-
 # push a mirror attached to us.
 # Arguments (using an array named SIGNAL_OPTS):
 #

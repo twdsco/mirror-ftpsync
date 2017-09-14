@@ -8,20 +8,21 @@ SCRIPTS = bin/ftpsync bin/ftpsync-cron bin/rsync-ssl-tunnel bin/runmirrors
 
 all: $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)
 
-bin/common.install: bin/common
+bin/%.install: bin/% bin/common
 	sed -r \
-		-e 's/^VERSION=.*$$/VERSION="${DEB_VERSION}"/;' \
+		-e '/## INCLUDE COMMON$$/ {' \
+		-e 'r bin/common' \
+		-e 'c VERSION="${DEB_VERSION}"' \
+		-e '};' \
 		$< > $@
 
-bin/%.install: bin/% bin/common.install
+bin/%.install-tar: bin/% bin/common bin/include-tar
 	sed -r \
-		-e '\#^\. .*/common"# {' -e 'r bin/common.install' -e 'd' -e '};' \
-		-e 's/^BASEDIR=.*$$/BASEDIR=/;' \
-		$< > $@
-
-bin/%.install-tar: bin/% bin/common.install
-	sed -r \
-		-e '\#^\. .*/common"# {' -e 'r bin/common.install' -e 'd' -e '};' \
+		-e '/## INCLUDE COMMON$$/ {' \
+		-e 'r bin/common' \
+		-e 'r bin/include-tar' \
+		-e 'c VERSION="${DEB_VERSION}"' \
+		-e '};' \
 		$< > $@
 
 install:
@@ -55,4 +56,4 @@ install-tar:
 		${DESTDIR}/etc
 
 clean:
-	rm -f bin/common.install $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)
+	rm -f $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)

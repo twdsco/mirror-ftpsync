@@ -1,8 +1,7 @@
 #!/bin/bash
 set -euE
 
-BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
-. "${BASEDIR}/bin/common"
+BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}; . "${BASEDIR}/bin/include-git" ## INCLUDE COMMON
 
 ARCHIVE=${1:-}
 CONFIG="ftpsync${ARCHIVE:+-$ARCHIVE}.conf"

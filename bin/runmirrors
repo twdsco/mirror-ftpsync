@@ -24,7 +24,7 @@ set -u
 
 # In case the admin somehow wants to have this script located someplace else,
 # he can set BASEDIR, and we will take that. If it is unset we take ${HOME}
-BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
+BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}; . "${BASEDIR}/bin/include-git" ## INCLUDE COMMON
 
 NAME="$(basename $0)"
 
@@ -90,9 +90,6 @@ PUSHKIND=${PUSHKIND:-"mhop"}
 FROMFTPSYNC=${FROMFTPSYNC:-"false"}
 
 ########################################################################
-# Source our common functions
-. "${BASEDIR}/bin/common"
-
 # Read our config file
 read_config "${NAME}.conf"
 
