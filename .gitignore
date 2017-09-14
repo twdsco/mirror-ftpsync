@@ -1,0 +1,5 @@
+/bin/*.install*
+/etc/*.conf
+/etc/*.mirror
+/locks
+/log
