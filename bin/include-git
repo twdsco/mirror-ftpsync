@@ -1,11 +1,11 @@
 # -*- mode:sh -*-
 # vim:syn=sh
 
-BINDIR="${BASEDIR}/bin"
+BASEDIR=$(readlink -f "${BINDIR}/..")
 CONFDIR="${BASEDIR}/etc"
 LOCKDIR="${BASEDIR}/locks"
 LOGDIR="${BASEDIR}/log"
 
 VERSION="g$(cd $BASEDIR && git rev-parse --short HEAD 2>/dev/null || echo "unknown")"
 
-. "${BASEDIR}/bin/common"
+. "${BINDIR}/common"

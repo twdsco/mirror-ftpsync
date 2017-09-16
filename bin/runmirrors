@@ -22,9 +22,7 @@
 set -e
 set -u
 
-# In case the admin somehow wants to have this script located someplace else,
-# he can set BASEDIR, and we will take that. If it is unset we take ${HOME}
-BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}; . "${BASEDIR}/bin/include-git" ## INCLUDE COMMON
+BINDIR=$(dirname $(readlink -f "$0")); . "${BINDIR}/include-git" ## INCLUDE COMMON
 
 NAME="$(basename $0)"
 

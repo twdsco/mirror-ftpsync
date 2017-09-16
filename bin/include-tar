@@ -1,8 +1,8 @@
 # -*- mode:sh -*-
 # vim:syn=sh
 
-BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
-BINDIR="${BASEDIR}/bin"
+BINDIR=$(dirname $(readlink -f "$0"))
+BASEDIR=$(readlink -f "${BINDIR}/..")
 CONFDIR="${BASEDIR}/etc"
 LOCKDIR="${BASEDIR}/locks"
 LOGDIR="${BASEDIR}/log"
