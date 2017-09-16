@@ -377,7 +377,8 @@ FULLLOGS=${FULLLOGS:-"false"}
 LOGROTATE=${LOGROTATE:-14}
 
 # Our lockfile
-LOCK=${LOCK:-"${TO}/Archive-Update-in-Progress-${MIRRORNAME}"}
+LOCK_NAME="Archive-Update-in-Progress-${MIRRORNAME}"
+LOCK="${TO}/${LOCK_NAME}"
 # timeout for the lockfile, in case we have bash older than v4 (and no /proc)
 LOCKTIMEOUT=${LOCKTIMEOUT:-3600}
 # sleeping time when an AUIP file is found but is not ours
@@ -385,7 +386,8 @@ UIPSLEEP=${UIPSLEEP:-1200}
 # retries whenever an upstream (or possibly stale) AUIP file is found
 UIPRETRIES=${UIPRETRIES:-3}
 # Do we need another rsync run?
-UPDATEREQUIRED="${TO}/Archive-Update-Required-${MIRRORNAME}"
+UPDATEREQUIRED_NAME="Archive-Update-Required-${MIRRORNAME}"
+UPDATEREQUIRED="${TO}/${UPDATEREQUIRED_NAME}"
 # Trace file for mirror stats and checks (make sure we get full hostname)
 TRACEDIR=project/trace
 TRACE=${TRACE:-"${TRACEDIR}/${MIRRORNAME}"}
@@ -411,14 +413,14 @@ RSYNC=${RSYNC:-rsync}
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
 _RSYNC_FILTER_TRACE=(
-  "--filter=protect_Archive-Update-in-Progress-${MIRRORNAME}"
+  "--filter=protect_${LOCK_NAME}"
+  "--filter=protect_${UPDATEREQUIRED_NAME}"
   "--filter=protect_${TRACE}"
   "--filter=protect_${TRACE}-stage1"
   "--exclude=${TRACEHIERARCHY}"
   "--filter=protect_${TRACEHIERARCHY}"
   "--exclude=${TRACELIST}"
   "--filter=protect_${TRACELIST}"
-  "--filter=protect_Archive-Update-Required-${MIRRORNAME}"
 )
 # limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
 RSYNC_BW=${RSYNC_BW:-0}
