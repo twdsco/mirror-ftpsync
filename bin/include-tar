@@ -15,14 +15,15 @@ function send_mail_new_version() {
         if [[ ${VERSION} =~ ^[0-9]+$ ]] && [[ ${LATEST} =~ ^[0-9]+$ ]] &&
             [[ ${LATEST} -gt ${VERSION} ]]; then
             if [[ -n ${MAILTO} ]]; then
+                interval=$((7 * 24 * 3600))
                 difference=0
                 if [[ -f ${LOGDIR}/ftpsync.newversion ]]; then
                     stamptime=$(< "${LOGDIR}/ftpsync.newversion")
                     unixtime=$(date +%s)
                     difference=$(( $unixtime - $stamptime ))
                 fi
-                if [[ ${difference} -ge 259200 ]]; then
-                    # Only warn every third day
+                if [[ ${difference} -ge $interval ]]; then
+                    # Only warn every seventh day
                     mailx -s "[$(hostname -s)] Update for ftpsync available" ${MAILTO} <<EOF
 Hello admin,
 
