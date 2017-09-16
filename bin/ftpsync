@@ -121,6 +121,16 @@ cleanup() {
     rm -f "${LOCK}"
 }
 
+run_rsync() {
+  local t=$1
+  shift
+
+  log "Running $t:" ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} "$@" ${RSYNCPTH}::${RSYNC_PATH} ${TO}
+
+  ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} "$@" \
+    ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error" || return $?
+}
+
 # Check rsyncs return value
 check_rsync() {
     ret=$1
@@ -613,17 +623,12 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
     if [[ true = ${SYNCSTAGE1} ]] || [[ true = ${SYNCALL} ]]; then
         while [[ -e ${UPDATEREQUIRED} ]]; do
             rm -f "${UPDATEREQUIRED}"
-            log "Running stage1: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE}  ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
-
-            set +e
             # Step one, sync everything except Packages/Releases
             rsync_started=$(date +%s)
-            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE} \
-                ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
-            result=$?
+            result=0
+            run_rsync "stage1" ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE} || result=$?
             rsync_ended=$(date +%s)
             STATS_TOTAL_RSYNC_TIME1=$(( STATS_TOTAL_RSYNC_TIME1 + rsync_ended - rsync_started ))
-            set -e
 
             log "Back from rsync with returncode ${result}"
         done
@@ -687,18 +692,13 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
                 result=1
             fi
         else
-            log "Running stage2: ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} ${RSYNCPTH}::${RSYNC_PATH} ${TO}"
-
-            set +e
             # We are lucky, it worked. Now do step 2 and sync again, this time including
             # the packages/releases files
             rsync_started=$(date +%s)
-            ${RSYNC} ${RSYNC_SSL_OPTIONS} ${RSYNC_OPTIONS} ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} \
-                ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error"
-            result=$?
+            result=0
+            run_rsync "stage2" ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} || result=$?
             rsync_ended=$(date +%s)
             STATS_TOTAL_RSYNC_TIME2=$(( STATS_TOTAL_RSYNC_TIME2 + rsync_ended - rsync_started ))
-            set -e
 
             log "Back from rsync with returncode ${result}"
         fi
