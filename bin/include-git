@@ -6,6 +6,6 @@ CONFDIR="${BASEDIR}/etc"
 LOCKDIR="${BASEDIR}/locks"
 LOGDIR="${BASEDIR}/log"
 
-VERSION="g$(cd $BASEDIR && git rev-parse --short HEAD 2>/dev/null || echo "unknown")"
+VERSION="g$(cd $BINDIR && git rev-parse --short HEAD 2>/dev/null || echo "unknown")"
 
 . "${BINDIR}/common"
