@@ -2,7 +2,7 @@
 # vim:syn=sh
 
 BINDIR=$(dirname $(readlink -f "$0"))
-BASEDIR=$(readlink -f "${BINDIR}/..")
+BASEDIR=${BASEDIR:-"$(readlink -f $(dirname "$0")/..)"}
 CONFDIR="${BASEDIR}/etc"
 LOCKDIR="${BASEDIR}/locks"
 LOGDIR="${BASEDIR}/log"
