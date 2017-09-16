@@ -16,7 +16,7 @@ function send_mail_new_version() {
             [[ ${LATEST} -gt ${VERSION} ]]; then
             if [[ -n ${MAILTO} ]]; then
                 interval=$((7 * 24 * 3600))
-                difference=0
+                difference=$interval
                 if [[ -f ${LOGDIR}/ftpsync.newversion ]]; then
                     stamptime=$(< "${LOGDIR}/ftpsync.newversion")
                     unixtime=$(date +%s)
