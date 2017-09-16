@@ -408,20 +408,23 @@ EXTENDEDTRACE=${EXTENDEDTRACE:-"full"}
 # The local hostname to be written to the trace file.
 TRACEHOST=${TRACEHOST:-$(hostname -f)}
 
+_TRACE_FILES=(
+  "${LOCK_NAME}"
+  "${UPDATEREQUIRED_NAME}"
+  "${TRACE}"
+  "${TRACE}-stage1"
+  "${TRACEHIERARCHY}"
+  "${TRACELIST}"
+)
+
 # rsync program
 RSYNC=${RSYNC:-rsync}
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
-_RSYNC_FILTER_TRACE=(
-  "--filter=protect_${LOCK_NAME}"
-  "--filter=protect_${UPDATEREQUIRED_NAME}"
-  "--filter=protect_${TRACE}"
-  "--filter=protect_${TRACE}-stage1"
-  "--exclude=${TRACEHIERARCHY}"
-  "--filter=protect_${TRACEHIERARCHY}"
-  "--exclude=${TRACELIST}"
-  "--filter=protect_${TRACELIST}"
-)
+declare -a _RSYNC_FILTER_TRACE
+for i in ${_TRACE_FILES[@]}; do
+  _RSYNC_FILTER_TRACE+=("--filter=exclude_${i}" "--filter=protect_${i}")
+done
 # limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
 RSYNC_BW=${RSYNC_BW:-0}
 RSYNC_PROTOCOL=$(rsync_protocol)
