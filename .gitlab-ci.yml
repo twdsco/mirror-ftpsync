@@ -39,6 +39,11 @@
     - cat root/project/trace/localhost
     - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+  artifacts:
+    paths:
+      - log
+      - root
+    when: always
 
 test stretch:
   <<: *TEST-DEBIAN
@@ -74,6 +79,11 @@ test wheezy:
     - cat root/project/trace/localhost
     - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+  artifacts:
+    paths:
+      - log
+      - root
+    when: always
 
 test stretch real:
   <<: *TEST-DEBIAN-REAL
