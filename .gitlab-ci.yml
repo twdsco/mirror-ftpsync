@@ -1,5 +1,4 @@
-test:
-  image: debian:stable
+.test debian: &TEST-DEBIAN
   variables:
     FTPSYNC_CONF: |
       TO=root
@@ -37,3 +36,11 @@ test:
     - cat root/project/trace/localhost
     - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+
+test stretch:
+  <<: *TEST-DEBIAN
+  image: debian:stretch
+
+test wheezy:
+  <<: *TEST-DEBIAN
+  image: debian:wheezy
