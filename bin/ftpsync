@@ -173,7 +173,7 @@ tracefile() {
         echo "Date-Started: ${DATE_STARTED}"
 
         if [[ -e $TRACEFILE_MASTER ]]; then
-            echo "Archive serial: $(awk -F': ' ' $1=="Archive serial" {print $2}' $TRACEFILE_MASTER || echo unknown )"
+            echo "Archive serial: $(extract_trace_serial $TRACEFILE_MASTER || echo unknown )"
         fi
 
         echo "Used ftpsync version: ${VERSION}"

@@ -273,6 +273,12 @@ rsync_protocol() {
     unset RSYNC_VERSION RSYNC_REGEX
 }
 
+extract_trace_serial() {
+    local serial=$(awk -F': ' ' $1=="Archive serial" {print $2}' "$@" 2>/dev/null)
+    [[ $serial ]] || return 1
+    echo $serial
+}
+
 # Search config files in various locations
 search_config() {
   local file
