@@ -1,18 +1,21 @@
+.variables: &VARIABLES
+  FTPSYNC_CONF: |
+    TO=root
+    RSYNC=true
+    RSYNC_HOST=localhost
+    MIRRORNAME=localhost
+    INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
+    INFO_SPONSOR="Example <https://example.com>"
+    INFO_COUNTRY=DE
+    INFO_LOCATION=Example
+    INFO_THROUGHPUT=10Gb
+  RUNMIRRORS_CONF: |
+    KEYFILE=~/key
+  SSH_KEY: |
+
 .test debian: &TEST-DEBIAN
   variables:
-    FTPSYNC_CONF: |
-      TO=root
-      RSYNC=true
-      RSYNC_HOST=localhost
-      MIRRORNAME=localhost
-      INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
-      INFO_SPONSOR="Example <https://example.com>"
-      INFO_COUNTRY=DE
-      INFO_LOCATION=Example
-      INFO_THROUGHPUT=10Gb
-    RUNMIRRORS_CONF: |
-      KEYFILE=~/key
-    SSH_KEY: |
+    <<: *VARIABLES
   script:
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
     - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
@@ -44,3 +47,27 @@ test stretch:
 test wheezy:
   <<: *TEST-DEBIAN
   image: debian:wheezy
+
+.test simple: &TEST-SIMPLE
+  variables:
+    <<: *VARIABLES
+  script:
+    - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
+    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
+    - echo "$SSH_KEY" > ~/key
+    - bin/ftpsync -T test || e_ftpsync=$?
+    - bin/runmirrors || e_runmirrors=$?
+    - ls -alR log root
+    - cat root/project/trace/localhost
+    - cat log/ftpsync.log* || true
+    - cat log/runmirrors.log* || true
+    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
+    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+
+test centos6:
+  <<: *TEST-SIMPLE
+  image: centos:centos6
+
+test centos7:
+  <<: *TEST-SIMPLE
+  image: centos:centos7
