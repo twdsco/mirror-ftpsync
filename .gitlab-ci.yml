@@ -48,6 +48,37 @@ test wheezy:
   <<: *TEST-DEBIAN
   image: debian:wheezy
 
+.test debian real: &TEST-DEBIAN-REAL
+  variables:
+    <<: *VARIABLES
+    FTPSYNC_CONF: |
+      TO=root
+      RSYNC_HOST=security.debian.org
+      RSYNC_PATH=debian-security
+      MIRRORNAME=localhost
+      RSYNC_OPTIONS="-prltvHSB8192 --chmod=D755,F644 --timeout 60 --stats --exclude=*"
+      INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
+      INFO_SPONSOR="Example <https://example.com>"
+      INFO_COUNTRY=DE
+      INFO_LOCATION=Example
+      INFO_THROUGHPUT=10Gb
+  script:
+    - apt-get update
+    - apt-get install --yes --no-install-recommends curl git rsync
+    - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
+    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
+    - echo "$SSH_KEY" > ~/key
+    - bash bin/ftpsync-cron || e_ftpsync=$?
+    - bash bin/runmirrors || e_runmirrors=$?
+    - ls -al root/project/trace/
+    - cat root/project/trace/localhost
+    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
+    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+
+test stretch real:
+  <<: *TEST-DEBIAN-REAL
+  image: debian:stretch
+
 .test simple: &TEST-SIMPLE
   variables:
     <<: *VARIABLES
