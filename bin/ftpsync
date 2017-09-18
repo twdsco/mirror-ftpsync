@@ -423,7 +423,7 @@ RSYNC=${RSYNC:-rsync}
 # excluded files
 declare -a _RSYNC_FILTER_TRACE
 for i in ${_TRACE_FILES[@]}; do
-  _RSYNC_FILTER_TRACE+=("--filter=exclude_${i}" "--filter=protect_${i}")
+  _RSYNC_FILTER_TRACE+=("--filter=exclude_/${i}" "--filter=protect_/${i}")
 done
 _RSYNC_FILTER_TRACE+=(
   "--filter=include_/project/"
