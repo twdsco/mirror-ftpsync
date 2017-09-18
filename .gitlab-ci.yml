@@ -28,17 +28,6 @@
     - cat log/runmirrors.log* || true
     - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
-
-    - apt-get update
-    - apt-get install --yes --no-install-recommends dpkg-dev git make
-    - make
-    - echo "$FTPSYNC_CONF" > etc/ftpsync.install-tar.conf
-    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.install-tar.conf
-    - bash bin/ftpsync.install-tar -T test || e_ftpsync=$?
-    - bash bin/runmirrors.install-tar || e_runmirrors=$?
-    - cat root/project/trace/localhost
-    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
-    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
   artifacts:
     paths:
       - log
