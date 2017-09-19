@@ -1,30 +1,13 @@
-.variables: &VARIABLES
-  FTPSYNC_CONF: |
-    TO=root
-    RSYNC_HOST=localhost
-    MIRRORNAME=localhost
-    INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
-    INFO_SPONSOR="Example <https://example.com>"
-    INFO_COUNTRY=DE
-    INFO_LOCATION=Example
-    INFO_THROUGHPUT=10Gb
-  RUNMIRRORS_CONF: |
-    KEYFILE=~/key
-  SSH_KEY: |
-
 .test debian: &TEST-DEBIAN
-  variables:
-    <<: *VARIABLES
   script:
     - apt-get update > /dev/null
     - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
 
-    - ln -s $(pwd)/test/simple/rsyncd /rsyncd
-    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/test/simple/etc/rsyncd.conf
+    - cd test/simple
+    - ln -s $(pwd)/rsyncd /rsyncd
+    - echo "" > ~/key
 
-    - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
-    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
-    - echo "$SSH_KEY" > ~/key
+    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/etc/rsyncd.conf
     - bin/ftpsync -T test || e_ftpsync=$?
     - bin/runmirrors || e_runmirrors=$?
     - ls -alR log root
@@ -35,8 +18,8 @@
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
   artifacts:
     paths:
-      - log
-      - root
+      - test/simple/log
+      - test/simple/root
     when: always
 
 test stretch:
@@ -47,57 +30,37 @@ test wheezy:
   <<: *TEST-DEBIAN
   image: debian:wheezy
 
-.test debian real: &TEST-DEBIAN-REAL
-  variables:
-    <<: *VARIABLES
-    FTPSYNC_CONF: |
-      TO=root
-      RSYNC_HOST=security.debian.org
-      RSYNC_PATH=debian-security
-      MIRRORNAME=localhost
-      RSYNC_OPTIONS="-prltvHSB8192 --chmod=D755,F644 --timeout 60 --stats --exclude=*"
-      INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
-      INFO_SPONSOR="Example <https://example.com>"
-      INFO_COUNTRY=DE
-      INFO_LOCATION=Example
-      INFO_THROUGHPUT=10Gb
+.test debian security: &TEST-DEBIAN-SECURITY
   script:
     - apt-get update > /dev/null
     - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
-    - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
-    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
-    - echo "$SSH_KEY" > ~/key
-    - bash bin/ftpsync-cron || e_ftpsync=$?
-    - bash bin/ftpsync-cron || e_ftpsync=$?
-    - bash bin/runmirrors || e_runmirrors=$?
+
+    - cd test/security
+
+    - bin/ftpsync-cron security
+    - bin/ftpsync-cron security
     - ls -alR log root
     - cat root/project/trace/localhost
     - cat log/ftpsync.log* || true
-    - cat log/runmirrors.log* || true
-    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
-    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
   artifacts:
     paths:
-      - log
-      - root
+      - test/security/log
+      - test/security/root
     when: always
 
-test stretch real:
-  <<: *TEST-DEBIAN-REAL
+test stretch security:
+  <<: *TEST-DEBIAN-SECURITY
   image: debian:stretch
 
 .test redhat: &TEST-REDHAT
-  variables:
-    <<: *VARIABLES
   script:
     - yum install -y curl git rsync > /dev/null
 
-    - ln -s $(pwd)/test/simple/rsyncd /rsyncd
-    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/test/simple/etc/rsyncd.conf
+    - cd test/simple
+    - ln -s $(pwd)/rsyncd /rsyncd
+    - echo "" > ~/key
 
-    - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
-    - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
-    - echo "$SSH_KEY" > ~/key
+    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/etc/rsyncd.conf
     - bin/ftpsync -T test || e_ftpsync=$?
     - bin/runmirrors || e_runmirrors=$?
     - ls -alR log root
