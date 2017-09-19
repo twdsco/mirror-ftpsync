@@ -1,7 +1,6 @@
 .variables: &VARIABLES
   FTPSYNC_CONF: |
     TO=root
-    RSYNC=true
     RSYNC_HOST=localhost
     MIRRORNAME=localhost
     INFO_MAINTAINER="Admins <admins@example.com>, Person <person@example.com>"
@@ -17,6 +16,12 @@
   variables:
     <<: *VARIABLES
   script:
+    - apt-get update > /dev/null
+    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
+
+    - ln -s $(pwd)/test/simple/rsyncd /rsyncd
+    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/test/simple/etc/rsyncd.conf
+
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
     - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
     - echo "$SSH_KEY" > ~/key
@@ -81,10 +86,15 @@ test stretch real:
   <<: *TEST-DEBIAN-REAL
   image: debian:stretch
 
-.test simple: &TEST-SIMPLE
+.test redhat: &TEST-REDHAT
   variables:
     <<: *VARIABLES
   script:
+    - yum install -y curl git rsync > /dev/null
+
+    - ln -s $(pwd)/test/simple/rsyncd /rsyncd
+    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/test/simple/etc/rsyncd.conf
+
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
     - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
     - echo "$SSH_KEY" > ~/key
@@ -98,9 +108,9 @@ test stretch real:
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
 
 test centos6:
-  <<: *TEST-SIMPLE
+  <<: *TEST-REDHAT
   image: centos:centos6
 
 test centos7:
-  <<: *TEST-SIMPLE
+  <<: *TEST-REDHAT
   image: centos:centos7
