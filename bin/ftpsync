@@ -427,7 +427,9 @@ for i in ${_TRACE_FILES[@]}; do
 done
 _RSYNC_FILTER_TRACE+=(
   "--filter=include_/project/"
+  "--filter=protect_/project/"
   "--filter=include_/project/trace/"
+  "--filter=protect_/project/trace/"
   "--filter=include_/project/trace/*"
 )
 # limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
