@@ -2,6 +2,7 @@
 set -euE
 
 BINDIR=$(dirname $(readlink -f "$0")); . "${BINDIR}/include-git" ## INCLUDE COMMON
+export BASEDIR
 
 ARCHIVE=${1:-}
 CONFIG="ftpsync${ARCHIVE:+-$ARCHIVE}.conf"
