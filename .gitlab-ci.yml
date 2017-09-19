@@ -57,8 +57,8 @@ test wheezy:
       INFO_LOCATION=Example
       INFO_THROUGHPUT=10Gb
   script:
-    - apt-get update
-    - apt-get install --yes --no-install-recommends curl git rsync
+    - apt-get update > /dev/null
+    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
     - echo "$FTPSYNC_CONF" > etc/ftpsync.conf
     - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
     - echo "$SSH_KEY" > ~/key
