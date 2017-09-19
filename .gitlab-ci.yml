@@ -1,8 +1,5 @@
-.test debian: &TEST-DEBIAN
+.test simple: &TEST-SIMPLE
   script:
-    - apt-get update > /dev/null
-    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
-
     - cd test/simple
     - ln -s $(pwd)/rsyncd /rsyncd
     - echo "" > ~/key
@@ -22,19 +19,8 @@
       - test/simple/root
     when: always
 
-test stretch:
-  <<: *TEST-DEBIAN
-  image: debian:stretch
-
-test wheezy:
-  <<: *TEST-DEBIAN
-  image: debian:wheezy
-
-.test debian security: &TEST-DEBIAN-SECURITY
+.test security: &TEST-SECURITY
   script:
-    - apt-get update > /dev/null
-    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
-
     - cd test/security
 
     - bin/ftpsync-cron security
@@ -48,32 +34,36 @@ test wheezy:
       - test/security/root
     when: always
 
-test stretch security:
-  <<: *TEST-DEBIAN-SECURITY
-  image: debian:stretch
+.test debian: &TEST-DEBIAN
+  before_script:
+    - apt-get update > /dev/null
+    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends curl git rsync > /dev/null
 
 .test redhat: &TEST-REDHAT
-  script:
+  before_script:
     - yum install -y curl git rsync > /dev/null
 
-    - cd test/simple
-    - ln -s $(pwd)/rsyncd /rsyncd
-    - echo "" > ~/key
+test stretch:
+  <<: *TEST-DEBIAN
+  <<: *TEST-SIMPLE
+  image: debian:stretch
 
-    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/etc/rsyncd.conf
-    - bin/ftpsync -T test || e_ftpsync=$?
-    - bin/runmirrors || e_runmirrors=$?
-    - ls -alR log root
-    - cat root/project/trace/localhost
-    - cat log/ftpsync.log* || true
-    - cat log/runmirrors.log* || true
-    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
-    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+test wheezy:
+  <<: *TEST-DEBIAN
+  <<: *TEST-SIMPLE
+  image: debian:wheezy
+
+test stretch security:
+  <<: *TEST-DEBIAN
+  <<: *TEST-SECURITY
+  image: debian:stretch
 
 test centos6:
   <<: *TEST-REDHAT
+  <<: *TEST-SIMPLE
   image: centos:centos6
 
 test centos7:
   <<: *TEST-REDHAT
+  <<: *TEST-SIMPLE
   image: centos:centos7
