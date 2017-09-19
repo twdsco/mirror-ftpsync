@@ -120,13 +120,7 @@ REGEX_URL='^([a-z.+]+)://(([^@/]+)@)?([^/]+)(/.*)?$'
 savelog "${LOG}" > /dev/null
 
 # where to send mails to
-if [[ $(hostname -d) != debian.org ]]; then
-    # We are not on a debian.org host
-    MAILTO=${MAILTO:-"root"}
-else
-    # Yay, on a .debian.org host
-    MAILTO=${MAILTO:-"mirrorlogs@debian.org"}
-fi
+MAILTO=${MAILTO:-"root"}
 
 if ! [[ -f ${KEYFILE_ABS} ]]; then
     error "SSH Key ${KEYFILE_ABS} does not exist" >> "${LOG}"
