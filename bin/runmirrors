@@ -123,7 +123,7 @@ savelog "${LOG}" > /dev/null
 MAILTO=${MAILTO:-"root"}
 
 if ! [[ -f ${KEYFILE_ABS} ]]; then
-    error "SSH Key ${KEYFILE_ABS} does not exist" >> "${LOG}"
+    error "SSH Key ${KEYFILE} does not exist" >> "${LOG}"
     exit 5
 fi
 
