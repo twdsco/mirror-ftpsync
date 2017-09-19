@@ -63,6 +63,7 @@ test wheezy:
     - echo "$RUNMIRRORS_CONF" > etc/runmirrors.conf
     - echo "$SSH_KEY" > ~/key
     - bash bin/ftpsync-cron || e_ftpsync=$?
+    - bash bin/ftpsync-cron || e_ftpsync=$?
     - bash bin/runmirrors || e_runmirrors=$?
     - ls -al root/project/trace/
     - cat root/project/trace/localhost
