@@ -65,8 +65,10 @@ test wheezy:
     - bash bin/ftpsync-cron || e_ftpsync=$?
     - bash bin/ftpsync-cron || e_ftpsync=$?
     - bash bin/runmirrors || e_runmirrors=$?
-    - ls -al root/project/trace/
+    - ls -alR log root
     - cat root/project/trace/localhost
+    - cat log/ftpsync.log* || true
+    - cat log/runmirrors.log* || true
     - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
     - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
   artifacts:
