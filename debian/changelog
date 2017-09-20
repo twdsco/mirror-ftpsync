@@ -1,8 +1,13 @@
-archvsync (20170913) UNRELEASED; urgency=medium
+archvsync (20170920) unstable; urgency=medium
 
   * Make sure source tar is pretty clean. (closes: #875702)
+  * Fix new version nag. (Closes: #865278)
+  * Force permissions of files.
+  * Make sure own trace files are never overwriten.
+  * Check only the archive serial in cron wrapper.
+  * Set default MAILTO to the current user.
 
- -- Bastian Blank <waldi@debian.org>  Thu, 14 Sep 2017 19:08:56 +0200
+ -- Bastian Blank <waldi@debian.org>  Wed, 20 Sep 2017 14:22:39 +0200
 
 archvsync (20170912) unstable; urgency=medium
 
