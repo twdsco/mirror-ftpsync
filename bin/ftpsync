@@ -200,7 +200,8 @@ tracefile() {
         fi
 
         if [[ -d ${TO}/dists ]]; then
-            ARCH=$(find ${TO}/dists -name 'Packages.*' -printf '%h\n' 2>/dev/null | sed -Ene 's#.*/binary-([^/]+)$#\1#p' | sort -u | tr '\n' ' ')
+            ARCH=$(find ${TO}/dists \( -name 'Packages.*' -o -name 'Sources.*' \) -printf '%h\n' 2>/dev/null |
+                sed -Ene 's#.*/binary-([^/]+)$#\1#p; s#.*/(source)$#\1#p' | sort -u | tr '\n' ' ')
             if [[ $ARCH ]]; then
                 echo "Architectures: ${ARCH}"
             fi
