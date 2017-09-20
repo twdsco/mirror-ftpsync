@@ -14,7 +14,7 @@ if ! read_config "${CONFIG}"; then
     exit 1
 fi
 
-MAILTO="${MAILTO:-root}"
+MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
 MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
 LOCK=${LOCK:-"${TO}/Archive-Update-in-Progress-${MIRRORNAME}"}
 RSYNC_PATH="${RSYNC_PATH:-debian}"
