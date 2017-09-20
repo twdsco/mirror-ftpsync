@@ -362,7 +362,7 @@ TO=${TO:-"/srv/mirrors/debian/"}
 PROGRAM=${PROGRAM:-"${NAME}"}
 
 # Where to send mails about mirroring to?
-MAILTO=${MAILTO:-"root"}
+MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
 # Want errors only or every log?
 ERRORSONLY=${ERRORSONLY:-"true"}
 # Want full logs, ie. including the rsync one?

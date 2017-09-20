@@ -1,4 +1,6 @@
 .test simple: &TEST-SIMPLE
+  variables:
+    LOGNAME: root
   script:
     - cd test/simple
     - ln -s $(pwd)/rsyncd /rsyncd
@@ -20,6 +22,8 @@
     when: always
 
 .test security: &TEST-SECURITY
+  variables:
+    LOGNAME: root
   script:
     - cd test/security
 

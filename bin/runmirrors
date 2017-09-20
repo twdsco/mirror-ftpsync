@@ -120,7 +120,7 @@ REGEX_URL='^([a-z.+]+)://(([^@/]+)@)?([^/]+)(/.*)?$'
 savelog "${LOG}" > /dev/null
 
 # where to send mails to
-MAILTO=${MAILTO:-"root"}
+MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
 
 if ! [[ -f ${KEYFILE_ABS} ]]; then
     error "SSH Key ${KEYFILE} does not exist" >> "${LOG}"
