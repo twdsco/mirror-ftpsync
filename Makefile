@@ -28,8 +28,8 @@ bin/%.install-tar: bin/% bin/common bin/include-tar
 		-e '};' \
 		$< > $@
 
-doc/%: doc/%.txt
-	a2x --doctype manpage --format manpage --no-xmllint $<
+doc/%: doc/%.md
+	pandoc -s -t man -o $@ $<
 
 install:
 	install -d ${DESTDIR}/${bindir} ${DESTDIR}/${examplesdir} ${DESTDIR}/${man1dir}

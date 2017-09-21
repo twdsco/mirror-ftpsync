@@ -5,9 +5,7 @@ Maintainer: Debian Mirror Team <mirrors@debian.org>
 Uploaders: Bastian Blank <waldi@debian.org>
 Build-Depends:
   debhelper (>= 9),
-  asciidoc-base,
-  docbook-xml,
-  docbook-xsl,
+  pandoc,
 Standards-Version: 3.9.8
 Vcs-Git: https://anonscm.debian.org/git/mirror/archvsync.git
 Vcs-Browser: https://anonscm.debian.org/cgit/mirror/archvsync.git

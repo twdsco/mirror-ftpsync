@@ -1,18 +1,14 @@
-:man source:   ftpsync
-:man manual:   ftpsync Manual
-ftpsync-cron(1)
-===============
+% FTPSYNC-CRON(1)
+% Debian mirror team
+% ftpsync Manual
 
-NAME
-----
+# NAME
 ftpsync-cron - Wrapper around ftpsync for use in cron(8)
 
-SYNOPSIS
---------
+# SYNOPSIS
 **ftpsync-cron** [__ARCHIVE__]
 
-DESCRIPTION
------------
+# DESCRIPTION
 
 **ftpsync-cron** is part of the ftpsync suite for mirroring Debian and Debian-like
 repositories of packages.  As there are way too many mirrors of Debian to populate
@@ -29,14 +25,12 @@ trace file via HTTP and compares it to the version on disk from the last mirror
 run, thus learning whether the upstream mirror has updated.  If it has,
 **ftpsync** is triggered.
 
-EXAMPLE
--------
+# EXAMPLE
 
 Example use in a user crontab:
 
   SHELL=/bin/bash
   31 * * * * sleep $(( RANDOM %% 1800 )) && ./bin/ftpsync-cron
 
-SEE ALSO
---------
+# SEE ALSO
 **ftpsync**(1) +

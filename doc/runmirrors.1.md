@@ -1,18 +1,14 @@
-:man source:   ftpsync
-:man manual:   ftpsync Manual
-runmirrors(1)
-=============
+% RUNMIRRORS(1)
+% Debian mirror team
+% ftpsync Manual
 
-NAME
-----
+# NAME
 runmirrors - Trigger downstream mirrors
 
-SYNOPSIS
---------
+# SYNOPSIS
 **runmirrors**
 
-DESCRIPTION
------------
+# DESCRIPTION
 
 **runmirrors** is part of the ftpsync suite for mirroring Debian and Debian-like
 repositories of packages.  As there are way too many mirrors of Debian to populate
@@ -21,6 +17,5 @@ organized in a tree-shaped hierarchy.  Thus, every mirror has exactly one upstre
 from which it syncs, and each mirror can have any number of downstreams which in
 turn sync from it.
 
-SEE ALSO
---------
+# SEE ALSO
 **ftpsync**(1) +
