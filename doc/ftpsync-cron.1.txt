@@ -1,5 +1,5 @@
 :man source:   ftpsync
-:man manual:   Tor Manual
+:man manual:   ftpsync Manual
 ftpsync-cron(1)
 ===============
 

@@ -1,4 +1,5 @@
 /bin/*.install*
+/doc/*.1
 /etc/*.conf
 /etc/*.mirror
 /locks
