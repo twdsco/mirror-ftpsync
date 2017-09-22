@@ -102,7 +102,7 @@ signal () {
         if [[ stage2 != ${PUSHKIND} ]]; then
             # Step1: Do a push to only sync stage1, do not background
             PUSHARGS1="sync:stage1"
-            signal_ssh "staged" "${MIRROR}" "${HOSTNAME}" $SSH_OPTIONS "${PUSHARGS} ${PUSHARGS1}"
+            signal_ssh "first stage" "${MIRROR}" "${HOSTNAME}" $SSH_OPTIONS "${PUSHARGS} ${PUSHARGS1}"
             touch "${PUSHLOCKOWN}"
 
             # Step2: Wait for all the other "lock"files to appear.
@@ -145,12 +145,12 @@ signal_ssh() {
     local hostname=$3
     shift 3
 
-    log "Sending ${t} push" >> $mirror_log
-    ssh -n $hostname "$@" >> $mirror_log 2>&1
+    log "Sending ${t} trigger" >> $mirror_log
+    output=$(ssh -n $hostname "$@" 2>&1 | tee -a $mirror_log)
     if [[ $? -eq 255 ]]; then
-        error "Trigger to $hostname failed"  >> "${LOG}"
+        error_mailf "${t} trigger failed: $hostname" -b "$output"  >> "${LOG}"
     else
-        log "Trigger to $hostname succeed" >> "${LOG}"
+        log "${t} trigger succeeded: $hostname" >> "${LOG}"
     fi
 }
 
@@ -209,6 +209,16 @@ error () {
     if [[ -n "${MAILTO}" ]]; then
         echo "$@" | mailx -e -s "[$PROGRAM@$(hostname -s)] ERROR [$$]" ${MAILTO}
     fi
+}
+
+# log the message using log() but then also send a mail
+# to the address configured in MAILTO (if non-empty)
+error_mailf () {
+    local m="$1"
+    shift
+    log "$m"
+    LOG_ERROR=1
+    mailf -s "[$PROGRAM@$(hostname -s)] ERROR: $m" "$@" ${MAILTO}
 }
 
 # run a hook
