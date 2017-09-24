@@ -31,12 +31,16 @@ bin/%.install-tar: bin/% bin/common bin/include-tar
 doc/%: doc/%.md
 	pandoc -s -t man -o $@ $<
 
+define install_bin
+install bin/ftpsync.$(1) $(2)/ftpsync
+install bin/ftpsync-cron.$(1) $(2)/ftpsync-cron
+install bin/rsync-ssl-tunnel.$(1) $(2)/rsync-ssl-tunnel
+install bin/runmirrors.$(1) $(2)/runmirrors
+endef
+
 install:
 	install -d ${DESTDIR}/${bindir} ${DESTDIR}/${examplesdir} ${DESTDIR}/${man1dir}
-	install bin/ftpsync.install ${DESTDIR}/${bindir}/ftpsync
-	install bin/ftpsync-cron.install ${DESTDIR}/${bindir}/ftpsync-cron
-	install bin/rsync-ssl-tunnel.install ${DESTDIR}/${bindir}/rsync-ssl-tunnel
-	install bin/runmirrors.install ${DESTDIR}/${bindir}/runmirrors
+	$(call install_bin,install,${DESTDIR}/${bindir})
 	install -m644 \
 		README.md \
 		${DESTDIR}/${docdir}
@@ -49,10 +53,7 @@ install:
 
 install-tar:
 	install -d ${DESTDIR}/bin ${DESTDIR}/doc ${DESTDIR}/etc ${DESTDIR}/log
-	install bin/ftpsync.install-tar ${DESTDIR}/bin/ftpsync
-	install bin/ftpsync-cron.install-tar ${DESTDIR}/bin/ftpsync-cron
-	install bin/rsync-ssl-tunnel.install-tar ${DESTDIR}/bin/rsync-ssl-tunnel
-	install bin/runmirrors.install ${DESTDIR}/bin/runmirrors
+	$(call install_bin,install-tar,${DESTDIR}/bin/)
 	install -m644 \
 		README.md \
 		${DESTDIR}
