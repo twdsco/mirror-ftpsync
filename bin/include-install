@@ -1,0 +1,4 @@
+# -*- mode:sh -*-
+# vim:syn=sh
+
+CONFDIRS=(~/.config/ftpsync /etc/ftpsync)

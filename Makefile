@@ -15,6 +15,7 @@ bin/%.install: bin/% bin/common
 	sed -r \
 		-e '/## INCLUDE COMMON$$/ {' \
 		-e 'r bin/common' \
+		-e 'r bin/include-install' \
 		-e 'c VERSION="${DEB_VERSION}"' \
 		-e '};' \
 		$< > $@

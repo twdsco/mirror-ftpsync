@@ -282,14 +282,7 @@ extract_trace_serial() {
 # Search config files in various locations
 search_config() {
   local file
-  if [ "${CONFDIR:-}" ]; then
-    file="$CONFDIR/$1"
-    if [ -f "$file" ]; then
-      echo "$file"
-      return
-    fi
-  fi
-  for i in ~/.config/ftpsync /etc/ftpsync; do
+  for i in ${CONFDIRS[@]}; do
     file="$i/$1"
     if [ -f "$file" ]; then
       echo "$file"
