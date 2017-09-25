@@ -39,7 +39,6 @@ automatically.
 
 Common names used in the Debian mirror network are:
 * standard debian archive:	default empty $ARCHIVE (ftpsync.conf)
-* debian-backports archive:	ARCHIVE=backports (ftpsync-backports.conf)
 * debian-ports archive:		ARCHIVE=ports (ftpsync-ports.conf)
 * debian-security archive:	ARCHIVE=security (ftpsync-security.conf)
 
