@@ -2,3 +2,5 @@
 # vim:syn=sh
 
 CONFDIRS=(~/.config/ftpsync /etc/ftpsync)
+LOCKDIR=~/.local/lock/ftpsync
+LOGDIR=~/.local/log/ftpsync
