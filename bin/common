@@ -306,8 +306,10 @@ read_config() {
     . "$config"
     CURRENT_CONFIG="$config"
     return 0
+  else
+    echo "Can't read config file ${name}!" >&2
+    exit 1
   fi
-  return 1
 }
 
 # Create lock dir

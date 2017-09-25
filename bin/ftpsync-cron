@@ -9,10 +9,7 @@ CONFIG="ftpsync${ARCHIVE:+-$ARCHIVE}.conf"
 NAME=ftpsync-cron
 PROGRAM=ftpsync-cron
 
-if ! read_config "${CONFIG}"; then
-    echo "Config ${CONFIG} not found!"
-    exit 1
-fi
+read_config "${CONFIG}"
 
 MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
 MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
