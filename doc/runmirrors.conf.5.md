@@ -1,12 +1,9 @@
-% FTPSYNC(1)
+% RUNMIRRORS.CONF(5)
 % Debian mirror team
 % ftpsync Manual
 
 # NAME
-ftpsync - Mirror Debian and Debian-like repositories of packages
-
-# SYNOPSIS
-**ftpsync**
+runmirrors.conf - Configuration for runmirrors
 
 # DESCRIPTION
 
@@ -17,5 +14,7 @@ organized in a tree-shaped hierarchy.  Thus, every mirror has exactly one upstre
 from which it syncs, and each mirror can have any number of downstreams which in
 turn sync from it.
 
+# OPTIONS
+
 # SEE ALSO
-**ftpsync.conf**(5) +
+**runmirrors**(1)

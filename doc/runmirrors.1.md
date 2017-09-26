@@ -18,4 +18,4 @@ from which it syncs, and each mirror can have any number of downstreams which in
 turn sync from it.
 
 # SEE ALSO
-**ftpsync**(1) +
+**ftpsync**(1), **runmirrors.conf**(5), **runmirrors.mirror**(5)
