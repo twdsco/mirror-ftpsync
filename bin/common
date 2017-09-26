@@ -386,5 +386,5 @@ EOF
         cat <<EOF
 --${boundary}--
 EOF
-    ) | /usr/sbin/sendmail -i -- "$@"
+    ) | /usr/sbin/sendmail -i -- "$@" || :
 }
