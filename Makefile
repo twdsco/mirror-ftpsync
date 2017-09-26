@@ -66,7 +66,7 @@ install-tar:
 		etc/runmirrors.conf.sample \
 		etc/runmirrors.mirror.sample \
 		${DESTDIR}/etc
-	install -m644 ${MAN1:%=doc/%.1} ${MAN5:%=doc/%.5} ${DESTDIR}/doc
+	install -m644 ${MAN1:%=doc/%.1.md} ${MAN5:%=doc/%.5.md} ${DESTDIR}/doc
 
 clean:
 	rm -f $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)
