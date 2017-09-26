@@ -38,10 +38,10 @@ function cmp_trace() {
         exit $ret
     fi
 
-    if ! serial_remote=$(extract_trace_serial <<< $trace); then
+    if ! serial_remote=$(extract_trace_serial_string "$trace"); then
         error "Failed to parse archive serial from $trace_uri"
         exit 1
-    elif ! serial_local=$(extract_trace_serial $trace_local); then
+    elif ! serial_local=$(extract_trace_serial "$trace_local"); then
         return 1
     elif [[ $serial_remote != $serial_local ]]; then
         return 1

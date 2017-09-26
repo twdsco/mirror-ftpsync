@@ -281,7 +281,13 @@ rsync_protocol() {
 }
 
 extract_trace_serial() {
-    local serial=$(awk -F': ' ' $1=="Archive serial" {print $2}' "$@" 2>/dev/null)
+    local serial=$(awk -F': ' ' $1=="Archive serial" {print $2}' "$1" 2>/dev/null)
+    [[ $serial ]] || return 1
+    echo $serial
+}
+
+extract_trace_serial_string() {
+    local serial=$(awk -F': ' ' $1=="Archive serial" {print $2}' <<< "$1" 2>/dev/null)
     [[ $serial ]] || return 1
     echo $serial
 }
