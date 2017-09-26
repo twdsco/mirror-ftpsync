@@ -206,9 +206,7 @@ log () {
 error () {
     log "$@"
     LOG_ERROR=1
-    if [[ -n "${MAILTO}" ]]; then
-        echo "$@" | mailx -e -s "[$PROGRAM@$(hostname -s)] ERROR [$$]" ${MAILTO}
-    fi
+    mailf -s "[$PROGRAM@$(hostname -s)] ERROR: $*" -b "$*" ${MAILTO}
 }
 
 # log the message using log() but then also send a mail

@@ -24,8 +24,7 @@ function send_mail_new_version() {
                 fi
                 if [[ ${difference} -ge $interval ]]; then
                     # Only warn every seventh day
-                    mailx -s "[$(hostname -s)] Update for ftpsync available" ${MAILTO} <<EOF
-Hello admin,
+                    mailf -s "[$(hostname -s)] Update for ftpsync available" -b "Hello admin,
 
 i found that there is a new version of me available.
 Me lonely ftpsync is currently version: ${VERSION}
@@ -39,7 +38,7 @@ You can ensure the validity of that file by using sha512sum or md5sum
 against the available checksum files secured with a signature from the
 Debian FTPMaster signing key.
 
-EOF
+" ${MAILTO}
 
                     date +%s > "${LOGDIR}/ftpsync.newversion"
                 fi
