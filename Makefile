@@ -35,38 +35,33 @@ doc/%: doc/%.md
 	pandoc -s -t man -o $@ $<
 
 define install_bin
-install bin/ftpsync.$(1) $(2)/ftpsync
-install bin/ftpsync-cron.$(1) $(2)/ftpsync-cron
-install bin/rsync-ssl-tunnel.$(1) $(2)/rsync-ssl-tunnel
-install bin/runmirrors.$(1) $(2)/runmirrors
+install -D bin/ftpsync.$(1) $(2)/ftpsync
+install -D bin/ftpsync-cron.$(1) $(2)/ftpsync-cron
+install -D bin/rsync-ssl-tunnel.$(1) $(2)/rsync-ssl-tunnel
+install -D bin/runmirrors.$(1) $(2)/runmirrors
 endef
 
 install:
-	install -d ${DESTDIR}/${bindir} ${DESTDIR}/${examplesdir} ${DESTDIR}/${man1dir} ${DESTDIR}/${man5dir}
 	$(call install_bin,install,${DESTDIR}/${bindir})
-	install -m644 \
-		README.md \
-		${DESTDIR}/${docdir}
-	install -m644 \
+	install -D -m644 -t ${DESTDIR}/${docdir} \
+		README.md
+	install -D -m644 -t ${DESTDIR}/${examplesdir} \
 		etc/ftpsync.conf.sample \
 		etc/runmirrors.conf.sample \
-		etc/runmirrors.mirror.sample \
-		${DESTDIR}/${examplesdir}
-	install -m644 ${MAN1:%=doc/%.1} ${DESTDIR}/${man1dir}
-	install -m644 ${MAN5:%=doc/%.5} ${DESTDIR}/${man5dir}
+		etc/runmirrors.mirror.sample
+	install -D -m644 -t ${DESTDIR}/${man1dir} ${MAN1:%=doc/%.1}
+	install -D -m644 -t ${DESTDIR}/${man5dir} ${MAN5:%=doc/%.5}
 
 install-tar:
 	install -d ${DESTDIR}/bin ${DESTDIR}/doc ${DESTDIR}/etc ${DESTDIR}/log
 	$(call install_bin,install-tar,${DESTDIR}/bin/)
-	install -m644 \
-		README.md \
-		${DESTDIR}
-	install -m644 \
+	install -D -m644 -t ${DESTDIR} \
+		README.md
+	install -D -m644 -t ${DESTDIR}/etc \
 		etc/ftpsync.conf.sample \
 		etc/runmirrors.conf.sample \
-		etc/runmirrors.mirror.sample \
-		${DESTDIR}/etc
-	install -m644 ${MAN1:%=doc/%.1.md} ${MAN5:%=doc/%.5.md} ${DESTDIR}/doc
+		etc/runmirrors.mirror.sample
+	install -D -m644 -t ${DESTDIR}/doc ${MAN1:%=doc/%.1.md} ${MAN5:%=doc/%.5.md}
 
 clean:
 	rm -f $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)
