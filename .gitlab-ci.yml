@@ -67,6 +67,11 @@ test centos6:
   <<: *TEST-SIMPLE
   image: centos:centos6
 
+test centos6 security:
+  <<: *TEST-REDHAT
+  <<: *TEST-SECURITY
+  image: centos:centos6
+
 test centos7:
   <<: *TEST-REDHAT
   <<: *TEST-SIMPLE
