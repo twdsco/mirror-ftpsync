@@ -145,15 +145,8 @@
 ## defines how many we keep
 #LOGROTATE=14
 
-## Our own lockfile (only one sync should run at any time)
-#LOCK="${TO}/Archive-Update-in-Progress-${MIRRORNAME}"
-
 # Timeout for the lockfile, in case we have bash older than v4 (and no /proc)
 # LOCKTIMEOUT=${LOCKTIMEOUT:-3600}
-
-## The following file is used to make sure we will end up with a correctly
-## synced mirror even if we get multiple pushes in a short timeframe
-#UPDATEREQUIRED="${TO}/Archive-Update-Required-${MIRRORNAME}"
 
 ## Number of seconds to sleep before retrying to sync whenever upstream
 ## is found to be updating while our update is running
@@ -163,12 +156,6 @@
 ## is found to be updating while our update is running.
 ## Note that these are retries, so: 1st attempt + retries = total attempts
 #UIPRETRIES=3
-
-## The trace file is used by a mirror check tool to see when we last
-## had a successful mirror sync. Make sure that it always ends up in
-## project/trace and always shows the full hostname.
-## This is *relative* to ${TO}
-#TRACE="project/trace/${MIRRORNAME}"
 
 ## The local hostname to be written to the trace file.
 #TRACEHOST="$(hostname -f)"
