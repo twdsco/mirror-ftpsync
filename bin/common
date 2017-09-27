@@ -365,22 +365,26 @@ MIME-Version: 1.0
 Content-Type: multipart/mixed; boundary=${boundary}
 
 EOF
-        for a in "${body[@]}"; do
-            cat <<EOF
+        if [[ ${body[@]:-} ]]; then
+            for a in "${body[@]}"; do
+                cat <<EOF
 --${boundary}
 Content-type: text/plain
 
 EOF
-            echo "$a"
-        done
-        for a in "${attachment[@]}"; do
-            cat <<EOF
+                echo "$a"
+            done
+        fi
+        if [[ ${attachment[@]:-} ]]; then
+            for a in "${attachment[@]}"; do
+                cat <<EOF
 --${boundary}
 Content-type: text/plain; name="$(basename $a)"
 
 EOF
-            cat "$a" || echo "Failed to attach $a"
-        done
+                cat "$a" || echo "Failed to attach $a"
+            done
+        fi
         cat <<EOF
 --${boundary}--
 EOF
