@@ -146,10 +146,10 @@ run_rsync() {
   local t=$1
   shift
 
-  log "Running $t:" ${RSYNC} ${RSYNC_SSL_OPTIONS} ${_RSYNC_FILTER_TRACE[@]} ${RSYNC_OPTIONS} "$@" ${RSYNCPTH}::${RSYNC_PATH} ${TO}
+  log "Running $t:" "${_RSYNC[@]}" ${RSYNC_OPTIONS} "$@"
 
-  ${RSYNC} ${RSYNC_SSL_OPTIONS} ${_RSYNC_FILTER_TRACE[@]} ${RSYNC_OPTIONS} "$@" \
-    ${RSYNCPTH}::${RSYNC_PATH} "${TO}" >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error" || return $?
+  "${_RSYNC[@]}" ${RSYNC_OPTIONS} "$@" \
+    >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error" || return $?
 }
 
 # Check rsyncs return value
@@ -459,13 +459,14 @@ _TRACE_FILES=(
   "${TRACELIST}"
 )
 
+_RSYNC=("$RSYNC")
+
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
-declare -a _RSYNC_FILTER_TRACE
 for i in ${_TRACE_FILES[@]}; do
-  _RSYNC_FILTER_TRACE+=("--filter=exclude_/${i}" "--filter=protect_/${i}")
+  _RSYNC+=("--filter=exclude_/${i}" "--filter=protect_/${i}")
 done
-_RSYNC_FILTER_TRACE+=(
+_RSYNC+=(
   "--filter=include_/project/"
   "--filter=protect_/project/"
   "--filter=include_/project/trace/"
@@ -484,15 +485,13 @@ STATS_TOTAL_RSYNC_TIME2=0
 
 # The temp directory used by rsync --delay-updates is not
 # world-readable remotely. Always exclude it to avoid errors.
-EXCLUDE="${EXCLUDE} --exclude=.~tmp~/"
+_RSYNC+=("--exclude=.~tmp~/")
 
-if [[ true != ${RSYNC_SSL} ]]; then
-  RSYNC_SSL_OPTIONS=""
-else
+if [[ true = ${RSYNC_SSL} ]]; then
   export RSYNC_SSL_PORT
   export RSYNC_SSL_CAPATH
   export RSYNC_SSL_METHOD
-  RSYNC_SSL_OPTIONS="-e ${BINDIR:+${BINDIR}/}rsync-ssl-tunnel"
+  _RSYNC+=(-e "${BINDIR:+${BINDIR}/}rsync-ssl-tunnel")
 fi
 
 ########################################################################
@@ -580,9 +579,9 @@ hook $HOOK
 # Now, we might want to sync from anonymous too.
 # This is that deep in this script so hook1 could, if wanted, change things!
 if [[ -z ${RSYNC_USER} ]]; then
-    RSYNCPTH="${RSYNC_HOST}"
+    _RSYNC+=("${RSYNC_HOST}::${RSYNC_PATH}" "$TO")
 else
-    RSYNCPTH="${RSYNC_USER}@${RSYNC_HOST}"
+    _RSYNC+=("${RSYNC_USER}@${RSYNC_HOST}::${RSYNC_PATH}" "$TO")
 fi
 
 # Now do the actual mirroring, and run as long as we have an updaterequired file.
