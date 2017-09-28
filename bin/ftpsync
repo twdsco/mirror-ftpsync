@@ -331,6 +331,19 @@ set_exclude_include_archs() {
 # As what are we called?
 NAME="$(basename $0)"
 
+# What should we do?
+ARCHIVE=
+# Do we sync stage1?
+SYNCSTAGE1=false
+# Do we sync stage2?
+SYNCSTAGE2=false
+# Do we sync all?
+SYNCALL=true
+# Do we have a mhop sync?
+SYNCMHOP=false
+# Do we callback? (May get changed later)
+SYNCCALLBACK=false
+
 while getopts T: option; do
     case $option in
         T) INFO_TRIGGER=$OPTARG;;
@@ -353,7 +366,6 @@ fi
 
 # If we have been told to do stuff for a different archive than default,
 # set the name accordingly.
-ARCHIVE=${ARCHIVE:-""}
 if [[ -n ${ARCHIVE} ]]; then
     NAME="${NAME}-${ARCHIVE}"
 fi
@@ -480,18 +492,6 @@ _RSYNC_FILTER_TRACE+=(
 # Now add the bwlimit option. As default is 0 we always add it, rsync interprets
 # 0 as unlimited, so this is safe.
 RSYNC_OPTIONS="${RSYNC_EXTRA} --bwlimit=${RSYNC_BW} ${RSYNC_OPTIONS}"
-
-# Do we sync stage1?
-SYNCSTAGE1=${SYNCSTAGE1:-"false"}
-# Do we sync stage2?
-SYNCSTAGE2=${SYNCSTAGE2:-"false"}
-# Do we sync all?
-SYNCALL=${SYNCALL:-"true"}
-# Do we have a mhop sync?
-SYNCMHOP=${SYNCMHOP:-"false"}
-# Do we callback? (May get changed later)
-SYNCCALLBACK=${SYNCCALLBACK:-"false"}
-# If we call back we need some more options defined in the config file.
 
 # collect some stats
 STATS_TOTAL_RSYNC_TIME1=0
