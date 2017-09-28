@@ -17,6 +17,7 @@ LOCK=${LOCK:-"${TO}/Archive-Update-in-Progress-${MIRRORNAME}"}
 RSYNC_PATH="${RSYNC_PATH:-debian}"
 
 TRACE_UPSTREAM="project/trace/${RSYNC_HOST}"
+TRACE="project/trace/${MIRRORNAME}"
 
 function run_ftpsync() {
     exec "${BINDIR:+${BINDIR}/}ftpsync" -T "cron" "sync:archive:${ARCHIVE}" "$@"
@@ -24,7 +25,7 @@ function run_ftpsync() {
 
 function cmp_trace() {
     local trace_uri="http://${RSYNC_HOST}/${RSYNC_PATH}/${TRACE_UPSTREAM}"
-    local trace_local="${TO}/${TRACE_UPSTREAM}"
+    local trace_local="${TO}/${TRACE}"
     local trace ret
 
     if [[ -e $LOCK ]] && $(kill -0 $(< ${LOCK}) 2>/dev/null); then
