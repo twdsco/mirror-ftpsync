@@ -270,16 +270,16 @@ tracefile() {
 arch_imexclude() {
     local param="$1" arch="$2"
     _RSYNC+=(
-        "--${param}=/dists/**/binary-${arch}/"
-        "--${param}=/dists/**/installer-${arch}/"
-        "--${param}=/dists/**/Contents-${arch}.gz"
-        "--${param}=/dists/**/Contents-udeb-${arch}.gz"
-        "--${param}=/dists/**/Contents-${arch}.diff/"
-        "--${param}=/indices/**/arch-${arch}.files"
-        "--${param}=/indices/**/arch-${arch}.list.gz"
-        "--${param}=/pool/**/*_${arch}.deb"
-        "--${param}=/pool/**/*_${arch}.udeb"
-        "--${param}=/pool/**/*_${arch}.changes"
+        "--filter=${param}_/dists/**/binary-${arch}/"
+        "--filter=${param}_/dists/**/installer-${arch}/"
+        "--filter=${param}_/dists/**/Contents-${arch}.gz"
+        "--filter=${param}_/dists/**/Contents-udeb-${arch}.gz"
+        "--filter=${param}_/dists/**/Contents-${arch}.diff/"
+        "--filter=${param}_/indices/**/arch-${arch}.files"
+        "--filter=${param}_/indices/**/arch-${arch}.list.gz"
+        "--filter=${param}_/pool/**/*_${arch}.deb"
+        "--filter=${param}_/pool/**/*_${arch}.udeb"
+        "--filter=${param}_/pool/**/*_${arch}.changes"
     )
 }
 
