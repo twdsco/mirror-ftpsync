@@ -410,7 +410,11 @@ else
     RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --timeout 3600 --stats"}
 fi
 RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--include=*.diff/ --exclude=*.diff/Index --exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --include=i18n/by-hash --exclude=i18n/* --exclude=ls-lR*"}
-RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-excluded"}
+if [[ $RSYNC_PROTOCOL -ge 30 ]]; then
+    RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-delay --delete-excluded"}
+else
+    RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-after --delete-excluded"}
+fi
 CALLBACKUSER=${CALLBACKUSER:-"archvsync"}
 CALLBACKHOST=${CALLBACKHOST:-"none"}
 CALLBACKKEY=${CALLBACKKEY:-"none"}
@@ -472,26 +476,10 @@ _RSYNC_FILTER_TRACE+=(
   "--filter=include_/project/trace/*"
 )
 
-# Set the delete method to --delete-delay if protocol version is 30 or
-# greater (meaning rsync 3.0.0 or greater is used). Use --delete-after
-# otherwise.
-if [[ 30 -le $RSYNC_PROTOCOL ]]; then
-    RSYNC_DELETE_METHOD=delay
-else
-    RSYNC_DELETE_METHOD=after
-fi
-
 # Default rsync options for *every* rsync call
 # Now add the bwlimit option. As default is 0 we always add it, rsync interprets
 # 0 as unlimited, so this is safe.
 RSYNC_OPTIONS="${RSYNC_EXTRA} --bwlimit=${RSYNC_BW} ${RSYNC_OPTIONS}"
-
-# Finally, make sure RSYNC_OPTIONS2 has either --delete-after or --delete-delay
-RSYNC_OPTION_REGEX="--delete-(after|delay)"
-if ! [[ ${RSYNC_OPTIONS2} =~ ${RSYNC_OPTION_REGEX} ]]; then
-    RSYNC_OPTIONS2+=" --delete-${RSYNC_DELETE_METHOD}"
-fi
-unset RSYNC_OPTION_REGEX
 
 # Do we sync stage1?
 SYNCSTAGE1=${SYNCSTAGE1:-"false"}
