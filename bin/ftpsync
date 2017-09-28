@@ -269,18 +269,27 @@ tracefile() {
 
 arch_imexclude() {
     local param="$1" arch="$2"
-    _RSYNC+=(
-        "--filter=${param}_/dists/**/binary-${arch}/"
-        "--filter=${param}_/dists/**/installer-${arch}/"
-        "--filter=${param}_/dists/**/Contents-${arch}.gz"
-        "--filter=${param}_/dists/**/Contents-udeb-${arch}.gz"
-        "--filter=${param}_/dists/**/Contents-${arch}.diff/"
-        "--filter=${param}_/indices/**/arch-${arch}.files"
-        "--filter=${param}_/indices/**/arch-${arch}.list.gz"
-        "--filter=${param}_/pool/**/*_${arch}.deb"
-        "--filter=${param}_/pool/**/*_${arch}.udeb"
-        "--filter=${param}_/pool/**/*_${arch}.changes"
-    )
+    if [[ $arch = source ]]; then
+        _RSYNC+=(
+            "--filter=${param}_/dists/**/source/"
+            "--filter=${param}_/pool/**/*.tar.*"
+            "--filter=${param}_/pool/**/*.diff.*"
+            "--filter=${param}_/pool/**/*.dsc"
+        )
+    else
+        _RSYNC+=(
+            "--filter=${param}_/dists/**/binary-${arch}/"
+            "--filter=${param}_/dists/**/installer-${arch}/"
+            "--filter=${param}_/dists/**/Contents-${arch}.gz"
+            "--filter=${param}_/dists/**/Contents-udeb-${arch}.gz"
+            "--filter=${param}_/dists/**/Contents-${arch}.diff/"
+            "--filter=${param}_/indices/**/arch-${arch}.files"
+            "--filter=${param}_/indices/**/arch-${arch}.list.gz"
+            "--filter=${param}_/pool/**/*_${arch}.deb"
+            "--filter=${param}_/pool/**/*_${arch}.udeb"
+            "--filter=${param}_/pool/**/*_${arch}.changes"
+        )
+    fi
 }
 
 arch_exclude() {
@@ -296,45 +305,31 @@ arch_include() {
 # Sets EXCLUDE (which might also have --include statements
 # followed by a --exclude *_*.<things>.
 set_exclude_include_archs() {
-  local exclude_sources=false
+    if [[ -n "${ARCH_EXCLUDE}" ]] && [[ -n "${ARCH_INCLUDE}" ]]; then
+        echo >&2 "ARCH_EXCLUDE and ARCH_INCLUDE are mutually exclusive.  Set only one."
+        exit 1
+    fi
 
-  if [[ -n "${ARCH_EXCLUDE}" ]] && [[ -n "${ARCH_INCLUDE}" ]]; then
-    echo >&2 "ARCH_EXCLUDE and ARCH_INCLUDE are mutually exclusive.  Set only one."
-    exit 1
-  fi
-
-  if [[ -n "${ARCH_EXCLUDE}" ]]; then
-    for ARCH in ${ARCH_EXCLUDE}; do
-        arch_exclude ${ARCH}
-        if [[ ${ARCH} = source ]]; then
-            exclude_sources=true
+    if [[ -n "${ARCH_EXCLUDE}" ]]; then
+        for ARCH in ${ARCH_EXCLUDE}; do
+            arch_exclude ${ARCH}
+        done
+        arch_include '*'
+        arch_include source
+    elif [[ -n "${ARCH_INCLUDE}" ]]; then
+        local include_arch_all=false
+        for ARCH in ${ARCH_INCLUDE}; do
+            arch_include ${ARCH}
+            if [[ ${ARCH} != source ]]; then
+                include_arch_all=true
+            fi
+        done
+        if [[ true = ${include_arch_all} ]]; then
+            arch_include all
         fi
-    done
-  elif [[ -n "${ARCH_INCLUDE}" ]]; then
-      local include_arch_all=false
-      exclude_sources=true
-      for ARCH in ${ARCH_INCLUDE}; do
-          arch_include ${ARCH}
-          if [[ ${ARCH} = source ]]; then
-              exclude_sources=false
-          else
-              include_arch_all=true
-          fi
-      done
-      if [[ true = ${include_arch_all} ]]; then
-          arch_include all
-      fi
-      arch_exclude '*'
-  fi
-
-  if [[ true = ${exclude_sources} ]]; then
-    _RSYNC+=(
-      "--exclude=/dists/**/source/"
-      "--exclude=/pool/**/*.tar.*"
-      "--exclude=/pool/**/*.diff.*"
-      "--exclude=/pool/**/*.dsc"
-    )
-  fi
+        arch_exclude '*'
+        arch_exclude source
+    fi
 }
 
 ########################################################################
