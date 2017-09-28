@@ -282,9 +282,7 @@ arch_include() {
 
 # Learn which archs to include/exclude based on ARCH_EXCLUDE and ARCH_INCLUDE
 # settings.
-#
-# Updates SOURCE_EXCLUDE (if not set already), and sets
-# EXCLUDE (which might also have --include statementss
+# Sets EXCLUDE (which might also have --include statements
 # followed by a --exclude *_*.<things>.
 set_exclude_include_archs() {
   local exclude_sources=false
@@ -318,9 +316,8 @@ set_exclude_include_archs() {
       arch_exclude '*'
   fi
 
-  # we do not want sources, and SOURCE_EXCLUDE is not set in the config yet.
-  if [[ true = ${exclude_sources} ]] && [[ -z ${SOURCE_EXCLUDE} ]]; then
-      SOURCE_EXCLUDE=" --exclude=/dists/**/source/ --exclude=/pool/**/*.tar.* --exclude=/pool/**/*.diff.* --exclude=/pool/**/*.dsc "
+  if [[ true = ${exclude_sources} ]]; then
+      EXCLUDE="${EXCLUDE} --exclude=/dists/**/source/ --exclude=/pool/**/*.tar.* --exclude=/pool/**/*.diff.* --exclude=/pool/**/*.dsc "
   fi
 }
 
@@ -501,8 +498,6 @@ STATS_TOTAL_RSYNC_TIME2=0
 # world-readable remotely. Always exclude it to avoid errors.
 EXCLUDE="${EXCLUDE} --exclude=.~tmp~/"
 
-SOURCE_EXCLUDE=${SOURCE_EXCLUDE:-""}
-
 if [[ true != ${RSYNC_SSL} ]]; then
   RSYNC_SSL_OPTIONS=""
 else
@@ -618,7 +613,7 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
             # Step one, sync everything except Packages/Releases
             rsync_started=$(date +%s)
             result=0
-            run_rsync "stage1" ${RSYNC_OPTIONS1} ${EXCLUDE} ${SOURCE_EXCLUDE} || result=$?
+            run_rsync "stage1" ${RSYNC_OPTIONS1} ${EXCLUDE} || result=$?
             rsync_ended=$(date +%s)
             STATS_TOTAL_RSYNC_TIME1=$(( STATS_TOTAL_RSYNC_TIME1 + rsync_ended - rsync_started ))
 
@@ -688,7 +683,7 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
             # the packages/releases files
             rsync_started=$(date +%s)
             result=0
-            run_rsync "stage2" ${RSYNC_OPTIONS2} ${EXCLUDE} ${SOURCE_EXCLUDE} || result=$?
+            run_rsync "stage2" ${RSYNC_OPTIONS2} ${EXCLUDE} || result=$?
             rsync_ended=$(date +%s)
             STATS_TOTAL_RSYNC_TIME2=$(( STATS_TOTAL_RSYNC_TIME2 + rsync_ended - rsync_started ))
 
