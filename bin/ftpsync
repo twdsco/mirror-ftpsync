@@ -440,27 +440,15 @@ HOOK5=${HOOK5:-""}
 # used by log() and error()
 PROGRAM=${PROGRAM:-"${NAME}"}
 
-# Our lockfile
+# Our trace and lock files
 LOCK_NAME="Archive-Update-in-Progress-${MIRRORNAME}"
 LOCK="${TO}/${LOCK_NAME}"
 UPDATEREQUIRED_NAME="Archive-Update-Required-${MIRRORNAME}"
 UPDATEREQUIRED="${TO}/${UPDATEREQUIRED_NAME}"
-# Trace file for mirror stats and checks (make sure we get full hostname)
 TRACEDIR=project/trace
-TRACE=${TRACE:-"${TRACEDIR}/${MIRRORNAME}"}
-TRACEHIERARCHY=${TRACEHIERARCHY:-"${TRACEDIR}/_hierarchy"}
-TRACELIST=${TRACELIST:-"${TRACEDIR}/_traces"}
-# The trace file can have different format/contents. Here you can select
-# what it will be.
-# Possible values are
-# "full"  - all information
-# "terse" - partial, ftpsync version and local hostname
-# "date"  - basic, timestamp only (date -u)
-# "touch" - just touch the file in existance
-# "none"  - no tracefile at all
-#
-# Default and required value for Debian mirrors is full.
-EXTENDEDTRACE=${EXTENDEDTRACE:-"full"}
+TRACE="${TRACEDIR}/${MIRRORNAME}"
+TRACEHIERARCHY="${TRACEDIR}/_hierarchy"
+TRACELIST="${TRACEDIR}/_traces"
 
 _TRACE_FILES=(
   "${LOCK_NAME}"
