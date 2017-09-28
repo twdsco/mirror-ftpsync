@@ -366,39 +366,70 @@ read_config "${NAME}.conf"
 create_logdir
 
 ########################################################################
-# There should be nothing to edit here, use the config file            #
+# Config defaults                                                      #
 ########################################################################
 MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
-# Where to put logfiles in
-# Our own logfile
-LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
-
-# Where should we put all the mirrored files?
 TO=${TO:-"/srv/mirrors/debian/"}
+MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
+HUB=${HUB:-"false"}
+
+# Connection options
+RSYNC_HOST=${RSYNC_HOST:?Missing a host to mirror from, please set RSYNC_HOST variable in ${CURRENT_CONFIG}}
+RSYNC_PATH=${RSYNC_PATH:-"debian"}
+RSYNC_USER=${RSYNC_USER:-""}
+RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
+RSYNC_SSL=${RSYNC_SSL:-"false"}
+RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
+RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
+RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
+RSYNC_PROXY=${RSYNC_PROXY:-""}
+
+# Include and exclude options
+ARCH_INCLUDE=${ARCH_INCLUDE:-""}
+ARCH_EXCLUDE=${ARCH_EXCLUDE:-""}
+EXCLUDE=${EXCLUDE:-""}
+
+# Log options
+LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
+ERRORSONLY=${ERRORSONLY:-"true"}
+FULLLOGS=${FULLLOGS:-"false"}
+LOGROTATE=${LOGROTATE:-14}
+
+# Other options
+LOCKTIMEOUT=${LOCKTIMEOUT:-3600}
+UIPSLEEP=${UIPSLEEP:-1200}
+UIPRETRIES=${UIPRETRIES:-3}
+TRACEHOST=${TRACEHOST:-$(hostname -f)}
+RSYNC=${RSYNC:-rsync}
+RSYNC_PROTOCOL=$(rsync_protocol)
+RSYNC_EXTRA=${RSYNC_EXTRA:-""}
+RSYNC_BW=${RSYNC_BW:-0}
+if [[ $RSYNC_PROTOCOL -ge 31 ]]; then
+    RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --chmod=D755,F644 --timeout 3600 --stats"}
+else
+    RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --timeout 3600 --stats"}
+fi
+RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--include=*.diff/ --exclude=*.diff/Index --exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --include=i18n/by-hash --exclude=i18n/* --exclude=ls-lR*"}
+RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-excluded"}
+CALLBACKUSER=${CALLBACKUSER:-"archvsync"}
+CALLBACKHOST=${CALLBACKHOST:-"none"}
+CALLBACKKEY=${CALLBACKKEY:-"none"}
+
+# Hooks
+HOOK1=${HOOK1:-""}
+HOOK2=${HOOK2:-""}
+HOOK3=${HOOK3:-""}
+HOOK4=${HOOK4:-""}
+HOOK5=${HOOK5:-""}
+########################################################################
+########################################################################
 
 # used by log() and error()
 PROGRAM=${PROGRAM:-"${NAME}"}
 
-# Where to send mails about mirroring to?
-MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
-# Want errors only or every log?
-ERRORSONLY=${ERRORSONLY:-"true"}
-# Want full logs, ie. including the rsync one?
-FULLLOGS=${FULLLOGS:-"false"}
-
-# How many logfiles to keep
-LOGROTATE=${LOGROTATE:-14}
-
 # Our lockfile
 LOCK_NAME="Archive-Update-in-Progress-${MIRRORNAME}"
 LOCK="${TO}/${LOCK_NAME}"
-# timeout for the lockfile, in case we have bash older than v4 (and no /proc)
-LOCKTIMEOUT=${LOCKTIMEOUT:-3600}
-# sleeping time when an AUIP file is found but is not ours
-UIPSLEEP=${UIPSLEEP:-1200}
-# retries whenever an upstream (or possibly stale) AUIP file is found
-UIPRETRIES=${UIPRETRIES:-3}
-# Do we need another rsync run?
 UPDATEREQUIRED_NAME="Archive-Update-Required-${MIRRORNAME}"
 UPDATEREQUIRED="${TO}/${UPDATEREQUIRED_NAME}"
 # Trace file for mirror stats and checks (make sure we get full hostname)
@@ -418,9 +449,6 @@ TRACELIST=${TRACELIST:-"${TRACEDIR}/_traces"}
 # Default and required value for Debian mirrors is full.
 EXTENDEDTRACE=${EXTENDEDTRACE:-"full"}
 
-# The local hostname to be written to the trace file.
-TRACEHOST=${TRACEHOST:-$(hostname -f)}
-
 _TRACE_FILES=(
   "${LOCK_NAME}"
   "${UPDATEREQUIRED_NAME}"
@@ -430,8 +458,6 @@ _TRACE_FILES=(
   "${TRACELIST}"
 )
 
-# rsync program
-RSYNC=${RSYNC:-rsync}
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
 declare -a _RSYNC_FILTER_TRACE
@@ -445,9 +471,6 @@ _RSYNC_FILTER_TRACE+=(
   "--filter=protect_/project/trace/"
   "--filter=include_/project/trace/*"
 )
-# limit I/O bandwidth. Value is KBytes per second, unset or 0 is unlimited
-RSYNC_BW=${RSYNC_BW:-0}
-RSYNC_PROTOCOL=$(rsync_protocol)
 
 # Set the delete method to --delete-delay if protocol version is 30 or
 # greater (meaning rsync 3.0.0 or greater is used). Use --delete-after
@@ -459,22 +482,6 @@ else
 fi
 
 # Default rsync options for *every* rsync call
-if [[ $RSYNC_PROTOCOL -ge 31 ]]; then
-    RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --chmod=D755,F644 --timeout 3600 --stats"}
-else
-    RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --timeout 3600 --stats"}
-fi
-# Options we only use in the first pass, where we do not want packages/sources to fly in yet and don't want to delete files
-RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--include=*.diff/ --exclude=*.diff/Index --exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --include=i18n/by-hash --exclude=i18n/* --exclude=ls-lR*"}
-# Options for the second pass, where we do want everything, including deletion of old and now unused files
-RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-excluded"}
-# Which rsync share to use on our upstream mirror?
-RSYNC_PATH=${RSYNC_PATH:-"debian"}
-
-# Extra rsync options as defined by the admin locally. Won't be set
-# to any default by ftpsync. Those will be added to EACH AND EVERY rsync call.
-RSYNC_EXTRA=${RSYNC_EXTRA:-""}
-
 # Now add the bwlimit option. As default is 0 we always add it, rsync interprets
 # 0 as unlimited, so this is safe.
 RSYNC_OPTIONS="${RSYNC_EXTRA} --bwlimit=${RSYNC_BW} ${RSYNC_OPTIONS}"
@@ -485,21 +492,6 @@ if ! [[ ${RSYNC_OPTIONS2} =~ ${RSYNC_OPTION_REGEX} ]]; then
     RSYNC_OPTIONS2+=" --delete-${RSYNC_DELETE_METHOD}"
 fi
 unset RSYNC_OPTION_REGEX
-
-# We have no default host to sync from, but will error out if its unset
-RSYNC_HOST=${RSYNC_HOST:-""}
-# Error out if we have no host to sync from
-if [[ -z ${RSYNC_HOST} ]]; then
-    error "Missing a host to mirror from, please set RSYNC_HOST variable in ${CURRENT_CONFIG}.conf"
-fi
-
-# our username for the rsync share
-RSYNC_USER=${RSYNC_USER:-""}
-# the password
-RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
-
-# a possible proxy
-RSYNC_PROXY=${RSYNC_PROXY:-""}
 
 # Do we sync stage1?
 SYNCSTAGE1=${SYNCSTAGE1:-"false"}
@@ -512,12 +504,6 @@ SYNCMHOP=${SYNCMHOP:-"false"}
 # Do we callback? (May get changed later)
 SYNCCALLBACK=${SYNCCALLBACK:-"false"}
 # If we call back we need some more options defined in the config file.
-CALLBACKUSER=${CALLBACKUSER:-"archvsync"}
-CALLBACKHOST=${CALLBACKHOST:-"none"}
-CALLBACKKEY=${CALLBACKKEY:-"none"}
-
-# General excludes. Don't list architecture specific stuff here, use ARCH_EXCLUDE for that!
-EXCLUDE=${EXCLUDE:-""}
 
 # collect some stats
 STATS_TOTAL_RSYNC_TIME1=0
@@ -528,13 +514,6 @@ STATS_TOTAL_RSYNC_TIME2=0
 EXCLUDE="${EXCLUDE} --exclude=.~tmp~/"
 
 SOURCE_EXCLUDE=${SOURCE_EXCLUDE:-""}
-ARCH_EXCLUDE=${ARCH_EXCLUDE:-""}
-ARCH_INCLUDE=${ARCH_INCLUDE:-""}
-
-RSYNC_SSL=${RSYNC_SSL:-"false"}
-RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
-RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
-RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
 
 if [[ true != ${RSYNC_SSL} ]]; then
   RSYNC_SSL_OPTIONS=""
@@ -544,16 +523,6 @@ else
   export RSYNC_SSL_METHOD
   RSYNC_SSL_OPTIONS="-e ${BINDIR:+${BINDIR}/}rsync-ssl-tunnel"
 fi
-
-# Hooks
-HOOK1=${HOOK1:-""}
-HOOK2=${HOOK2:-""}
-HOOK3=${HOOK3:-""}
-HOOK4=${HOOK4:-""}
-HOOK5=${HOOK5:-""}
-
-# Are we a hub?
-HUB=${HUB:-"false"}
 
 ########################################################################
 # Really nothing to see below here. Only code follows.                 #

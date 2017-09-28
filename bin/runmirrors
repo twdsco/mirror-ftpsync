@@ -96,32 +96,39 @@ read_config "${NAME}.conf"
 create_logdir
 create_lockdir
 
-# Set sane defaults if the configfile didn't do that for us.
-# Our own logfile
+########################################################################
+# Config defaults                                                      #
+########################################################################
+MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
+KEYFILE=${KEYFILE:-".ssh/pushmirror"}
+
+# Log options
 LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
-# How many logfiles to keep
 LOGROTATE=${LOGROTATE:-14}
-# Our mirrorfile
+
+# Other options
 MIRRORS=${MIRRORS:-$(search_config "${NAME}.mirror")}
+SSH_OPTS=${SSH_OPTS:-"-o StrictHostKeyChecking=no"}
+PUSHARCHIVE=${PUSHARCHIVE:-"${CONF}"}
+PUSHDELAY=${PUSHDELAY:-600}
+
+# Hooks
+HOOK1=${HOOK1:-""}
+HOOK2=${HOOK2:-""}
+HOOK3=${HOOK3:-""}
+########################################################################
+########################################################################
+
+# Which ssh key to use?
+KEYFILE_ABS=$(cd && readlink -f "$KEYFILE" || :)
+
 # used by log()
 PROGRAM=${PROGRAM:-"${NAME}"}
-# extra ssh options we might want hostwide
-SSH_OPTS=${SSH_OPTS:-"-o StrictHostKeyChecking=no"}
-# Whats our archive name? We will also tell our leafs about it
-PUSHARCHIVE=${PUSHARCHIVE:-"${CONF}"}
-# How long to wait for mirrors to do stage1 if we have multi-stage syncing
-PUSHDELAY=${PUSHDELAY:-600}
-# Which ssh key to use?
-KEYFILE=${KEYFILE:-".ssh/pushmirror"}
-KEYFILE_ABS=$(cd && readlink -f "$KEYFILE" || :)
 
 REGEX_URL='^([a-z.+]+)://(([^@/]+)@)?([^/]+)(/.*)?$'
 
 # start a new log
 savelog "${LOG}" > /dev/null
-
-# where to send mails to
-MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
 
 if ! [[ -f ${KEYFILE_ABS} ]]; then
     error "SSH Key ${KEYFILE} does not exist" >> "${LOG}"
@@ -129,9 +136,6 @@ if ! [[ -f ${KEYFILE_ABS} ]]; then
 fi
 
 # Hooks
-HOOK1=${HOOK1:-""}
-HOOK2=${HOOK2:-""}
-HOOK3=${HOOK3:-""}
 
 ########################################################################
 
