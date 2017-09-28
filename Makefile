@@ -9,27 +9,26 @@ man5dir = ${mandir}/man5
 
 MAN1 = ftpsync ftpsync-cron rsync-ssl-tunnel runmirrors
 MAN5 = ftpsync.conf runmirrors.conf runmirrors.mirror
-SCRIPTS = bin/ftpsync bin/ftpsync-cron bin/rsync-ssl-tunnel bin/runmirrors
+SCRIPTS = ftpsync ftpsync-cron rsync-ssl-tunnel runmirrors
+ALL = $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=bin/%.install) $(SCRIPTS:%=bin/%.install-tar)
 
-all: $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)
+all: $(ALL)
 
-bin/%.install: bin/% bin/common
+define expand
 	sed -r \
 		-e '/## INCLUDE COMMON$$/ {' \
 		-e 'r bin/common' \
-		-e 'r bin/include-install' \
+		-e 'r bin/include-$(1)' \
 		-e 'c VERSION="${DEB_VERSION}"' \
 		-e '};' \
 		$< > $@
+endef
+
+bin/%.install: bin/% bin/common bin/include-install
+	$(call expand,install)
 
 bin/%.install-tar: bin/% bin/common bin/include-tar
-	sed -r \
-		-e '/## INCLUDE COMMON$$/ {' \
-		-e 'r bin/common' \
-		-e 'r bin/include-tar' \
-		-e 'c VERSION="${DEB_VERSION}"' \
-		-e '};' \
-		$< > $@
+	$(call expand,tar)
 
 doc/%: doc/%.md
 	pandoc -s -t man -o $@ $<
@@ -53,7 +52,6 @@ install:
 	install -D -m644 -t ${DESTDIR}/${man5dir} ${MAN5:%=doc/%.5}
 
 install-tar:
-	install -d ${DESTDIR}/bin ${DESTDIR}/doc ${DESTDIR}/etc ${DESTDIR}/log
 	$(call install_bin,install-tar,${DESTDIR}/bin/)
 	install -D -m644 -t ${DESTDIR} \
 		README.md
@@ -64,4 +62,4 @@ install-tar:
 	install -D -m644 -t ${DESTDIR}/doc ${MAN1:%=doc/%.1.md} ${MAN5:%=doc/%.5.md}
 
 clean:
-	rm -f $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=%.install) $(SCRIPTS:%=%.install-tar)
+	rm -f $(ALL)
