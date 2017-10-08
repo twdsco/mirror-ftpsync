@@ -65,6 +65,11 @@ turn sync from it.
 **RSYNC_TRANSPORT**
 :   Set to select the transport used for rsync.
 
+    **ssh**
+    :   Use rsync daemon over SSH.
+        This requires a **rsyncd.conf** on the server.
+        Additional options for the ssh client should be configured in **ssh_config**.
+
     **ssl**
     :   Use rsync daemon over SSL.
         This requires a SSL wrapper (e.g. stunnel) for the rsync daemon on the server.

@@ -504,6 +504,8 @@ _RSYNC+=("--exclude=.~tmp~/")
 
 if [[ ${RSYNC_TRANSPORT} = undefined ]]; then
     :
+elif [[ ${RSYNC_TRANSPORT} = ssh ]]; then
+    _RSYNC+=(-e "ssh")
 elif [[ ${RSYNC_TRANSPORT} = ssl ]]; then
     export RSYNC_SSL_PORT
     export RSYNC_SSL_CAPATH
