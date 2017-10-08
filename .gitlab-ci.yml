@@ -53,11 +53,6 @@ test stretch:
   <<: *TEST-SIMPLE
   image: debian:stretch
 
-test wheezy:
-  <<: *TEST-DEBIAN
-  <<: *TEST-SIMPLE
-  image: debian:wheezy
-
 test stretch security:
   <<: *TEST-DEBIAN
   <<: *TEST-SECURITY
