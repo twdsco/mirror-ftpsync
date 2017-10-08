@@ -6,7 +6,7 @@
   artifacts:
     paths:
       - test/simple/log
-      - test/simple/root
+      - test/simple/output
     when: always
 
 .test security: &TEST-SECURITY
