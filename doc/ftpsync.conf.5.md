@@ -96,6 +96,7 @@ turn sync from it.
       :   will skip the checkHost check.  As such it will connect
           to any peer that is able to present a valid certificate, regardless of
           which name it is made out to.
+
       **socat**
       :    will verify the peer certificate name only starting with version
            1.7.3 (Debian 9.0).
