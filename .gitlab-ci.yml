@@ -2,19 +2,7 @@
   variables:
     LOGNAME: root
   script:
-    - cd test/simple
-    - ln -s $(pwd)/rsyncd /rsyncd
-    - echo "" > ~/key
-
-    - rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/etc/rsyncd.conf
-    - bin/ftpsync -T test || e_ftpsync=$?
-    - bin/runmirrors || e_runmirrors=$?
-    - ls -alR log root
-    - cat root/project/trace/localhost
-    - cat log/ftpsync.log* || true
-    - cat log/runmirrors.log* || true
-    - '[[ $e_ftpsync -eq 0 ]] || exit $e_ftpsync'
-    - '[[ $e_runmirrors -eq 0 ]] || exit $e_runmirrors'
+    - cd test/simple && bats tests
   artifacts:
     paths:
       - test/simple/log
