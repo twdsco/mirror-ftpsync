@@ -2,12 +2,11 @@
 
 setup() {
   mkdir log
-  rm -f log/rsyncd.pid
-  rsync --daemon --config etc/rsyncd.conf
+  coproc rsyncd { exec rsync --daemon --no-detach --config etc/rsyncd.conf; }
 }
 
 teardown() {
-  kill -15 $(cat log/rsyncd.pid)
+  kill -15 $rsyncd_PID
 }
 
 @test "run ftpsync" {
