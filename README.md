@@ -219,7 +219,7 @@ not mandantory:
 | `Architectures` | List of architectures included in the mirror. | `all amd64 i386 source` |
 | `Architectures-Configuration` | Architecture list as specified in config. | `ALL`, `INCLUDE amd64 i386 source`, `EXCLUDE armel` |
 | `Upstream-Mirror` | From where does the mirror get its data. | `ftp-master.debian.org` |
-| `SSL` | Boolean, is ftpsync rsync over ssl feature used | `true`
+| `Rsync-Transport` | Transport to connect to upstream used by rsync | `plain`
 | `Total bytes received in rsync` | rsync --stats output, bytes received | `1109846675` |
 | `Total time spent in stage1 rsync` | Seconds of runtime for stage1 | `347` |
 | `Total time spent in stage2 rsync` | Seconds of runtime for stage2 | `47` |
