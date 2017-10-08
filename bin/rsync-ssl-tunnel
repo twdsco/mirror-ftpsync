@@ -34,35 +34,21 @@ set -u
 
 usage() {
   echo "Usage: [RSYNC_SSL_CAPATH=<capath>] [RSYNC_SSL_PORT=<port>] [RSYNC_SSL_METHOD=stunnel4|stunnel4-old|socat] $0 <RSYNC_HOST>"
+  exit $1
 }
 
-while [[ "$#" -gt 0 ]]; do
-  case "$1" in
-    -h|--help)
-      usage
-      exit 0
-      ;;
-    -l)
-      shift
-      shift
-      continue
-      ;;
-    --)
-      shift
-      continue
-      ;;
-    -*)
-      usage >&2
-      exit 1
-      ;;
-    *)
-      break
+while getopts hl: option; do
+  case $option in
+    h) usage 0 ;;
+    l) ;; # ignore option
+    ?) usage 64 >&2 ;;
   esac
 done
+shift $(($OPTIND - 1))
 
 if [[ "$#" = 0 ]]; then
-  usage >&2
   echo >&2 "No arguments given."
+  usage 64 >&2
   exit 1
 fi
 RSYNC_HOST="$1"; shift
