@@ -62,13 +62,13 @@ turn sync from it.
 **RSYNC_PASSWORD**
 :   If we need a user we also need a password
 
-**RSYNC_SSL**
-:   Set to "true" to tunnel your rsync through stunnel.
+**RSYNC_TRANSPORT**
+:   Set to select the transport used for rsync.
 
-    ftpsync will then use rsync's -e option to wrap the connection
-    with bin/rsync-ssl-tunnel which sets up an stunnel to connect to
-    RSYNC_SSL_PORT on the remote site.  (This requires server
-    support, obviously.)
+    **ssl**
+    :   Use rsync daemon over SSL.
+        This requires a SSL wrapper (e.g. stunnel) for the rsync daemon on the server.
+        See the other **RSYNC_SSL** options below.
 
 **RSYNC_SSL_PORT**
 :   Default: **1873**

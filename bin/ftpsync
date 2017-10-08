@@ -235,7 +235,9 @@ tracefile() {
             echo "Architectures-Configuration: ALL"
         fi
         echo "Upstream-mirror: ${RSYNC_HOST}"
-        echo "SSL: ${RSYNC_SSL}"
+        if [[ ${RSYNC_TRANSPORT} = ssl ]]; then
+            echo "SSL: true"
+        fi
         total=0
         if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
             for bytes in $(awk -F': '   '$1 == "Total bytes received" {print $2} ' "${LOGDIR}/rsync-${NAME}.log"); do
@@ -398,7 +400,11 @@ RSYNC_HOST=${RSYNC_HOST:?Missing a host to mirror from, please set RSYNC_HOST va
 RSYNC_PATH=${RSYNC_PATH:-"debian"}
 RSYNC_USER=${RSYNC_USER:-""}
 RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
-RSYNC_SSL=${RSYNC_SSL:-"false"}
+if [[ ${RSYNC_SSL:-} = true ]]; then
+    RSYNC_TRANSPORT=${RSYNC_TRANSPORT:-"ssl"}
+else
+    RSYNC_TRANSPORT=${RSYNC_TRANSPORT:-"undefined"}
+fi
 RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
 RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
 RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
@@ -498,11 +504,16 @@ STATS_TOTAL_RSYNC_TIME2=0
 # world-readable remotely. Always exclude it to avoid errors.
 _RSYNC+=("--exclude=.~tmp~/")
 
-if [[ true = ${RSYNC_SSL} ]]; then
-  export RSYNC_SSL_PORT
-  export RSYNC_SSL_CAPATH
-  export RSYNC_SSL_METHOD
-  _RSYNC+=(-e "${BINDIR:+${BINDIR}/}rsync-ssl-tunnel")
+if [[ ${RSYNC_TRANSPORT} = undefined ]]; then
+    :
+elif [[ ${RSYNC_TRANSPORT} = ssl ]]; then
+    export RSYNC_SSL_PORT
+    export RSYNC_SSL_CAPATH
+    export RSYNC_SSL_METHOD
+    _RSYNC+=(-e "${BINDIR:+${BINDIR}/}rsync-ssl-tunnel")
+else
+    echo "Unknown rsync transport configured (${RSYNC_TRANSPORT})" >&2
+    exit 1
 fi
 
 # Exclude architectures defined in $ARCH_EXCLUDE
