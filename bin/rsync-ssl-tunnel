@@ -33,14 +33,24 @@ set -e
 set -u
 
 usage() {
-  echo "Usage: [RSYNC_SSL_CAPATH=<capath>] [RSYNC_SSL_PORT=<port>] [RSYNC_SSL_METHOD=stunnel4|stunnel4-old|socat] $0 <RSYNC_HOST>"
+  cat <<EOF
+Usage: $0 [OPTION]... RSYNC_HOST"
+
+  -C  the capath (default: /etc/ssl/certs)
+  -m  the method (stunnel4|stunnel4-old|socat)
+  -p  the port (default: 1873)
+  -h  display this help and exit
+EOF
   exit $1
 }
 
-while getopts hl: option; do
+while getopts C:hl:m:p: option; do
   case $option in
+    C) RSYNC_SSL_CAPATH=$OPTARG ;;
     h) usage 0 ;;
     l) ;; # ignore option
+    m) RSYNC_SSL_METHOD=$OPTARG ;;
+    p) RSYNC_SSL_PORT=$OPTARG ;;
     ?) usage 64 >&2 ;;
   esac
 done

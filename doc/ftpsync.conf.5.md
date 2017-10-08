@@ -103,7 +103,7 @@ turn sync from it.
 
     To test if things work, you can run:
 
-    **RSYNC_SSL_PORT=1873 RSYNC_SSL_CAPATH=/etc/ssl/certs RSYNC_SSL_METHOD=socat rsync -e 'bin/rsync-ssl-tunnel' <server>::**
+    **rsync -e 'bin/rsync-ssl-tunnel -m socat -p 1873 -C /etc/ssl/certs' SERVER::**
 
     Default: stunnel4
 

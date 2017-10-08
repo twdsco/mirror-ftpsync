@@ -17,6 +17,23 @@ organized in a tree-shaped hierarchy.  Thus, every mirror has exactly one upstre
 from which it syncs, and each mirror can have any number of downstreams which in
 turn sync from it.
 
+# OPTIONS
+
+**-C**
+:   The CA path for certificate verification
+
+    Default: **/etc/ssl/certs**
+
+**-m**
+:   The method used to connect to the remote host.
+
+    Default: **stunnel4**
+
+**-p**
+:   The port used to connect to the remote host.
+
+    Default: **1873**
+
 # EXAMPLE
 
 Example use with rsync:
