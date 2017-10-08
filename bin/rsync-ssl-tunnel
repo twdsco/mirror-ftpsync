@@ -73,17 +73,11 @@ RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
 method_stunnel() {
   skip_host_check="$1"; shift
 
-  tmp="`tempfile`"
-  trap "rm -f '$tmp'" EXIT
+  if ! [ "$skip_host_check" = 1 ]; then
+    checkhost="checkHost = ${RSYNC_HOST}"
+  fi
 
-  (
-    cat << EOF
-# This file has been automatically created by ftpsync for syncing
-# from ${RSYNC_HOST}.
-#
-# To test if things works, try the following:
-#    rsync -e 'stunnel4 <this config file>' \$RSYNC_USER@dummy::
-#
+  exec stunnel4 -fd 3 3<<EOF
 client = yes
 verify = 2
 CApath = ${RSYNC_SSL_CAPATH}
@@ -93,13 +87,9 @@ debug = 4
 output = /dev/stderr
 
 connect = ${RSYNC_HOST}:${RSYNC_SSL_PORT}
+${checkhost:-}
 EOF
-    if ! [ "$skip_host_check" = 1 ]; then
-      echo "checkHost = ${RSYNC_HOST}"
-    fi
-  ) > "$tmp"
 
-  exec stunnel4 "$tmp"
   echo >&2 "Failed to exec stunnel4"
   exit 1
 }
