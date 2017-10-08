@@ -29,12 +29,12 @@
 .test debian: &TEST-DEBIAN
   before_script:
     - apt-get update > /dev/null
-    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends bats curl git rsync > /dev/null
+    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends bats curl git rsync stunnel > /dev/null
 
 .test redhat: &TEST-REDHAT
   before_script:
     - yum install -y epel-release > /dev/null
-    - yum install -y bats curl git rsync > /dev/null
+    - yum install -y bats curl git rsync stunnel > /dev/null
 
 test stretch:
   <<: *TEST-DEBIAN
