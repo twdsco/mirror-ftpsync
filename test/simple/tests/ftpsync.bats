@@ -1,13 +1,13 @@
 #!/usr/bin/env bats
 
 setup() {
-  ln -s $(pwd)/rsyncd /rsyncd
-  rm -f /rsyncd.pid
-  rsync --daemon --log-file $(pwd)/log/rsyncd.log --config $(pwd)/etc/rsyncd.conf
+  mkdir log
+  rm -f log/rsyncd.pid
+  rsync --daemon --config etc/rsyncd.conf
 }
 
 teardown() {
-  kill -15 $(cat /rsyncd.pid)
+  kill -15 $(cat log/rsyncd.pid)
 }
 
 @test "run ftpsync" {
