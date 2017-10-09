@@ -27,7 +27,7 @@ turn sync from it.
 **-m**
 :   The method used to connect to the remote host.
 
-    Default: **stunnel4**
+    Default: **stunnel**
 
 **-p**
 :   The port used to connect to the remote host.

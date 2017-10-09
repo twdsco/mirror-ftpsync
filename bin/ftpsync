@@ -405,7 +405,7 @@ else
 fi
 RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
 RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
-RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
+RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel"}
 RSYNC_PROXY=${RSYNC_PROXY:-""}
 
 # Include and exclude options

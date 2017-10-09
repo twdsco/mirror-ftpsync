@@ -37,7 +37,7 @@ usage() {
 Usage: $0 [OPTION]... RSYNC_HOST"
 
   -C  the capath (default: /etc/ssl/certs)
-  -m  the method (stunnel4|stunnel4-old|socat)
+  -m  the method (stunnel|stunnel-old|socat)
   -p  the port (default: 1873)
   -h  display this help and exit
 EOF
@@ -64,7 +64,7 @@ fi
 RSYNC_HOST="$1"; shift
 RSYNC_SSL_PORT=${RSYNC_SSL_PORT:-"1873"}
 RSYNC_SSL_CAPATH=${RSYNC_SSL_CAPATH:-"/etc/ssl/certs"}
-RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel4"}
+RSYNC_SSL_METHOD=${RSYNC_SSL_METHOD:-"stunnel"}
 
 method_stunnel() {
   skip_host_check="$1"; shift
@@ -73,7 +73,7 @@ method_stunnel() {
     checkhost="checkHost = ${RSYNC_HOST}"
   fi
 
-  exec stunnel4 -fd 3 3<<EOF
+  exec stunnel -fd 3 3<<EOF
 client = yes
 verify = 2
 CApath = ${RSYNC_SSL_CAPATH}
@@ -86,7 +86,7 @@ connect = ${RSYNC_HOST}:${RSYNC_SSL_PORT}
 ${checkhost:-}
 EOF
 
-  echo >&2 "Failed to exec stunnel4"
+  echo >&2 "Failed to exec stunnel"
   exit 1
 }
 
@@ -97,10 +97,10 @@ method_socat() {
 }
 
 case ${RSYNC_SSL_METHOD:-} in
-  stunnel4)
+  stunnel|stunnel4)
     method_stunnel 0
     ;;
-  stunnel4-old)
+  stunnel-old|stunnel4-old)
     method_stunnel 1
     ;;
   socat)

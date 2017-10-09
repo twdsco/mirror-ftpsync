@@ -82,17 +82,17 @@ turn sync from it.
 :   Default: **/etc/ssl/certs**
 
 **RSYNC_SSL_METHOD**
-:    ftpsync can use either stunnel4, stunnel4-old, or socat to set up the
+:    ftpsync can use either stunnel, stunnel-old, or socat to set up the
      encrypted tunnel.
 
-     **stunnel4**
-     :   requires at least stunnel4 version 5.15 built aginst openssl
+     **stunnel**
+     :   requires at least stunnel version 5.15 built aginst openssl
          1.0.2 or later such that the stunnel build supports the checkHost
          service-level option.  This will cause stunnel to verify both the
          peer certificate's validity and that it's actually for the host we wish
          to connect to.
 
-      **stunnel4-old**
+      **stunnel-old**
       :   will skip the checkHost check.  As such it will connect
           to any peer that is able to present a valid certificate, regardless of
           which name it is made out to.
@@ -105,7 +105,7 @@ turn sync from it.
 
     **rsync -e 'bin/rsync-ssl-tunnel -m socat -p 1873 -C /etc/ssl/certs' SERVER::**
 
-    Default: stunnel4
+    Default: stunnel
 
 **RSYNC_PROXY**
 :   You may establish the connection via a web proxy by setting the environment
