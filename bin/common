@@ -312,7 +312,7 @@ read_config() {
     return 0
   else
     echo "Can't read config file ${name}!" >&2
-    exit 1
+    exit 78 # EX_CONFIG
   fi
 }
 
