@@ -6,7 +6,11 @@ setup() {
 }
 
 teardown() {
-  kill -15 $rsyncd_PID
+  local pid=$rsyncd_PID
+  if [[ $pid ]]; then
+    kill -15 $pid || :
+    wait $pid || :
+  fi
 }
 
 @test "run ftpsync" {

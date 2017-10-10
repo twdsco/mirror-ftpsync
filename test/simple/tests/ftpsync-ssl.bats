@@ -6,7 +6,11 @@ setup() {
 }
 
 teardown() {
-  kill -15 $stunnel_PID
+  local pid=$stunnel_PID
+  if [[ $pid ]]; then
+    kill -15 $pid || :
+    wait $pid || :
+  fi
 }
 
 @test "run ftpsync with ssl" {
