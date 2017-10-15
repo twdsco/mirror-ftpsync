@@ -241,7 +241,9 @@ tracefile() {
             for bytes in $(sed -Ene 's/^sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\1/p' "${LOGDIR}/rsync-${NAME}.log"); do
                 total=$(( total + bytes ))
             done
-            echo "Total bytes received in rsync: ${total}"
+            if [[ $total -gt 0 ]]; then
+                echo "Total bytes received in rsync: ${total}"
+            fi
         fi
         total_time=$(( STATS_TOTAL_RSYNC_TIME1 + STATS_TOTAL_RSYNC_TIME2 ))
         echo "Total time spent in stage1 rsync: ${STATS_TOTAL_RSYNC_TIME1}"
