@@ -238,8 +238,7 @@ tracefile() {
         echo "Rsync-Transport: ${RSYNC_TRANSPORT}"
         total=0
         if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
-            for bytes in $(awk -F': '   '$1 == "Total bytes received" {print $2} ' "${LOGDIR}/rsync-${NAME}.log"); do
-                bytes=${bytes//,}
+            for bytes in $(sed -Ene 's/^sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\1/p' "${LOGDIR}/rsync-${NAME}.log"); do
                 total=$(( total + bytes ))
             done
             echo "Total bytes received in rsync: ${total}"
