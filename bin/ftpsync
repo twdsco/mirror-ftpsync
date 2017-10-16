@@ -112,18 +112,19 @@ cleanup() {
             args+=(-a $rsync_error -a $LOG)
             subject="ERROR: rsync errors"
             send=1
-        # In case admin want all logs or we had logged any error
-        elif [[ ${ERRORSONLY} = false ]] || [[ ${LOG_ERROR:-} ]]; then
+        # In case admin want all logs
+        elif [[ ${ERRORSONLY} = false ]]; then
             args+=(-a $LOG)
-            subject="ERROR"
-            send=1
-        fi
-        # Someone wants full logs including rsync
-        if [[ ${FULLLOGS} = true ]]; then
-            args+=(-a $rsync_log)
+            if [[ ${LOG_ERROR:-} ]]; then
+                subject="ERROR"
+            fi
             send=1
         fi
         if [[ $send ]]; then
+            # Someone wants full logs including rsync
+            if [[ ${FULLLOGS} = true ]]; then
+                args+=(-a $rsync_log)
+            fi
             mailf "${args[@]}" -s "[${PROGRAM}@$(hostname -s)] ${subject}" ${MAILTO}
         fi
     fi
