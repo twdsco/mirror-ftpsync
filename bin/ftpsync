@@ -101,26 +101,21 @@ cleanup() {
     log "Mirrorsync done";
 
     if [[ -n ${MAILTO} ]]; then
-	local archive="(empty)"
-        if [[ $ARCHIVE ]]; then
-            archive=$ARCHIVE
-        fi
-
         local args=()
         local send=
-        local subject="SUCCESS: archive ${archive}"
+        local subject="SUCCESS"
         local rsync_error="${LOGDIR}/rsync-${NAME}.error"
         local rsync_log="${LOGDIR}/rsync-${NAME}.log"
 
         # In case rsync had something on stderr
         if [[ -s $rsync_error ]]; then
             args+=(-a $rsync_error -a $LOG)
-            subject="ERROR: archive ${archive}: rsync errors"
+            subject="ERROR: rsync errors"
             send=1
         # In case admin want all logs or we had logged any error
         elif [[ ${ERRORSONLY} = false ]] || [[ ${LOG_ERROR:-} ]]; then
             args+=(-a $LOG)
-            subject="ERROR: archive ${archive}: errors"
+            subject="ERROR"
             send=1
         fi
         # Someone wants full logs including rsync
