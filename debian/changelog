@@ -1,3 +1,20 @@
+archvsync (20171017) unstable; urgency=high
+
+  [ Peter Palfrader ]
+  * Add a lot of manpages.
+
+  [ Bastian Blank ]
+  * Make sure correct version of runmirrors is installed.
+  * Always print error if config can't be read.
+  * Support old bash in ftpsync-cron.
+  * Implement minimal SSH transport. (closes: #828727)
+  * Disable rsync human readable output and only read numbers from
+    output.
+  * Ask rsync to only allow save symlinks.
+    CVE-2017-8805
+
+ -- Bastian Blank <waldi@debian.org>  Tue, 17 Oct 2017 15:22:24 +0200
+
 archvsync (20170920) unstable; urgency=medium
 
   * Make sure source tar is pretty clean. (closes: #875702)
