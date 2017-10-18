@@ -9,9 +9,15 @@ load helper
 
   run_ftpsync sync:archive:default
   [[ $status -eq 0 ]]
+
   ! [[ -f $logdir/ftpsync-default.log ]]
   ! [[ -f $logdir/rsync-ftpsync-default.log ]]
   ! [[ -f $logdir/rsync-ftpsync-default.error ]]
+
+  [[ -s $outdir/project/trace/localhost ]]
+  [[ -s $outdir/project/trace/master.example.com ]]
+  grep 'Archive serial: 2017091804' $outdir/project/trace/localhost
+  grep -v 'Trigger:' $outdir/project/trace/localhost
 }
 
 @test "run ftpsync, ssh command" {
@@ -21,9 +27,15 @@ load helper
 
   SSH_ORIGINAL_COMMAND="sync:archive:default" run_ftpsync
   [[ $status -eq 0 ]]
+
   ! [[ -f $logdir/ftpsync-default.log ]]
   ! [[ -f $logdir/rsync-ftpsync-default.log ]]
   ! [[ -f $logdir/rsync-ftpsync-default.error ]]
+
+  [[ -s $outdir/project/trace/localhost ]]
+  [[ -s $outdir/project/trace/master.example.com ]]
+  grep 'Archive serial: 2017091804' $outdir/project/trace/localhost
+  grep 'Trigger: ssh' $outdir/project/trace/localhost
 }
 
 @test "run ftpsync with non-existant archive" {
