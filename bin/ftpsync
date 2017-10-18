@@ -426,7 +426,7 @@ RSYNC_PROTOCOL=$(rsync_protocol)
 RSYNC_EXTRA=${RSYNC_EXTRA:-""}
 RSYNC_BW=${RSYNC_BW:-0}
 if [[ $RSYNC_PROTOCOL -ge 31 ]]; then
-    RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltHSB8192 --safe-links --chmod=D755,F644 --timeout 3600 --info=name1,skip0,stats2 --no-human-readable"}
+    RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --safe-links --chmod=D755,F644 --timeout 3600 --info=skip0,stats2 --no-human-readable"}
 else
     RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --safe-links --timeout 3600 --stats --no-human-readable"}
 fi
