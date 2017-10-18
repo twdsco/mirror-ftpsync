@@ -47,3 +47,12 @@ load helper
   SSH_ORIGINAL_COMMAND="sync:archive:" run bin/ftpsync
   [[ $status -eq 78 ]]
 }
+
+@test "run ftpsync with non-default trigger" {
+  local testid=$(testid)
+  local outdir=output/$testid
+
+  run_ftpsync -T test sync:archive:default
+  [[ $status -eq 0 ]]
+  grep 'Trigger: test' $outdir/project/trace/localhost
+}
