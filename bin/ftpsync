@@ -230,7 +230,7 @@ tracefile() {
         else
             echo "Architectures-Configuration: ALL"
         fi
-        echo "Upstream-mirror: ${RSYNC_HOST}"
+        echo "Upstream-mirror: ${RSYNC_HOST:-unknown}"
         echo "Rsync-Transport: ${RSYNC_TRANSPORT}"
         total=0
         if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
@@ -256,7 +256,7 @@ tracefile() {
         if [[ -e ${TO}/${TRACEHIERARCHY}.mirror ]]; then
             cat ${TO}/${TRACEHIERARCHY}.mirror
         fi
-        echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST}"
+        echo "$(basename "${TRACEFILE}") ${MIRRORNAME} ${TRACEHOST} ${RSYNC_HOST:-unknown}"
     } > "${TO}/${TRACEHIERARCHY}".new
     mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
     cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
@@ -391,9 +391,11 @@ MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check you
 HUB=${HUB:-"false"}
 
 # Connection options
-RSYNC_HOST=${RSYNC_HOST:?Missing a host to mirror from, please set RSYNC_HOST variable in ${CURRENT_CONFIG}}
-RSYNC_PATH=${RSYNC_PATH:-"debian"}
-RSYNC_USER=${RSYNC_USER:-""}
+if [[ -z ${RSYNC_SOURCE:-} ]]; then
+    RSYNC_HOST=${RSYNC_HOST:?Missing a host to mirror from, please set RSYNC_HOST variable in ${CURRENT_CONFIG}}
+    RSYNC_PATH=${RSYNC_PATH:-"debian"}
+    RSYNC_USER=${RSYNC_USER:-""}
+fi
 RSYNC_PASSWORD=${RSYNC_PASSWORD:-""}
 if [[ ${RSYNC_SSL:-} = true ]]; then
     RSYNC_TRANSPORT=${RSYNC_TRANSPORT:-"ssl"}
@@ -597,11 +599,15 @@ hook $HOOK
 
 # Now, we might want to sync from anonymous too.
 # This is that deep in this script so hook1 could, if wanted, change things!
-if [[ -z ${RSYNC_USER} ]]; then
-    _RSYNC+=("${RSYNC_HOST}::${RSYNC_PATH}" "$TO")
-else
-    _RSYNC+=("${RSYNC_USER}@${RSYNC_HOST}::${RSYNC_PATH}" "$TO")
+if [[ -z ${RSYNC_SOURCE:-} ]]; then
+    if [[ -z ${RSYNC_USER:-} ]]; then
+        RSYNC_SOURCE="${RSYNC_HOST}::${RSYNC_PATH}"
+    else
+        RSYNC_SOURCE="${RSYNC_USER}@${RSYNC_HOST}::${RSYNC_PATH}"
+    fi
 fi
+
+_RSYNC+=("${RSYNC_SOURCE}" "$TO")
 
 # Now do the actual mirroring, and run as long as we have an updaterequired file.
 export RSYNC_PASSWORD
