@@ -1,3 +1,10 @@
+archvsync (20171018) unstable; urgency=medium
+
+  * Revert usage if --info options for connections with old rsync
+    version.
+
+ -- Bastian Blank <waldi@debian.org>  Wed, 18 Oct 2017 16:55:46 +0200
+
 archvsync (20171017) unstable; urgency=high
 
   [ Peter Palfrader ]
