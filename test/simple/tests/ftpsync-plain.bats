@@ -1,8 +1,11 @@
 #!/usr/bin/env bats
 
+load helper
+
 setup() {
-  mkdir -p log
-  coproc rsyncd { exec rsync --daemon --no-detach --config etc/rsyncd.conf; }
+  local logdir=log/$(testid)
+  mkdir -p $logdir
+  coproc rsyncd { exec rsync --daemon --no-detach --config etc/rsyncd.conf --log-file $logdir/rsyncd.log; }
 }
 
 teardown() {
@@ -13,15 +16,7 @@ teardown() {
   fi
 }
 
-@test "run ftpsync" {
-  run bin/ftpsync -T test sync:archive:plain
-  [[ $status -eq 0 ]]
-  ! [[ -f log/ftpsync-plain.log ]]
-  ! [[ -f log/rsync-ftpsync-plain.log ]]
-  ! [[ -f log/rsync-ftpsync-plain.error ]]
-}
-
-@test "run ftpsync, ssh command" {
-  SSH_ORIGINAL_COMMAND="sync:archive:plain" run bin/ftpsync
+@test "run ftpsync using plain transport" {
+  run_ftpsync sync:archive:plain
   [[ $status -eq 0 ]]
 }
