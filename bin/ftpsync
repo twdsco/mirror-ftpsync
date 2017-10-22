@@ -165,7 +165,7 @@ check_rsync() {
 
     # Lets get a statistical value
     if [[ -f ${LOGDIR}/rsync-${NAME}.log ]]; then
-        SPEED=$(tail -n 2 ${LOGDIR}/rsync-${NAME}.log | sed -ne 's#.* \([0-9.,]\{1,\}\) bytes/sec#\1#p')
+        SPEED=$(tail -n 2 ${LOGDIR}/rsync-${NAME}.log | sed -Ene 's#.* ([0-9.,]+) bytes/sec#\1#p')
         if [[ ${SPEED} ]]; then
             SPEED=${SPEED%%.*}
             SPEED=${SPEED//,}
@@ -225,7 +225,7 @@ function tracefile_content() {
 
     if [[ -d ${TO}/dists ]]; then
         ARCH=$(find ${TO}/dists \( -name 'Packages.*' -o -name 'Sources.*' \) 2>/dev/null |
-            sed -ne 's#.*/binary-\([^/]\{1,\}\)/Packages.*#\1#p; s#.*/\(source\)/Sources.*#\1#p' |
+            sed -Ene 's#.*/binary-([^/]+)/Packages.*#\1#p; s#.*/(source)/Sources.*#\1#p' |
             sort -u | tr '\n' ' ')
         if [[ $ARCH ]]; then
             echo "Architectures: ${ARCH}"
@@ -242,7 +242,7 @@ function tracefile_content() {
     echo "Rsync-Transport: ${RSYNC_TRANSPORT}"
     total=0
     if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
-        for bytes in $(sed -ne 's/^sent \([0-9]\{1,\}\) bytes  received \([0-9]\{1,\}\) bytes.*/\1/p' "${LOGDIR}/rsync-${NAME}.log"); do
+        for bytes in $(sed -Ene 's/^sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\1/p' "${LOGDIR}/rsync-${NAME}.log"); do
             total=$(( total + bytes ))
         done
         if [[ $total -gt 0 ]]; then
