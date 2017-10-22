@@ -31,6 +31,12 @@
     - apt-get update > /dev/null
     - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends bats curl git rsync stunnel > /dev/null
 
+.test debian busybox: &TEST-DEBIAN-BUSYBOX
+  before_script:
+    - apt-get update > /dev/null
+    - DEBIAN_FRONTEND=noninteractive apt-get install --yes --no-install-recommends bats busybox curl git rsync stunnel > /dev/null
+    - busybox --install -s /usr/local/bin
+
 .test redhat: &TEST-REDHAT
   before_script:
     - yum install -y epel-release > /dev/null
@@ -38,6 +44,11 @@
 
 test stretch:
   <<: *TEST-DEBIAN
+  <<: *TEST-SIMPLE
+  image: debian:stretch
+
+test basic:
+  <<: *TEST-DEBIAN-BUSYBOX
   <<: *TEST-SIMPLE
   image: debian:stretch
 
