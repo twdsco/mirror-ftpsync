@@ -98,7 +98,12 @@ cleanup() {
 
     trap - ERR TERM HUP INT QUIT EXIT
     # all done. Mail the log, exit.
-    log "Mirrorsync done";
+
+    if [[ $rc -gt 0 ]]; then
+        log "Mirrorsync done with errors"
+    else
+        log "Mirrorsync done"
+    fi
 
     if [[ -n ${MAILTO} ]]; then
         local args=()
@@ -111,6 +116,11 @@ cleanup() {
         if [[ -s $rsync_error ]]; then
             args+=(-a $rsync_error -a $LOG)
             subject="ERROR: rsync errors"
+            send=1
+        # In case of direct errors
+        elif [[ $rc -gt 0 ]]; then
+            args+=(-a $LOG)
+            subject="ERROR"
             send=1
         # In case admin want all logs
         elif [[ ${ERRORSONLY} = false ]]; then
