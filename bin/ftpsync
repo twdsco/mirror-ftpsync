@@ -224,8 +224,9 @@ function tracefile_content() {
     fi
 
     if [[ -d ${TO}/dists ]]; then
-        ARCH=$(find ${TO}/dists \( -name 'Packages.*' -o -name 'Sources.*' \) -printf '%h\n' 2>/dev/null |
-            sed -ne 's#.*/binary-\([^/]\{1,\}\)$#\1#p; s#.*/\(source\)$#\1#p' | sort -u | tr '\n' ' ')
+        ARCH=$(find ${TO}/dists \( -name 'Packages.*' -o -name 'Sources.*' \) 2>/dev/null |
+            sed -ne 's#.*/binary-\([^/]\{1,\}\)/Packages.*#\1#p; s#.*/\(source\)/Sources.*#\1#p' |
+            sort -u | tr '\n' ' ')
         if [[ $ARCH ]]; then
             echo "Architectures: ${ARCH}"
         fi
@@ -277,7 +278,7 @@ tracefile() {
     mv "${TO}/${TRACEHIERARCHY}".new "${TO}/${TRACEHIERARCHY}"
     cp "${TO}/${TRACEHIERARCHY}" "${TO}/${TRACEHIERARCHY}.mirror"
 
-    (cd "${TO}/${TRACEDIR}" && ls -1rt $(find . -type f \! -name "_*" -printf "%f\n")) > "${TO}/${TRACELIST}"
+    (cd "${TO}/${TRACEDIR}" && ls -1rt $(find * -type f \! -name "_*")) > "${TO}/${TRACELIST}"
 }
 
 arch_imexclude() {
