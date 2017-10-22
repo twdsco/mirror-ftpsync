@@ -189,6 +189,8 @@ check_rsync() {
 }
 
 function tracefile_content() {
+    set +e
+
     LC_ALL=POSIX LANG=POSIX date -u
     rfc822date=$(LC_ALL=POSIX LANG=POSIX date -u -R)
     echo "Date: ${rfc822date}"
@@ -254,6 +256,8 @@ function tracefile_content() {
         rate=$(( total / total_time ))
         echo "Average rate: ${rate} B/s"
     fi
+
+    set -e
 }
 
 # Write a tracefile
