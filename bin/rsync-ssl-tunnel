@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 # Helper to tunnel rsync through ssl on the client side.
 # Example:

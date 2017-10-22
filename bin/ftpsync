@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 # No, we can not deal with sh alone.
 
 set -e
