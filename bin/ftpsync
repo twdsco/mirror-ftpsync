@@ -242,7 +242,7 @@ function tracefile_content() {
     echo "Rsync-Transport: ${RSYNC_TRANSPORT}"
     total=0
     if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
-        for bytes in $(sed -Ene 's/^sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\1/p' "${LOGDIR}/rsync-${NAME}.log"); do
+        for bytes in $(sed -Ene 's/^sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\2/p' "${LOGDIR}/rsync-${NAME}.log"); do
             total=$(( total + bytes ))
         done
         if [[ $total -gt 0 ]]; then
