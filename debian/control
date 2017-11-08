@@ -16,6 +16,8 @@ Depends:
  default-mta | mail-transport-agent,
  rsync,
  ${misc:Depends}
+Recommends:
+ curl,
 Description: Debian archive mirror tool
  ftpsync is the preferred tool for maintaining a Debian mirror.  It
  tries to make updates as smooth as possible, without the clients
