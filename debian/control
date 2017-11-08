@@ -4,15 +4,18 @@ Priority: optional
 Maintainer: Debian Mirror Team <mirrors@debian.org>
 Uploaders: Bastian Blank <waldi@debian.org>
 Build-Depends:
-  debhelper (>= 9),
-  pandoc,
+ debhelper (>= 9),
+ pandoc,
 Standards-Version: 3.9.8
 Vcs-Git: https://anonscm.debian.org/git/mirror/archvsync.git
 Vcs-Browser: https://anonscm.debian.org/cgit/mirror/archvsync.git
 
 Package: ftpsync
 Architecture: all
-Depends: ${misc:Depends}
+Depends:
+ default-mta | mail-transport-agent,
+ rsync,
+ ${misc:Depends}
 Description: Debian archive mirror tool
  ftpsync is the preferred tool for maintaining a Debian mirror.  It
  tries to make updates as smooth as possible, without the clients
