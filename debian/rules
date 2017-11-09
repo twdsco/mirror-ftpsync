@@ -7,20 +7,22 @@ include /usr/share/dpkg/pkg-info.mk
 include /usr/share/dpkg/vendor.mk
 export DEB_VERSION
 
+ifeq ($(DEB_VENDOR),Debian)
 TARNAME = ftpsync_$(DEB_VERSION_UPSTREAM_REVISION)_all.tar.gz
+endif
 
 %:
 	dh $@
 
 override_dh_auto_install:
 	dh_auto_install
-ifeq ($(DEB_VENDOR),Debian)
+ifdef TARNAME
 	$(MAKE) install-tar DESTDIR=debian/ftpsync-tar/distrib
 endif
 
 override_dh_builddeb:
 	dh_builddeb
-ifeq ($(DEB_VENDOR),Debian)
+ifdef TARNAME
 	tar -c -C debian/ftpsync-tar distrib | gzip -n > ../$(TARNAME)
 	dpkg-distaddfile $(TARNAME) byhand -
 endif
