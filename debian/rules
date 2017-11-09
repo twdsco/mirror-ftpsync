@@ -7,8 +7,13 @@ include /usr/share/dpkg/pkg-info.mk
 include /usr/share/dpkg/vendor.mk
 export DEB_VERSION
 
+# Only build the extra tar
+# - on Debian, and
 ifeq ($(DEB_VENDOR),Debian)
+# - if the version doesn't contain a backports or other extension.
+  ifeq ($(shell echo $(DEB_VERSION_UPSTREAM_REVISION) | sed -Ee 's/^[0-9]{8}//'),)
 TARNAME = ftpsync_$(DEB_VERSION_UPSTREAM_REVISION)_all.tar.gz
+  endif
 endif
 
 %:
