@@ -152,9 +152,9 @@ run_rsync() {
   local t=$1
   shift
 
-  log "Running $t:" "${_RSYNC[@]}" ${RSYNC_OPTIONS} "$@"
+  log "Running $t:" "${_RSYNC[@]}" "$@"
 
-  "${_RSYNC[@]}" ${RSYNC_OPTIONS} "$@" \
+  "${_RSYNC[@]}" "$@" \
     >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error" || return $?
 }
 
@@ -504,7 +504,7 @@ _RSYNC+=(
 # Default rsync options for *every* rsync call
 # Now add the bwlimit option. As default is 0 we always add it, rsync interprets
 # 0 as unlimited, so this is safe.
-RSYNC_OPTIONS="${RSYNC_EXTRA} --bwlimit=${RSYNC_BW} ${RSYNC_OPTIONS} ${EXCLUDE}"
+_RSYNC+=(${RSYNC_EXTRA} --bwlimit=${RSYNC_BW} ${RSYNC_OPTIONS} ${EXCLUDE})
 
 # collect some stats
 STATS_TOTAL_RSYNC_TIME1=0
