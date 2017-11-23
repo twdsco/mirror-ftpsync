@@ -486,7 +486,7 @@ _TRACE_FILES=(
   "${TRACELIST}"
 )
 
-_RSYNC=("$RSYNC")
+_RSYNC=($RSYNC)
 
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
