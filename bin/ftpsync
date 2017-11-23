@@ -450,11 +450,7 @@ else
     RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --safe-links --timeout 3600 --stats --no-human-readable"}
 fi
 RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--include=*.diff/ --exclude=*.diff/Index --exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --include=i18n/by-hash --exclude=i18n/* --exclude=ls-lR*"}
-if [[ $RSYNC_PROTOCOL -ge 30 ]]; then
-    RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-delay --delete-excluded"}
-else
-    RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-after --delete-excluded"}
-fi
+RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-delay --delete-excluded"}
 CALLBACKUSER=${CALLBACKUSER:-"archvsync"}
 CALLBACKHOST=${CALLBACKHOST:-"none"}
 CALLBACKKEY=${CALLBACKKEY:-"none"}
