@@ -3,42 +3,34 @@
 load helper
 
 @test "run ftpsync" {
-  local testid=$(testid)
-  local logdir=log/$testid
-  local outdir=output/$testid
-
   run_ftpsync sync:archive:security
   [[ $status -eq 0 ]]
 
-  ! [[ -f $logdir/ftpsync-security.log ]]
-  ! [[ -f $logdir/rsync-ftpsync-security.log ]]
-  ! [[ -f $logdir/rsync-ftpsync-security.error ]]
-  [[ -s $logdir/ftpsync-security.log.0 ]]
-  [[ -s $logdir/rsync-ftpsync-security.log.0 ]]
-  [[ -f $logdir/rsync-ftpsync-security.error.0 ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/ftpsync-security.log ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.log ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.error ]]
+  [[ -s $BATS_TEST_OWN_LOGDIR/ftpsync-security.log.0 ]]
+  [[ -s $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.log.0 ]]
+  [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.error.0 ]]
 
-  [[ -s $outdir/project/trace/localhost ]]
-  [[ -s $outdir/project/trace/security.debian.org ]]
+  [[ -s $BATS_TEST_OWN_OUTDIR/project/trace/localhost ]]
+  [[ -s $BATS_TEST_OWN_OUTDIR/project/trace/security.debian.org ]]
 }
 
 @test "run ftpsync-cron" {
-  local testid=$(testid)
-  local logdir=log/$testid
-  local outdir=output/$testid
+  run_ftpsync_cron security
+  [[ $status -eq 0 ]]
+
+  [[ -s $BATS_TEST_OWN_LOGDIR/ftpsync-security.log.0 ]]
+  [[ -s $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.log.0 ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/ftpsync-security.log.1 ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.log.1 ]]
 
   run_ftpsync_cron security
   [[ $status -eq 0 ]]
 
-  [[ -s $logdir/ftpsync-security.log.0 ]]
-  [[ -s $logdir/rsync-ftpsync-security.log.0 ]]
-  ! [[ -f $logdir/ftpsync-security.log.1 ]]
-  ! [[ -f $logdir/rsync-ftpsync-security.log.1 ]]
-
-  run_ftpsync_cron security
-  [[ $status -eq 0 ]]
-
-  [[ -s $logdir/ftpsync-security.log.0 ]]
-  [[ -s $logdir/rsync-ftpsync-security.log.0 ]]
-  ! [[ -f $logdir/ftpsync-security.log.1 ]]
-  ! [[ -f $logdir/rsync-ftpsync-security.log.1 ]]
+  [[ -s $BATS_TEST_OWN_LOGDIR/ftpsync-security.log.0 ]]
+  [[ -s $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.log.0 ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/ftpsync-security.log.1 ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-security.log.1 ]]
 }

@@ -3,39 +3,31 @@
 load helper
 
 @test "run ftpsync" {
-  local testid=$(testid)
-  local logdir=log/$testid
-  local outdir=output/$testid
-
   run_ftpsync sync:archive:default
   [[ $status -eq 0 ]]
 
-  ! [[ -f $logdir/ftpsync-default.log ]]
-  ! [[ -f $logdir/rsync-ftpsync-default.log ]]
-  ! [[ -f $logdir/rsync-ftpsync-default.error ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/ftpsync-default.log ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-default.log ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-default.error ]]
 
-  [[ -s $outdir/project/trace/localhost ]]
-  [[ -s $outdir/project/trace/master.example.com ]]
-  grep 'Archive serial: 2017091804' $outdir/project/trace/localhost
-  grep -v 'Trigger:' $outdir/project/trace/localhost
+  [[ -s $BATS_TEST_OWN_OUTDIR/project/trace/localhost ]]
+  [[ -s $BATS_TEST_OWN_OUTDIR/project/trace/master.example.com ]]
+  grep 'Archive serial: 2017091804' $BATS_TEST_OWN_OUTDIR/project/trace/localhost
+  grep -v 'Trigger:' $BATS_TEST_OWN_OUTDIR/project/trace/localhost
 }
 
 @test "run ftpsync, ssh command" {
-  local testid=$(testid)
-  local logdir=log/$testid
-  local outdir=output/$testid
-
   SSH_ORIGINAL_COMMAND="sync:archive:default" run_ftpsync
   [[ $status -eq 0 ]]
 
-  ! [[ -f $logdir/ftpsync-default.log ]]
-  ! [[ -f $logdir/rsync-ftpsync-default.log ]]
-  ! [[ -f $logdir/rsync-ftpsync-default.error ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/ftpsync-default.log ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-default.log ]]
+  ! [[ -f $BATS_TEST_OWN_LOGDIR/rsync-ftpsync-default.error ]]
 
-  [[ -s $outdir/project/trace/localhost ]]
-  [[ -s $outdir/project/trace/master.example.com ]]
-  grep 'Archive serial: 2017091804' $outdir/project/trace/localhost
-  grep 'Trigger: ssh' $outdir/project/trace/localhost
+  [[ -s $BATS_TEST_OWN_OUTDIR/project/trace/localhost ]]
+  [[ -s $BATS_TEST_OWN_OUTDIR/project/trace/master.example.com ]]
+  grep 'Archive serial: 2017091804' $BATS_TEST_OWN_OUTDIR/project/trace/localhost
+  grep 'Trigger: ssh' $BATS_TEST_OWN_OUTDIR/project/trace/localhost
 }
 
 @test "run ftpsync with non-existant archive" {
@@ -49,10 +41,7 @@ load helper
 }
 
 @test "run ftpsync with non-default trigger" {
-  local testid=$(testid)
-  local outdir=output/$testid
-
   run_ftpsync -T test sync:archive:default
   [[ $status -eq 0 ]]
-  grep 'Trigger: test' $outdir/project/trace/localhost
+  grep 'Trigger: test' $BATS_TEST_OWN_OUTDIR/project/trace/localhost
 }

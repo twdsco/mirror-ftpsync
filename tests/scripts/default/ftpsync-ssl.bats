@@ -3,9 +3,8 @@
 load helper
 
 setup() {
-  local logdir=log/$(testid)
-  mkdir -p $logdir
-  coproc stunnel { exec stunnel etc/default/stunnel.conf > $logdir/stunnel.log 2>&1; }
+  setup_dirs
+  coproc stunnel { exec stunnel etc/default/stunnel.conf > $BATS_TEST_OWN_LOGDIR/stunnel.log 2>&1; }
 }
 
 teardown() {

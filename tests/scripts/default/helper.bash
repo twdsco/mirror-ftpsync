@@ -1,9 +1,15 @@
-function testid() {
-  echo default/$(basename $BATS_TEST_FILENAME)/$BATS_TEST_NUMBER
+function setup_dirs() {
+  export BATS_TEST_OWN_TESTID=default/$(basename $BATS_TEST_FILENAME)/$BATS_TEST_NUMBER
+  BATS_TEST_OWN_LOGDIR=log/$BATS_TEST_OWN_TESTID
+  BATS_TEST_OWN_OUTDIR=output/$BATS_TEST_OWN_TESTID
+  rm -rf $BATS_TEST_OWN_LOGDIR $BATS_TEST_OWN_OUTDIR
+  mkdir -p $BATS_TEST_OWN_LOGDIR $BATS_TEST_OWN_OUTDIR
+}
+
+function setup() {
+  setup_dirs
 }
 
 function run_ftpsync() {
-  local testid=$(testid)
-  rm -rf log/$testid output/$testid
-  TESTID=$testid run ./bin/ftpsync "$@"
+  run ./bin/ftpsync "$@"
 }

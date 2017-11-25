@@ -3,9 +3,8 @@
 load helper
 
 setup() {
-  local logdir=log/$(testid)
-  mkdir -p $logdir
-  coproc rsyncd { exec rsync --daemon --no-detach --config etc/default/rsyncd.conf --log-file $logdir/rsyncd.log; }
+  setup_dirs
+  coproc rsyncd { exec rsync --daemon --no-detach --config etc/default/rsyncd.conf --log-file $BATS_TEST_OWN_LOGDIR/rsyncd.log; }
 }
 
 teardown() {
