@@ -20,17 +20,11 @@ package:
   variables:
     LOGNAME: root
   script:
-    - cd test/security
-
-    - bin/ftpsync-cron security
-    - bin/ftpsync-cron security
-    - ls -alR log root
-    - cat root/project/trace/localhost
-    - cat log/ftpsync.log* || true
+    - cd tests && bats scripts/security
   artifacts:
     paths:
-      - test/security/log
-      - test/security/root
+      - tests/log
+      - tests/output
     when: always
 
 .test debian: &TEST-DEBIAN
