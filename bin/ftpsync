@@ -40,27 +40,6 @@ BINDIR=$(dirname $(readlink -f "$0")); . "${BINDIR}/include-git" ## INCLUDE COMM
 ## functions                                                          ##
 ########################################################################
 ########################################################################
-# We want to be able to get told what kind of sync we should do. This
-# might be anything, from the archive to sync, the stage to do, etc. A
-# list of currently understood and valid options is below. Multiple
-# options are seperated by space. All the words have to have the word
-# sync: in front or nothing will get used!
-#
-# Option        Behaviour
-# stage1		 Only do stage1 sync
-# stage2		 Only do stage2 sync
-# all			 Do a complete sync
-# mhop           Do a mhop sync, usually additionally to stage1
-# archive:foo    Sync archive foo (if config for foo is available)
-# callback       Call back when done (needs proper ssh setup for this to
-#                work). It will always use the "command" callback:$HOSTNAME
-#                where $HOSTNAME is the one defined below/in config and
-#                will happen before slave mirrors are triggered.
-#
-# So to get us to sync all of the archive behind bpo and call back when
-# we are done, a trigger command of
-# "ssh $USER@$HOST sync:all sync:archive:bpo sync:callback" will do the
-# trick.
 check_commandline() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
