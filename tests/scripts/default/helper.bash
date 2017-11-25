@@ -1,5 +1,5 @@
 function testid() {
-  echo $(basename $BATS_TEST_FILENAME)/$BATS_TEST_NUMBER
+  echo default/$(basename $BATS_TEST_FILENAME)/$BATS_TEST_NUMBER
 }
 
 function run_ftpsync() {

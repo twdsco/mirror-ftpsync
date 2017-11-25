@@ -9,11 +9,11 @@ package:
   variables:
     LOGNAME: root
   script:
-    - cd test/simple && bats tests
+    - cd tests && bats scripts/default
   artifacts:
     paths:
-      - test/simple/log
-      - test/simple/output
+      - tests/log
+      - tests/output
     when: always
 
 .test security: &TEST-SECURITY
