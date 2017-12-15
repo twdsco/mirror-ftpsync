@@ -170,12 +170,13 @@ wait_for_pushlocks() {
           fi
       done
       if [[ ${total} -eq ${found} ]] || [[ -f ${LOCKDIR}/all_stage1 ]]; then
-          touch "${LOCKDIR}/all_stage1"
           break
       fi
       tries=$(( tries + 5 ))
       sleep 5
   done
+  # Regardless of the state of our siblings, hitting one timeout cancels all waits
+  touch "${LOCKDIR}/all_stage1"
   if [[ ${tries} -ge ${timeout} ]]; then
     return 1
   else
