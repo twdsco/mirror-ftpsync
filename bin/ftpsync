@@ -134,7 +134,7 @@ run_rsync() {
   log "Running $t:" "${_RSYNC[@]}" "$@"
 
   "${_RSYNC[@]}" "$@" \
-    >>"${LOGDIR}/rsync-${NAME}.log" 2>>"${LOGDIR}/rsync-${NAME}.error" || return $?
+    >>"${LOGDIR}/rsync-${NAME}.error" 2>&1 || return $?
 }
 
 # Check rsyncs return value
@@ -465,7 +465,11 @@ _TRACE_FILES=(
   "${TRACELIST}"
 )
 
-_RSYNC=($RSYNC)
+_RSYNC=(
+  $RSYNC
+  --quiet
+  --log-file "${LOGDIR}/rsync-${NAME}.log"
+)
 
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
 # excluded files
