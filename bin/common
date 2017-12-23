@@ -148,9 +148,9 @@ signal_ssh() {
     msg "Sending ${t} trigger" >> $mirror_log
     output=$(ssh -n $hostname "$@" 2>&1 | tee -a $mirror_log)
     if [[ $? -eq 255 ]]; then
-        error_mailf "${t} trigger failed: $hostname" -b "$output"  >> "${LOG}"
+        error_mailf "${t} trigger failed: $hostname" -b "$output"
     else
-        log "${t} trigger succeeded: $hostname" >> "${LOG}"
+        log "${t} trigger succeeded: $hostname"
     fi
 }
 

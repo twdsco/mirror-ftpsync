@@ -145,9 +145,9 @@ umask 022
 
 open_log $LOG
 
-trap 'log "Mirrorpush done" >> "${LOG}"' EXIT
+trap 'log "Mirrorpush done"' EXIT
 
-log "Pushing leaf mirrors. Inside ftpsync: ${FROMFTPSYNC}. Pushkind: ${PUSHKIND}" >> "${LOG}"
+log "Pushing leaf mirrors. Inside ftpsync: ${FROMFTPSYNC}. Pushkind: ${PUSHKIND}"
 
 HOOK=(
     HOOKNR=1
@@ -176,14 +176,14 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
             MLNAME=600
         fi
         if [ "${MHOSTNAME:-}" = "stage1" ]; then
-            log "Delay of ${MLNAME} or until staging is finished requested" >> "${LOG}"
+            log "Delay of ${MLNAME} or until staging is finished requested"
             if ! wait_for_pushlocks ${MLNAME}; then
-                log "Staged delay ran into timeout of ${MLNAME} seconds" >> "${LOG}"
+                log "Staged delay ran into timeout of ${MLNAME} seconds"
             else
-                log "Staged delay finished" >> "${LOG}"
+                log "Staged delay finished"
             fi
         else
-            log "Delay of ${MLNAME} requested, sleeping" >> "${LOG}"
+            log "Delay of ${MLNAME} requested, sleeping"
             sleep ${MLNAME}
         fi
         continue
@@ -213,7 +213,7 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
                 MPUSHARCHIVE=${URLPATH#/}
             fi
         else
-            log "Trigger ${MLNAME}: ${MHOSTNAME} have wrong scheme, ignoring" >> "${LOG}"
+            log "Trigger ${MLNAME}: ${MHOSTNAME} have wrong scheme, ignoring"
             continue
         fi
 
@@ -265,9 +265,9 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
     )
 
     # And finally, push the mirror
-    log "Trigger ${MLNAME}" >> "${LOG}"
+    log "Trigger ${MLNAME}"
     signal "${SIGNAL_OPTS}" &
-    log "Trigger for ${MLNAME} done" >> "${LOG}"
+    log "Trigger for ${MLNAME} done"
 
     HOOK=(
         HOOKNR=2
