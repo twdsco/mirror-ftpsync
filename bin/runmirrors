@@ -143,6 +143,8 @@ fi
 cd "${BASEDIR}"
 umask 022
 
+open_log $LOG
+
 trap 'log "Mirrorpush done" >> "${LOG}"' EXIT
 
 log "Pushing leaf mirrors. Inside ftpsync: ${FROMFTPSYNC}. Pushkind: ${PUSHKIND}" >> "${LOG}"

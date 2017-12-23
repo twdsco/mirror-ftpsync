@@ -569,8 +569,9 @@ fi
 # We want to cleanup always
 trap cleanup EXIT TERM HUP INT QUIT
 
-# Start log by redirecting stdout and stderr there and closing stdin
-exec >"$LOG" 2>&1 <&-
+# Open log and close stdin
+open_log $LOG
+exec 2>&1 <&-
 log "Mirrorsync start"
 
 # Look who pushed us and note that in the log.

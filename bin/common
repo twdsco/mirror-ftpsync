@@ -191,6 +191,13 @@ callback () {
     ssh -n $SSH_OPTIONS -i "$3" -o"user $1" "$2" callback:${HOSTNAME}
 }
 
+# open log file
+open_log() {
+    local log=$1
+    shift
+    exec 3<&0 4>&1 1>>$log
+}
+
 # assemble log message (basically echo it together with a timestamp)
 #
 # Set $PROGRAM to a string to have it added to the output.
