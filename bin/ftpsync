@@ -88,12 +88,10 @@ cleanup() {
         local args=()
         local send=
         local subject="SUCCESS"
-        local rsync_error="${LOGDIR}/rsync-${NAME}.error"
-        local rsync_log="${LOGDIR}/rsync-${NAME}.log"
 
         # In case rsync had something on stderr
-        if [[ -s $rsync_error ]]; then
-            args+=(-a $rsync_error -a $LOG)
+        if [[ -s $LOG_RSYNC_ERROR ]]; then
+            args+=(-a $LOG_RSYNC_ERROR -a $LOG)
             subject="ERROR: rsync errors"
             send=1
         # In case of direct errors
@@ -112,14 +110,14 @@ cleanup() {
         if [[ $send ]]; then
             # Someone wants full logs including rsync
             if [[ ${FULLLOGS} = true ]]; then
-                args+=(-a $rsync_log)
+                args+=(-a $LOG_RSYNC)
             fi
             mailf "${args[@]}" -s "[${PROGRAM}@$(hostname -s)] ${subject}" ${MAILTO}
         fi
     fi
 
-    savelog "${LOGDIR}/rsync-${NAME}.log"
-    savelog "${LOGDIR}/rsync-${NAME}.error"
+    savelog "${LOG_RSYNC}"
+    savelog "${LOG_RSYNC_ERROR}"
     savelog "$LOG" > /dev/null
 
     rm -f "${LOCK}"
@@ -134,7 +132,7 @@ run_rsync() {
   log "Running $t:" "${_RSYNC[@]}" "$@"
 
   "${_RSYNC[@]}" "$@" \
-    >>"${LOGDIR}/rsync-${NAME}.error" 2>&1 || return $?
+    >>"${LOG_RSYNC_ERROR}" 2>&1 || return $?
 }
 
 # Check rsyncs return value
@@ -143,8 +141,8 @@ check_rsync() {
     msg=$2
 
     # Lets get a statistical value
-    if [[ -f ${LOGDIR}/rsync-${NAME}.log ]]; then
-        SPEED=$(tail -n 2 ${LOGDIR}/rsync-${NAME}.log | sed -Ene 's#.* ([0-9.,]+) bytes/sec#\1#p')
+    if [[ -f ${LOG_RSYNC} ]]; then
+        SPEED=$(tail -n 2 ${LOG_RSYNC} | sed -Ene 's#.* ([0-9.,]+) bytes/sec#\1#p')
         if [[ ${SPEED} ]]; then
             SPEED=${SPEED%%.*}
             SPEED=${SPEED//,}
@@ -220,8 +218,8 @@ function tracefile_content() {
     echo "Upstream-mirror: ${RSYNC_HOST:-unknown}"
     echo "Rsync-Transport: ${RSYNC_TRANSPORT}"
     total=0
-    if [[ -e ${LOGDIR}/rsync-${NAME}.log ]]; then
-        for bytes in $(sed -Ene 's/(^|.* )sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\3/p' "${LOGDIR}/rsync-${NAME}.log"); do
+    if [[ -e ${LOG_RSYNC} ]]; then
+        for bytes in $(sed -Ene 's/(^|.* )sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\3/p' "${LOG_RSYNC}"); do
             total=$(( total + bytes ))
         done
         if [[ $total -gt 0 ]]; then
@@ -413,6 +411,8 @@ LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
 ERRORSONLY=${ERRORSONLY:-"true"}
 FULLLOGS=${FULLLOGS:-"false"}
 LOGROTATE=${LOGROTATE:-14}
+LOG_RSYNC="${LOGDIR}/rsync-${NAME}.log"
+LOG_RSYNC_ERROR="${LOGDIR}/rsync-${NAME}.error"
 
 # Other options
 LOCKTIMEOUT=${LOCKTIMEOUT:-3600}
@@ -468,7 +468,7 @@ _TRACE_FILES=(
 _RSYNC=(
   $RSYNC
   --quiet
-  --log-file "${LOGDIR}/rsync-${NAME}.log"
+  --log-file "${LOG_RSYNC}"
 )
 
 # Rsync filter rules. Used to protect various files we always want to keep, even if we otherwise delete
