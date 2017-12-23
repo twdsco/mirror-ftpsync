@@ -110,10 +110,10 @@ signal () {
             # This is a little racy, especially if the other parts decide to do this
             # at the same time, but it wont hurt more than a mail too much, so I don't care much
             if ! wait_for_pushlocks ${PUSHDELAY}; then
-                log "Failed to wait for all other mirrors. Failed ones are:" >> "${LOGDIR}/${MIRROR}.log"
+                msg "Failed to wait for all other mirrors. Failed ones are:" >> "${LOGDIR}/${MIRROR}.log"
                 for file in ${PUSHLOCKS}; do
                     if [[ ! -f ${file} ]]; then
-                        log "${file}" >> "${LOGDIR}/${MIRROR}.log"
+                        msg "${file}" >> "${LOGDIR}/${MIRROR}.log"
                         log "Missing Pushlockfile ${file} after waiting for more than ${PUSHDELAY} seconds, continuing"
                     fi
                 done
@@ -145,7 +145,7 @@ signal_ssh() {
     local hostname=$3
     shift 3
 
-    log "Sending ${t} trigger" >> $mirror_log
+    msg "Sending ${t} trigger" >> $mirror_log
     output=$(ssh -n $hostname "$@" 2>&1 | tee -a $mirror_log)
     if [[ $? -eq 255 ]]; then
         error_mailf "${t} trigger failed: $hostname" -b "$output"  >> "${LOG}"
