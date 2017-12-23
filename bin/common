@@ -191,15 +191,20 @@ callback () {
     ssh -n $SSH_OPTIONS -i "$3" -o"user $1" "$2" callback:${HOSTNAME}
 }
 
-# log something (basically echo it together with a timestamp)
+# assemble log message (basically echo it together with a timestamp)
 #
 # Set $PROGRAM to a string to have it added to the output.
-log () {
+msg() {
     if [[ -z "${PROGRAM}" ]]; then
         echo "$(date +"%b %d %H:%M:%S") $(hostname -s) [$$] $@"
     else
         echo "$(date +"%b %d %H:%M:%S") $(hostname -s) ${PROGRAM}[$$]: $@"
     fi
+}
+
+# log something
+log() {
+    msg "$@"
 }
 
 # log the message using log() but then also send a mail
