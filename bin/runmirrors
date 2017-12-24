@@ -168,7 +168,7 @@ rm -f "${LOCKDIR}/all_stage1"
 
 # Now read our mirrorfile and push the mirrors defined in there.
 # We use grep to easily sort out all lines having a # in front of them or are empty.
-egrep -v '^[[:space:]]*(#|$)' "${MIRRORS}" |
+egrep -vs '^[[:space:]]*(#|$)' "${MIRRORS}" |
 while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
     if [[ ${MTYPE} = DELAY ]]; then
         # We should wait a bit.
