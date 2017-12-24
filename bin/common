@@ -195,7 +195,7 @@ callback () {
 open_log() {
     local log=$1
     shift
-    exec 3<&0 4>&1 1>>$log
+    exec 4>&1 1>>$log
 }
 
 # assemble log message (basically echo it together with a timestamp)
