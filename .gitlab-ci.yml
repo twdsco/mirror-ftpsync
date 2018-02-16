@@ -16,17 +16,6 @@ package:
       - tests/output
     when: always
 
-.test security: &TEST-SECURITY
-  variables:
-    LOGNAME: root
-  script:
-    - cd tests && bats scripts/security
-  artifacts:
-    paths:
-      - tests/log
-      - tests/output
-    when: always
-
 .test debian: &TEST-DEBIAN
   before_script:
     - apt-get update > /dev/null
@@ -53,19 +42,9 @@ test basic:
   <<: *TEST-SIMPLE
   image: debian:stretch
 
-test stretch security:
-  <<: *TEST-DEBIAN
-  <<: *TEST-SECURITY
-  image: debian:stretch
-
 test centos6:
   <<: *TEST-REDHAT
   <<: *TEST-SIMPLE
-  image: centos:centos6
-
-test centos6 security:
-  <<: *TEST-REDHAT
-  <<: *TEST-SECURITY
   image: centos:centos6
 
 test centos7:
