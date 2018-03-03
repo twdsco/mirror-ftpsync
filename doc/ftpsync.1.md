@@ -6,7 +6,7 @@
 ftpsync - Mirror Debian and Debian-like repositories of packages
 
 # SYNOPSIS
-**ftpsync** [__OPTION__]... [__SYNC-FLAG__]...
+**ftpsync** [_OPTION_]... [_SYNC-FLAG_]...
 
 # DESCRIPTION
 
@@ -21,8 +21,8 @@ turn sync from it.
 
 Sync flags can be specified on the command-line or via a ssh forced command from the remote side.
 
-**archive:__foo__**
-: Select archive __foo__ for syncing.  A config needs to be available.
+**archive:_foo_**
+: Select archive _foo_ for syncing.  A config needs to be available.
 
 **all**
 : Do a complete sync.

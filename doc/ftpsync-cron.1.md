@@ -6,7 +6,7 @@
 ftpsync-cron - Wrapper around ftpsync for use in cron(8)
 
 # SYNOPSIS
-**ftpsync-cron** [__ARCHIVE__]
+**ftpsync-cron** [_ARCHIVE_]
 
 # DESCRIPTION
 
