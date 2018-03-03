@@ -21,22 +21,22 @@ turn sync from it.
 
 Sync flags can be specified on the command-line or via a ssh forced command from the remote side.
 
-**archive:_foo_**
+**sync:archive:_foo_**
 : Select archive _foo_ for syncing.  A config needs to be available.
 
-**all**
+**sync:all**
 : Do a complete sync.
 
-**stage1**
+**sync:stage1**
 : Only do a stage 1 sync.
 
-**stage2**
+**sync:stage2**
 : Only do a stage 2 sync.
 
-**mhop**
+**sync:mhop**
 : Do a special multi-hop sync, usually additionally to stage 1.
 
-**callback**
+**sync:callback**
 : Call back when done.
 
 # OPTIONS
