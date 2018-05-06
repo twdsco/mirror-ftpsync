@@ -28,6 +28,11 @@ endif
 override_dh_builddeb:
 	dh_builddeb
 ifdef TARNAME
-	tar -c -C debian/ftpsync-tar distrib | gzip -n > ../$(TARNAME)
+	tar -c -C debian/ftpsync-tar \
+		--sort=name \
+		--mtime="@${SOURCE_DATE_EPOCH}" \
+		--owner=root:0 \
+		--group=root:0 \
+		distrib | gzip -n > ../$(TARNAME)
 	dpkg-distaddfile $(TARNAME) byhand -
 endif
