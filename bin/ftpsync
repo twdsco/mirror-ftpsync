@@ -630,6 +630,10 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
             log "Back from rsync with returncode ${result}"
         done
     else
+        time1=$(extract_trace_field 'Total time spent in stage1 rsync' "${TO}/${TRACE_STAGE1}" || :)
+        if [[ $time1 ]]; then
+            STATS_TOTAL_RSYNC_TIME1="$time1"
+        fi
         # Fake a good resultcode
         result=0
     fi # Sync stage 1?
