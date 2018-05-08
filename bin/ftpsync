@@ -453,6 +453,7 @@ UPDATEREQUIRED_NAME="Archive-Update-Required-${MIRRORNAME}"
 UPDATEREQUIRED="${TO}/${UPDATEREQUIRED_NAME}"
 TRACEDIR=project/trace
 TRACE="${TRACEDIR}/${MIRRORNAME}"
+TRACE_STAGE1="${TRACEDIR}/${MIRRORNAME}-stage1"
 TRACEHIERARCHY="${TRACEDIR}/_hierarchy"
 TRACELIST="${TRACEDIR}/_traces"
 
@@ -460,7 +461,7 @@ _TRACE_FILES=(
   "${LOCK_NAME}"
   "${UPDATEREQUIRED_NAME}"
   "${TRACE}"
-  "${TRACE}-stage1"
+  "${TRACE_STAGE1}"
   "${TRACEHIERARCHY}"
   "${TRACELIST}"
 )
@@ -725,10 +726,10 @@ done
 if [[ true = ${SYNCSTAGE2} ]] || [[ true = ${SYNCALL} ]]; then
     tracefile
     if [[ true = ${SYNCALL} ]]; then
-        rm -f "${TO}/${TRACE}-stage1"
+        rm -f "${TO}/${TRACE_STAGE1}"
     fi
 elif [[ true = ${SYNCSTAGE1} ]]; then
-    tracefile "${TO}/${TRACE}-stage1"
+    tracefile "${TO}/${TRACE_STAGE1}"
 fi
 
 
