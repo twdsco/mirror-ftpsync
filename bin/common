@@ -291,16 +291,30 @@ rsync_protocol() {
     unset RSYNC_VERSION RSYNC_REGEX
 }
 
+extract_trace_field() {
+    local field="$1"
+    local file="$2"
+    local value=$(awk -F': ' "\$1==\"$field\" {print \$2; exit}" "$file" 2>/dev/null)
+    [[ $value ]] || return 1
+    echo $value
+}
+
+extract_trace_field_string() {
+    local field="$1"
+    local string="$2"
+    local value=$(awk -F': ' "\$1==\"$field\" {print \$2; exit}" <<< "$string" 2>/dev/null)
+    [[ $value ]] || return 1
+    echo $value
+}
+
 extract_trace_serial() {
-    local serial=$(awk -F': ' ' $1=="Archive serial" {print $2}' "$1" 2>/dev/null)
-    [[ $serial ]] || return 1
-    echo $serial
+    extract_trace_field 'Archive serial' "$1"
+    return $?
 }
 
 extract_trace_serial_string() {
-    local serial=$(awk -F': ' ' $1=="Archive serial" {print $2}' <<< "$1" 2>/dev/null)
-    [[ $serial ]] || return 1
-    echo $serial
+    extract_trace_field_string 'Archive serial' "$1"
+    return $?
 }
 
 # Search config files in various locations
