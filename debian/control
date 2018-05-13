@@ -7,8 +7,8 @@ Build-Depends:
  debhelper (>= 10),
  pandoc,
 Standards-Version: 4.1.4
-Vcs-Git: https://anonscm.debian.org/git/mirror/archvsync.git
-Vcs-Browser: https://anonscm.debian.org/cgit/mirror/archvsync.git
+Vcs-Git: https://salsa.debian.org/mirror-team/archvsync.git
+Vcs-Browser: https://salsa.debian.org/mirror-team/archvsync
 Rules-Requires-Root: no
 
 Package: ftpsync
