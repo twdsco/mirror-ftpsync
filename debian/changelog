@@ -1,3 +1,15 @@
+archvsync (20180513) unstable; urgency=medium
+
+  * Try to support BSD and co userland.
+  * Drop support for rsync < 3.0.
+  * Break siblings out of push lock wait if timeout hits.
+  * Disable incremental recursive mode.
+  * Make tar generation reproducible. (closes: #856860)
+  * Update Standards-Version to 4.1.4, no changes.
+  * Lower rsync timeout to 120 seconds. (closes: #882381)
+
+ -- Bastian Blank <waldi@debian.org>  Sun, 13 May 2018 12:43:37 +0200
+
 archvsync (20171018) unstable; urgency=medium
 
   * Revert usage if --info options for connections with old rsync
