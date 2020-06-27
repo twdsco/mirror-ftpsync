@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian Mirror Team <mirrors@debian.org>
 Uploaders: Bastian Blank <waldi@debian.org>
 Build-Depends:
- debhelper (>= 10),
+ debhelper (>= 12~),
  pandoc,
 Standards-Version: 4.1.4
 Vcs-Git: https://salsa.debian.org/mirror-team/archvsync.git

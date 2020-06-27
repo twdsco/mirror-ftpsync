@@ -1,3 +1,9 @@
+archvsync (20180514) UNRELEASED; urgency=low
+
+  * Bump debhelper from old 10 to 12.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Sat, 27 Jun 2020 03:15:15 -0000
+
 archvsync (20180513) unstable; urgency=medium
 
   * Try to support BSD and co userland.
