@@ -29,7 +29,10 @@ set -o pipefail
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-BINDIR=$(dirname $(readlink -f "$0")); . "${BINDIR}/include-git" ## INCLUDE COMMON
+# shellcheck disable=SC2046
+BINDIR=$(dirname $(readlink -f "$0"))
+# shellcheck source=bin/include-git
+source "${BINDIR}/include-git" ## INCLUDE COMMON
 
 ########################################################################
 ########################################################################
@@ -88,6 +91,7 @@ ARCH=""
 # Base target dir for the archive
 ARCHIVEDIR=/srv/archive.debian.org/debian-archive
 # Who should get error mails
+# shellcheck disable=SC2034 # used in included common file
 #MAILTO=ftp-master@debian.org
 MAILTO=joerg@debian.org
 # Log options
@@ -113,11 +117,12 @@ cd "${ARCHIVEDIR:-}"
 umask 022
 
 # Open log and close stdin
-open_log $LOG
+open_log "$LOG"
 exec 2>&1 <&-
 
 # Check if we got told about stuff via ssh
 if [[ -n ${SSH_ORIGINAL_COMMAND:-} ]]; then
+    # shellcheck disable=SC2086
     check_commandline ${SSH_ORIGINAL_COMMAND}
 fi
 
@@ -182,9 +187,11 @@ case ${DIST} in
 esac
 
 # Check to see if another sync is in progress
+# shellcheck disable=SC2091,2046
 if ! ( set -o noclobber; echo "$$" > "${LOCK}") 2> /dev/null; then
     # the lock will contain the right pid, thanks to $BASHPID
-    if ! $(kill -0 $(< ${LOCK}) 2>/dev/null); then
+    # shellcheck disable=SC2086
+    if ! $(kill -0 $(< "${LOCK}") 2>/dev/null); then
         # Process does either not exist or is not owned by us.
         echo "$$" > "${LOCK}"
     else
@@ -195,7 +202,6 @@ fi
 
 # We want to cleanup, always
 trap cleanup EXIT TERM HUP INT QUIT
-DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 
 
 # Find a user/passwort we can use against rsync to fetch data
@@ -203,10 +209,12 @@ DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 LOGINDATA=$(grep -v '^#' ${RSYNC_SECRETS} | shuf -n 1)
 export RSYNC_USER=${LOGINDATA%%:*}
 export RSYNC_PASSWORD=${LOGINDATA##*:}
+log "Start at: $(LC_ALL=POSIX LANG=POSIX date -u -R)"
 
 BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extra=none --rsync-batch=2000 --i18n --getcontents --no-check-gpg --diff=none --nocleanup --section=main,contrib,non-free,main/debian-installer "
 
 # Remove dry-run when finished testing
+# shellcheck disable=SC2086
 debmirror --dry-run ${BASEARGS} ${DEBEXTRA} \
           --dist=${DIST} \
           --arch=${ARCH} \
