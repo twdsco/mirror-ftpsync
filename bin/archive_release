@@ -158,8 +158,11 @@ fi
 # Are we syncing security or main?
 case ${DIST} in
     */updates|*-security)
+        # Our target dir
         TO=${ARCHIVEDIR}/debian-security
+        # From where to sync this?
         RSYNC_HOST=security-master.debian.org
+        # And whats the rsync root/share called
         RSYNC_ROOT="debian-security"
         # Where to look for user/pass for rsync
         RSYNC_SECRETS=${HOME}/rsyncd/debian-security.secrets
@@ -167,8 +170,11 @@ case ${DIST} in
         exit 3
         ;;
     *)
+        # Our target dir
         TO=${ARCHIVEDIR}/debian
+        # From where to sync this?
         RSYNC_HOST=fasolo.debian.org
+        # And whats the rsync root/share called
         RSYNC_ROOT="debian"
         # Where to look for user/pass for rsync
         RSYNC_SECRETS=${HOME}/rsyncd/debian.secrets
