@@ -169,10 +169,10 @@ case ${DIST} in
         RSYNC_HOST=security-master.debian.org
         # And whats the rsync root/share called
         RSYNC_ROOT="debian-security"
-        # Where to look for user/pass for rsync
-        RSYNC_SECRETS=${HOME}/rsyncd/debian-security.secrets
-        error "Not yet setup for security (need rsync user/password setup for fasolo"
-        exit 3
+        # Find a user/passwort we can use against rsync to fetch data
+        # Data is stored in ~archvsync/etc/ftpsync-security.conf
+        RSYNC_USER=$(awk -F '"' '/RSYNC_USER/ {print $2}' "${HOME}/etc/ftpsync-security.conf" )
+        RSYNC_PASSWORD=$(awk -F '"' '/RSYNC_PASSWORD/ {print $2}' "${HOME}/etc/ftpsync-security.conf" )
         ;;
     *)
         # Our target dir
@@ -181,10 +181,16 @@ case ${DIST} in
         RSYNC_HOST=fasolo.debian.org
         # And whats the rsync root/share called
         RSYNC_ROOT="debian"
-        # Where to look for user/pass for rsync
-        RSYNC_SECRETS=${HOME}/rsyncd/debian.secrets
+        # Find a user/passwort we can use against rsync to fetch data
+        # Data is stored in ~archvsync/rsyncd/*.secrets and we really don't care which user/pass we take
+        LOGINDATA=$(grep -v '^#' "${HOME}/rsyncd/debian.secrets" | shuf -n 1)
+        RSYNC_USER=${LOGINDATA%%:*}
+        RSYNC_PASSWORD=${LOGINDATA##*:}
         ;;
 esac
+
+# rsync needs this
+export RSYNC_PASSWORD
 
 # Check to see if another sync is in progress
 # shellcheck disable=SC2091,2046
@@ -202,13 +208,6 @@ fi
 
 # We want to cleanup, always
 trap cleanup EXIT TERM HUP INT QUIT
-
-
-# Find a user/passwort we can use against rsync to fetch data
-# Data is stored in ~archvsync/rsyncd/*.secrets and we really don't care which user/pass we take
-LOGINDATA=$(grep -v '^#' ${RSYNC_SECRETS} | shuf -n 1)
-export RSYNC_USER=${LOGINDATA%%:*}
-export RSYNC_PASSWORD=${LOGINDATA##*:}
 log "Start at: $(LC_ALL=POSIX LANG=POSIX date -u -R)"
 
 BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extra=none --rsync-batch=2000 --i18n --getcontents --no-check-gpg --diff=none --nocleanup --section=main,contrib,non-free,main/debian-installer "
