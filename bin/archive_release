@@ -1,0 +1,211 @@
+#!/bin/bash
+
+set -e
+set -u
+# ERR traps should be inherited from functions too. (And command
+# substitutions and subshells and whatnot, but for us the function is
+# the important part here)
+set -E
+
+# A pipeline's return status is the value of the last (rightmost)
+# command to exit with a non-zero status, or zero if all commands exit
+# success fully.
+set -o pipefail
+
+# archive debian releases
+#
+# Copyright (C) 2021 Joerg Jaspert <joerg@debian.org>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; version 2.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+BINDIR=$(dirname $(readlink -f "$0")); . "${BINDIR}/include-git" ## INCLUDE COMMON
+
+########################################################################
+########################################################################
+## functions                                                          ##
+########################################################################
+########################################################################
+
+# Check what we are supposed to do
+check_commandline() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            dist:*)
+                # Which dist to archive, no default
+                DIST=${1##dist:}
+                ;;
+            arch:*)
+                # Which architecture to archive, no default
+                ARCH=${1##arch:}
+                ;;
+            di:*)
+                # Should we sync debian-installer? If set false, then
+                # no, otherwise (true) will take same value as DIST
+                DI=${1##di:}
+                ;;
+            *)
+                echo "Unknown option ${1} ignored"
+                ;;
+        esac
+        shift  # Check next set of parameters.
+    done
+}
+
+# All the stuff we want to do when we exit, no matter where
+cleanup() {
+    rc=$?
+
+    trap - ERR TERM HUP INT QUIT EXIT
+    # all done. Mail the log, exit.
+
+    savelog "$LOG" > /dev/null
+
+    rm -f "${LOCK}"
+
+    exit $rc
+}
+
+########################################################################
+########################################################################
+
+# Who we are
+PROGRAM="archive_release"
+# Which dist to archive
+DIST=""
+# Which architecture to archive
+ARCH=""
+# Base target dir for the archive
+ARCHIVEDIR=/srv/archive.debian.org/debian-archive
+# Who should get error mails
+#MAILTO=ftp-master@debian.org
+MAILTO=joerg@debian.org
+# Log options
+LOG=${LOG:-"${BASEDIR}/log/${PROGRAM}.log"}
+LOGROTATE=${LOGROTATE:-14}
+# Our trace and lock files
+LOCK="${LOCKDIR}/${PROGRAM}"
+# Store extra debmirror args
+DEBEXTRA=""
+
+# Check we are on the archive master host
+HOST=$(hostname -s)
+if [[ ${HOST} != fasolo ]]; then
+    error "Not running on current archive-master host, exiting"
+    exit 2
+fi
+
+create_lockdir
+create_logdir
+
+# Some sane defaults
+cd "${ARCHIVEDIR:-}"
+umask 022
+
+# Open log and close stdin
+open_log $LOG
+exec 2>&1 <&-
+
+# Check if we got told about stuff via ssh
+if [[ -n ${SSH_ORIGINAL_COMMAND:-} ]]; then
+    check_commandline ${SSH_ORIGINAL_COMMAND}
+fi
+
+# Now, we can locally override (or supply) it all on commandline
+if [[ $# -gt 0 ]]; then
+    check_commandline "$@"
+fi
+
+# Nothing set yet, we error out
+if [[ -z ${ARCH} ]] || [[ -z ${DIST} ]]; then
+    error "Need arch and dist and maybe di supplied.
+Possible arguments:
+   dist:DISTNAME              - Which dist to archive
+   arch:ARCH,...              - List of architectures to archive, comma separated
+   di:[true|false|archlist]   - Sync d-i dists too? If true, dist list is taken from dist: param.
+                                                    If false, not synced at all.
+                                                    Otherwise comma separated list expected.
+                                d-i architectures always taken from arch: parameter
+"
+    exit 1
+fi
+
+log "Archival of ${DIST}, ${ARCH} started"
+
+# We default to true
+DI=${DI:-true}
+# Now check if we should sync debian-installer
+if [[ ${DI} == false ]]; then
+    :
+elif [[ ${DI} == true ]]; then
+    DEBEXTRA="${DEBEXTRA} --di-dist=${DIST} --di-arch=${ARCH}"
+else
+    DEBEXTRA="${DEBEXTRA} --di-dist=${DI} --di-arch=${ARCH}"
+fi
+
+########################################################################
+
+# Are we syncing security or main?
+case ${DIST} in
+    */updates|*-security)
+        TO=${ARCHIVEDIR}/debian-security
+        RSYNC_HOST=security-master.debian.org
+        RSYNC_ROOT="debian-security"
+        error "Not yet setup for security (need rsync user/password setup for fasolo"
+        exit 3
+        ;;
+    *)
+        TO=${ARCHIVEDIR}/debian
+        RSYNC_HOST=fasolo.debian.org
+        RSYNC_ROOT="debian"
+        ;;
+esac
+
+# Check to see if another sync is in progress
+if ! ( set -o noclobber; echo "$$" > "${LOCK}") 2> /dev/null; then
+    # the lock will contain the right pid, thanks to $BASHPID
+    if ! $(kill -0 $(< ${LOCK}) 2>/dev/null); then
+        # Process does either not exist or is not owned by us.
+        echo "$$" > "${LOCK}"
+    else
+        echo "Unable to start archiving, lock file still exists, PID $(< ${LOCK})"
+        exit 1
+    fi
+fi
+
+# We want to cleanup, always
+trap cleanup EXIT TERM HUP INT QUIT
+DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
+
+
+# Find a user/passwort we can use against rsync to fetch data
+# Data is stored in ~archvsync/rsyncd/debian.secrets and we really don't care which user/pass we take
+LOGINDATA=$(grep -v '^#' ${HOME}/rsyncd/debian.secrets | shuf -n 1)
+export RSYNC_USER=${LOGINDATA%%:*}
+export RSYNC_PASSWORD=${LOGINDATA##*:}
+
+BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extra=none --rsync-batch=2000 --i18n --getcontents --no-check-gpg --diff=none --nocleanup --section=main,contrib,non-free,main/debian-installer "
+
+# Remove dry-run when finished testing
+debmirror --dry-run ${BASEARGS} ${DEBEXTRA} \
+          --dist=${DIST} \
+          --arch=${ARCH} \
+          --host=${RSYNC_USER}@${RSYNC_HOST} \
+          --root=${RSYNC_ROOT} \
+          ${TO}
+
+# Remove the LOCK
+rm -f "${LOCK}"
+
+#log "Trigger archive.d.o mirrors"
+#${BINDIR:+${BINDIR}/}runmirrors archive
