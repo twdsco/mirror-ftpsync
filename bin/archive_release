@@ -161,6 +161,8 @@ case ${DIST} in
         TO=${ARCHIVEDIR}/debian-security
         RSYNC_HOST=security-master.debian.org
         RSYNC_ROOT="debian-security"
+        # Where to look for user/pass for rsync
+        RSYNC_SECRETS=${HOME}/rsyncd/debian-security.secrets
         error "Not yet setup for security (need rsync user/password setup for fasolo"
         exit 3
         ;;
@@ -168,6 +170,8 @@ case ${DIST} in
         TO=${ARCHIVEDIR}/debian
         RSYNC_HOST=fasolo.debian.org
         RSYNC_ROOT="debian"
+        # Where to look for user/pass for rsync
+        RSYNC_SECRETS=${HOME}/rsyncd/debian.secrets
         ;;
 esac
 
@@ -189,8 +193,8 @@ DATE_STARTED=$(LC_ALL=POSIX LANG=POSIX date -u -R)
 
 
 # Find a user/passwort we can use against rsync to fetch data
-# Data is stored in ~archvsync/rsyncd/debian.secrets and we really don't care which user/pass we take
-LOGINDATA=$(grep -v '^#' ${HOME}/rsyncd/debian.secrets | shuf -n 1)
+# Data is stored in ~archvsync/rsyncd/*.secrets and we really don't care which user/pass we take
+LOGINDATA=$(grep -v '^#' ${RSYNC_SECRETS} | shuf -n 1)
 export RSYNC_USER=${LOGINDATA%%:*}
 export RSYNC_PASSWORD=${LOGINDATA##*:}
 
