@@ -217,7 +217,8 @@ BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extr
 debmirror --dry-run ${BASEARGS} ${DEBEXTRA} \
           --dist=${DIST} \
           --arch=${ARCH} \
-          --host=${RSYNC_USER}@${RSYNC_HOST} \
+          --user=${RSYNC_USER} \
+          --host=${RSYNC_HOST} \
           --root=${RSYNC_ROOT} \
           ${TO}
 
