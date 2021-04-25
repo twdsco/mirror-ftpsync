@@ -96,8 +96,7 @@ ARCH=""
 ARCHIVEDIR=/srv/archive.debian.org/debian-archive
 # Who should get error mails
 # shellcheck disable=SC2034 # used in included common file
-#MAILTO=ftp-master@debian.org
-MAILTO=joerg@debian.org
+MAILTO=ftp-master@debian.org
 # Log options
 LOG=${LOG:-"${BASEDIR}/log/${PROGRAM}.log"}
 LOGROTATE=${LOGROTATE:-14}
@@ -222,19 +221,18 @@ log "Start at: $(LC_ALL=POSIX LANG=POSIX date -u -R)"
 # Base debmirror args, thinks we always want.
 BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extra=none --rsync-batch=2000 --i18n --getcontents --no-check-gpg --diff=none --nocleanup "
 
-# Remove dry-run when finished testing
 # shellcheck disable=SC2086
-debmirror --dry-run ${BASEARGS} ${DEBEXTRA} \
-          --dist=${DIST} \
-          --arch=${ARCH} \
-          --user=${RSYNC_USER} \
-          --host=${RSYNC_HOST} \
-          --root=${RSYNC_ROOT} \
+debmirror ${BASEARGS} ${DEBEXTRA} \
+          --dist=${DIST}          \
+          --arch=${ARCH}          \
           --section=${SECTIONS}   \
+          --user=${RSYNC_USER}    \
+          --host=${RSYNC_HOST}    \
+          --root=${RSYNC_ROOT}    \
           ${TO}
 
 # Remove the LOCK
 rm -f "${LOCK}"
 
-#log "Trigger archive.d.o mirrors"
-#${BINDIR:+${BINDIR}/}runmirrors archive
+log "Trigger archive.d.o mirrors"
+${BINDIR:+${BINDIR}/}runmirrors archive
