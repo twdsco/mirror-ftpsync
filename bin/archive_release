@@ -57,6 +57,10 @@ check_commandline() {
                 # no, otherwise (true) will take same value as DIST
                 DI=${1##di:}
                 ;;
+            section:*)
+                # Which sections to archive? Defaults to main,contrib,non-free,main/debian-installer
+                SECTIONS=${1##section:}
+                ;;
             *)
                 echo "Unknown option ${1} ignored"
                 ;;
@@ -141,6 +145,8 @@ Possible arguments:
                                                     If false, not synced at all.
                                                     Otherwise comma separated list expected.
                                 d-i architectures always taken from arch: parameter
+   section:SECTIONS           - Which sections to archive
+                                defaults to debmirror default of main,contrib,non-free,main/debian-installer
 "
     exit 1
 fi
@@ -157,6 +163,9 @@ elif [[ ${DI} == true ]]; then
 else
     DEBEXTRA="${DEBEXTRA} --di-dist=${DI} --di-arch=${ARCH}"
 fi
+
+# Default is debmirrors default, but user may override it
+SECTIONS=${SECTIONS:-"main,contrib,non-free,main/debian-installer"}
 
 ########################################################################
 
@@ -210,7 +219,8 @@ fi
 trap cleanup EXIT TERM HUP INT QUIT
 log "Start at: $(LC_ALL=POSIX LANG=POSIX date -u -R)"
 
-BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extra=none --rsync-batch=2000 --i18n --getcontents --no-check-gpg --diff=none --nocleanup --section=main,contrib,non-free,main/debian-installer "
+# Base debmirror args, thinks we always want.
+BASEARGS="--progress --verbose --method=rsync --omit-suite-symlinks --rsync-extra=none --rsync-batch=2000 --i18n --getcontents --no-check-gpg --diff=none --nocleanup "
 
 # Remove dry-run when finished testing
 # shellcheck disable=SC2086
@@ -220,6 +230,7 @@ debmirror --dry-run ${BASEARGS} ${DEBEXTRA} \
           --user=${RSYNC_USER} \
           --host=${RSYNC_HOST} \
           --root=${RSYNC_ROOT} \
+          --section=${SECTIONS}   \
           ${TO}
 
 # Remove the LOCK
