@@ -32,20 +32,15 @@ package:
     - yum install -y epel-release > /dev/null
     - yum install -y bats curl git rsync stunnel > /dev/null
 
-test stretch:
+test buster:
   <<: *TEST-DEBIAN
   <<: *TEST-SIMPLE
-  image: debian:stretch
+  image: debian:buster
 
 test basic:
   <<: *TEST-DEBIAN-BUSYBOX
   <<: *TEST-SIMPLE
-  image: debian:stretch
-
-test centos6:
-  <<: *TEST-REDHAT
-  <<: *TEST-SIMPLE
-  image: centos:centos6
+  image: debian:buster
 
 test centos7:
   <<: *TEST-REDHAT
