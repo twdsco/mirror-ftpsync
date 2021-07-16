@@ -428,7 +428,7 @@ if [[ $RSYNC_PROTOCOL -ge 31 ]]; then
 else
     RSYNC_OPTIONS=${RSYNC_OPTIONS:-"-prltvHSB8192 --safe-links --timeout 120 --stats --no-human-readable --no-inc-recursive"}
 fi
-RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--include=*.diff/ --include=by-hash/ --exclude=*.diff/Index --exclude=Contents* --exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --exclude=i18n/* --exclude=dep11/* --exclude=ls-lR*"}
+RSYNC_OPTIONS1=${RSYNC_OPTIONS1:-"--include=*.diff/ --include=by-hash/ --exclude=*.diff/Index --exclude=Contents* --exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --exclude=i18n/* --exclude=dep11/* --exclude=installer-*/current --exclude=ls-lR*"}
 RSYNC_OPTIONS2=${RSYNC_OPTIONS2:-"--max-delete=40000 --delay-updates --delete --delete-delay --delete-excluded"}
 CALLBACKUSER=${CALLBACKUSER:-"archvsync"}
 CALLBACKHOST=${CALLBACKHOST:-"none"}
