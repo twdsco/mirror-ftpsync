@@ -389,7 +389,7 @@ Subject: ${subject}
 To: $(join_by ', ' "$@")
 Auto-Submitted: auto-generated
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary=${boundary}
+Content-Type: multipart/mixed; boundary="${boundary}"
 
 EOF
         if [[ ${body[@]:-} ]]; then
