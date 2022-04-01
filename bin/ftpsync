@@ -591,7 +591,7 @@ fi
 
 HOOK=(
     HOOKNR=1
-    HOOKSCR=${HOOK1}
+    HOOKSCR="${HOOK1}"
 )
 hook $HOOK
 
@@ -651,7 +651,7 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
 
     HOOK=(
         HOOKNR=2
-        HOOKSCR=${HOOK2}
+        HOOKSCR="${HOOK2}"
     )
     hook $HOOK
 
@@ -720,7 +720,7 @@ while [[ -e ${UPDATEREQUIRED} ]]; do
 
     HOOK=(
         HOOKNR=3
-        HOOKSCR=${HOOK3}
+        HOOKSCR="${HOOK3}"
     )
     hook $HOOK
 done
@@ -739,7 +739,7 @@ fi
 
 HOOK=(
     HOOKNR=4
-    HOOKSCR=${HOOK4}
+    HOOKSCR="${HOOK4}"
 )
 hook $HOOK
 
@@ -782,7 +782,7 @@ if [[ ${HUB} = true ]]; then
 
         HOOK=(
             HOOKNR=5
-            HOOKSCR=${HOOK5}
+            HOOKSCR="${HOOK5}"
         )
         hook $HOOK
     fi
