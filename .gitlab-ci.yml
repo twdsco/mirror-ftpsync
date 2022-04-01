@@ -37,6 +37,16 @@ test buster:
   <<: *TEST-SIMPLE
   image: debian:buster
 
+test bullseye:
+  <<: *TEST-DEBIAN
+  <<: *TEST-SIMPLE
+  image: debian:bullseye
+
+test sid:
+  <<: *TEST-DEBIAN
+  <<: *TEST-SIMPLE
+  image: debian:sid
+
 test basic:
   <<: *TEST-DEBIAN-BUSYBOX
   <<: *TEST-SIMPLE
