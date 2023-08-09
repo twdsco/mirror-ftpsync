@@ -42,6 +42,11 @@ test bullseye:
   <<: *TEST-SIMPLE
   image: debian:bullseye
 
+test bookworm:
+  <<: *TEST-DEBIAN
+  <<: *TEST-SIMPLE
+  image: debian:bookworm
+
 test sid:
   <<: *TEST-DEBIAN
   <<: *TEST-SIMPLE
