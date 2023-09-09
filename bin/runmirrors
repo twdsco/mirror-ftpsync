@@ -256,7 +256,7 @@ while read MTYPE MLNAME MHOSTNAME MUSER MSSHOPT; do
         USERNAME="${MUSER}"
         SSHPROTO="${MPROTO}"
         SSHKEY="${MKEYFILE}"
-        SSHOPTS="${SSHOPT/ /#}"
+        SSHOPTS="${SSHOPT// /#}"
         PUSHLOCKOWN="${LOCKDIR}/${MLNAME}.stage1"
         PUSHTYPE="${MTYPE}"
         PUSHARCHIVE=${MPUSHARCHIVE}

@@ -45,7 +45,7 @@ signal () {
     FROMFTPSYNC=${FROMFTPSYNC:-"false"}
 
     # And now get # back to space...
-    SSHOPTS=${SSHOPTS/\#/ }
+    SSHOPTS=${SSHOPTS//\#/ }
 
     # Defaults we always want, no matter what
     SSH_OPTIONS="-o user=${USERNAME} -o BatchMode=yes -o ServerAliveInterval=45 -o ConnectTimeout=45 -o PasswordAuthentication=no"
