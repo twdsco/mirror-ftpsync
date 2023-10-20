@@ -9,6 +9,19 @@ archvsync (20180514) UNRELEASED; urgency=low
   * update ftpsync-cron manpage and replace %% with \%.
     %% is a newline, \% a percent sign in crontabs.
 
+  [ Raphaël Hertzog ]
+  * Ensure that files referenced in Release files are synced in
+    stage 2.
+  * Properly quote the "HOOKSCR" parameter, avoiding errors with
+    newer Bash versions.
+  * Ensure that hook commands with parameters are supported.
+
+  [ Niklas Edmundsson ]
+  * Fix quoting boundary in MIME header in generated mails.
+
+  [ Adam D. Barratt ]
+  *  Fix support for multiple custom host SSH options.
+
  -- Debian Janitor <janitor@jelmer.uk>  Sat, 27 Jun 2020 03:15:15 -0000
 
 archvsync (20180513) unstable; urgency=medium
