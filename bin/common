@@ -269,6 +269,9 @@ get2stage() {
 savelog() {
     torotate="$1"
     count=${2:-${LOGROTATE}}
+    if [[ ${count} -le 0 ]]; then
+        return 0
+    fi
     while [[ ${count} -gt 0 ]]; do
         prev=$(( count - 1 ))
         if [[ -e ${torotate}.${prev} ]]; then

@@ -141,7 +141,7 @@ check_rsync() {
     msg=$2
 
     # Lets get a statistical value
-    if [[ -f ${LOG_RSYNC} ]]; then
+    if [[ -s ${LOG_RSYNC} ]]; then
         SPEED=$(tail -n 2 ${LOG_RSYNC} | sed -Ene 's#.* ([0-9.,]+) bytes/sec#\1#p')
         if [[ ${SPEED} ]]; then
             SPEED=${SPEED%%.*}
@@ -218,7 +218,7 @@ function tracefile_content() {
     echo "Upstream-mirror: ${RSYNC_HOST:-unknown}"
     echo "Rsync-Transport: ${RSYNC_TRANSPORT}"
     total=0
-    if [[ -e ${LOG_RSYNC} ]]; then
+    if [[ -s ${LOG_RSYNC} ]]; then
         for bytes in $(sed -Ene 's/(^|.* )sent ([0-9]+) bytes  received ([0-9]+) bytes.*/\3/p' "${LOG_RSYNC}"); do
             total=$(( total + bytes ))
         done
@@ -407,12 +407,12 @@ ARCH_EXCLUDE=${ARCH_EXCLUDE:-""}
 EXCLUDE=${EXCLUDE:-""}
 
 # Log options
-LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
 ERRORSONLY=${ERRORSONLY:-"true"}
 FULLLOGS=${FULLLOGS:-"false"}
 LOGROTATE=${LOGROTATE:-14}
-LOG_RSYNC="${LOGDIR}/rsync-${NAME}.log"
-LOG_RSYNC_ERROR="${LOGDIR}/rsync-${NAME}.error"
+LOG=${LOG:-"${LOGDIR}/${NAME}.log"}
+LOG_RSYNC=${LOG_RSYNC:-"${LOGDIR}/rsync-${NAME}.log"}
+LOG_RSYNC_ERROR=${LOG_RSYNC_ERROR:-"${LOGDIR}/rsync-${NAME}.error"}
 
 # Other options
 LOCKTIMEOUT=${LOCKTIMEOUT:-3600}
