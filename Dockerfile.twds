@@ -15,5 +15,6 @@ ENV LOG_RSYNC /proc/1/fd/1
 ENV LOG_RSYNC_ERROR /proc/1/fd/2
 # Enable human readable
 ENV RSYNC_OPTIONS "-prltvhHSB8192 --safe-links --chmod=D755,F644 --timeout 120 --stats --no-inc-recursive"
+RUN mkdir -p /ftpsync/log && chmod 777 /ftpsync/log
 COPY --from=builder /ftpsync /ftpsync
 RUN apt-get update && apt-get install -y rsync curl

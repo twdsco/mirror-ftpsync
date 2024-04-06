@@ -11,6 +11,7 @@ ENV LOG_RSYNC_ERROR /proc/1/fd/2
 ENV RSYNC_OPTIONS "-prltvhHSB8192 --safe-links --chmod=D755,F644 --timeout 120 --stats --no-inc-recursive"
 # Disable git ownership safe check
 RUN echo "[safe]\ndirectory = *" > /etc/gitconfig
+RUN mkdir -p /ftpsync/log && chmod 777 /ftpsync/log
 COPY etc /ftpsync/etc
 COPY bin /ftpsync/bin
 RUN apt-get update && apt-get install -y rsync git curl
