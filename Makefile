@@ -10,7 +10,7 @@ man5dir = ${mandir}/man5
 MAN1 = ftpsync ftpsync-cron rsync-ssl-tunnel runmirrors
 MAN5 = ftpsync.conf runmirrors.conf runmirrors.mirror
 SCRIPTS = ftpsync ftpsync-cron rsync-ssl-tunnel runmirrors
-ALL = $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=bin/%.install) $(SCRIPTS:%=bin/%.install-tar)
+ALL = $(MAN1:%=doc/%.1) $(MAN5:%=doc/%.5) $(SCRIPTS:%=bin/%.install) $(SCRIPTS:%=bin/%.install-tar) $(SCRIPTS:%=bin/%.install-docker)
 
 all: $(ALL)
 
@@ -29,6 +29,9 @@ bin/%.install: bin/% bin/common bin/include-install
 
 bin/%.install-tar: bin/% bin/common bin/include-tar
 	$(call expand,tar)
+
+bin/%.install-docker: bin/% bin/common bin/include-docker
+	$(call expand,docker)
 
 doc/%: doc/%.md
 	pandoc -s -t man -o $@ $<
@@ -60,6 +63,9 @@ install-tar:
 		etc/runmirrors.conf.sample \
 		etc/runmirrors.mirror.sample
 	install -D -m644 -t ${DESTDIR}/doc ${MAN1:%=doc/%.1.md} ${MAN5:%=doc/%.5.md}
+
+install-docker:
+	$(call install_bin,install-docker,${DESTDIR}/bin/)
 
 clean:
 	rm -f $(ALL)
