@@ -274,12 +274,12 @@ savelog() {
     fi
     while [[ ${count} -gt 0 ]]; do
         prev=$(( count - 1 ))
-        if [[ -e ${torotate}.${prev} ]]; then
+        if [[ -s ${torotate}.${prev} ]]; then
             mv "${torotate}.${prev}" "${torotate}.${count}"
         fi
         count=$prev
     done
-    if [[ -e ${torotate} ]]; then
+    if [[ -s ${torotate} ]]; then
         mv "${torotate}" "${torotate}.0"
     fi
 }
