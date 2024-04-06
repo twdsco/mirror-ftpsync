@@ -1,3 +1,9 @@
+archvsync (20240406-twds) UNRELEASED; urgency=low
+
+  * Add support for redirecting logs to stdout/stderr
+
+ -- James58899 <james59988@gmail.com>  Sat, 06 Apr 2024 10:41:45 +0000
+
 archvsync (20180514) UNRELEASED; urgency=low
 
   [ Debian Janitor ]
