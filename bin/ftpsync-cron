@@ -12,7 +12,7 @@ PROGRAM=ftpsync-cron
 
 read_config "${CONFIG}"
 
-MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
+MAILTO=${MAILTO:-${LOGNAME:-""}}
 MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
 LOCK=${LOCK:-"${TO}/Archive-Update-in-Progress-${MIRRORNAME}"}
 RSYNC_PATH="${RSYNC_PATH:-debian}"

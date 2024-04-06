@@ -381,7 +381,7 @@ create_logdir
 ########################################################################
 MIRRORNAME=${MIRRORNAME:-$(hostname -f)}
 TO=${TO:-"/srv/mirrors/debian/"}
-MAILTO=${MAILTO:-${LOGNAME:?Environment variable LOGNAME unset, please check your system or specify MAILTO}}
+MAILTO=${MAILTO:-${LOGNAME:-""}}
 HUB=${HUB:-"false"}
 
 # Connection options
